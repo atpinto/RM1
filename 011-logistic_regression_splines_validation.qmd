@@ -1,0 +1,459 @@
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+# Logistic Regression {#logreg_splines_ROC}
+
+## Learning objectives {#learn_obj_wk11 .unnumbered}
+
+By the end of this week you should have
+
+1.  Deepened your understanding of diagnostic tools
+
+2.  Discovered how to assess linearity in logistic regression models
+
+3.  Learned about splines and other flexible methods in this setting
+
+4.  Gained familiarity with ROC curves 
+
+5.  Understood pros and the cons of goodness of fit techniques in logistic regression
+
+
+
+## Learning activities {#learn_act_wk11 .unnumbered}
+
+This week's learning activities include:
+
+| Learning Activity             | Learning objectives |
+|-------------------------------|---------------------|
+| Lecture 1                     | 1, 2 3,             |
+| Reading                       | 2, 3                |
+| Lecture 2                     | 4, 5                |
+| Investigation                 | 3                   |
+| Discussions/tutorial          | 2, 3, 4             |
+
+**Lecture 1 in R**
+
+<iframe width="740" height="416"  src="https://www.youtube.com/embed/JEaqK_18Qow" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+[Download video here](https://www.dropbox.com/s/jkh8ve2x9699sgh/RM1_week11_lecture1_R.mp4?dl=1)
+
+**Lecture 1 in Stata**
+
+<iframe width="740" height="416"  src="https://www.youtube.com/embed/pk3aENLqU3o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[Download video here](https://www.dropbox.com/s/tikjb3ke371uxw3/RM1_week11_lecture1_Stata.mp4?dl=1)
+
+## Other diagnostic tools {.unnumbered}
+
+Residuals, leverage, Cook's distance and all related plots are not the only diagnostic tools you can use in logistic regression. Similarly to linear regression you can compute *dfbetas* for each coefficient. They have the same interpretation, i.e. they measure the standardized difference between a regression coefficient before and after the removal of each observation in turn. As an example, we go back to the final for *chd69* we used earlier and compute dfbetas for  *chol_50* and *bmichol* but this time we keep case 12237 who has a very high cholesterol reading (645 mg/dL=16.68 mmol/L). The figure below shows that this observation has the highest dfbeta on the two plots. It's particularly extreme for *bmichol*, meaning that this leverage point was particularly influential on this parameter. 
+
+**R code and output**
+
+```{r,collapse=TRUE}
+wcgs <- read.csv("wcgs.csv")
+wcgs<-data.frame(wcgs)
+# centre variables  (use wcgs again)
+wcgs$age_10<-(wcgs$age-mean(wcgs$age))/10
+wcgs$bmi_10<-(wcgs$bmi-mean(wcgs$bmi))/10
+wcgs$sbp_50<-(wcgs$sbp-mean(wcgs$sbp))/50
+wcgs$chol_50<-(wcgs$chol-mean(wcgs$chol,na.rm=T))/50
+myvars <- c("id","chd69", "age", "bmi", "chol", "sbp", "smoke", "dibpat",
+            "age_10", "bmi_10", "chol_50", "sbp_50")
+wcgs3 <- wcgs[myvars]
+wcgs3cc<-na.omit(wcgs3)  # here case with chol=645 is  kept, missing deleted
+# 3142x 12
+wcgs3cc$bmichol<-wcgs3cc$bmi_10*wcgs3cc$chol_50
+wcgs3cc$bmisbp<-wcgs3cc$bmi_10*wcgs3cc$sbp_50
+out5<-glm(chd69 ~ age_10 + chol_50 + sbp_50 +  bmi_10 + smoke + dibpat + bmichol + bmisbp, family=binomial, data=wcgs3cc)
+#summary(out5)
+dfbetas<-dfbetas(out5) # 3142  x 9
+par(mfrow=c(1,2))
+plot(dfbetas[,3], ylab="dfbeta for chol_50")
+plot(dfbetas[,8], ylab="dfbeta for bmi x chol")
+```
+
+**Stata code and output**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use wcgs.dta
+gen age10=(age-46.27869)/10    
+gen bmi10=(bmi-24.51837)/10    
+gen chol50=(chol-226.3724)/50  
+gen sbp50=(sbp-128.6328)/50    
+gen bmichol=bmi10*chol50
+gen bmisbp=bmi10*sbp50
+** remove missing
+drop if missing(chd69) | missing(bmi) | missing(age) | missing(sbp) | missing(smoke) | missing(chol) | missing(dibpat)  
+** n=3142 observations
+logistic chd69 age10 chol50 sbp50 bmi10 smoke dibpat  bmichol bmisbp, coef 
+ldfbeta
+desc
+** Stata has created dfbeta for each coefficient
+gen index=_n
+scatter DFchol50 index, name(temp1) mlab(id)
+scatter DFbmicho index, name(temp2) mlab(id)
+graph combine temp1 temp2
+** the figure is not displayed (Mardown compatibility with Stata)
+** but you will see it when running the code
+```
+
+
+It's worth noting that the Cook's distance and leverage would have identified this case as well (Cook's D=.107, leverage=0.297 in R), so Vittinghof et al. (2012) were right to remove this observation from their analysis. Note that *dfbetas* are obtained via the command *ldfbeta* in Stata, this is slightly different from the code used for the linear model. You may also find other diagnostic tools in your favourite software, we let you explore this further. We have presented here the ones that are more commonly used and readily available in all statistical packages. We will end this paragraph by saying that multicollinearity can occur in logistic regression for the same reason as in the linear model. VIF and various other indicators can be obtained by installing *collin* in Stata (i.e. type *net install collin*) and running it. A generalised version of the concept called (GVIF) is available in R via the library *car*. 
+The interpretation is the same as in linear regression so we will not illustrated its use in this context.
+
+
+## Checking linearity {.unnumbered}
+
+### Categorising {.unnumbered}
+
+One of the logistic model assumption is linearity on the log-odds scale and this should be checked. Unlike linear regression, we cannot really use the Pearson or deviance residuals and examine whether some structure remains there and scatter plots are not meaningful for a binary endpoint. There are several ways you can check this assumption and, perhaps, the most common one consists of creating categories for a particular predictor of interest. This is the logic we followed in week 9 where *agec* representing decades of age was used instead of *age* both in a $2\times k$ table and a logistic model. If linearity is met, you expect to find a regular increase or decrease in the coefficient with each additional decade. There are obvious disadvantages with this approach: first, the choice of the categories is not obvious; second, categorising may result in small numbers in some categories for which it's difficult to conclude anything; third, it may have an impact on the interpretation and in some cases can even mask existing structures. 
+
+<!-- The following reading expresses concerns about this strategy. They suggest instead to use a more flexible techniques like smoothing splines and let the data show how categories can be defined, if any. Even it categories are well defined, fitting a model with a categorised version of a covariate may give you an average effect within each category compared with a reference. -->
+
+
+### Using polynomials {.unnumbered}
+
+An important outcome from a hospital resources point of view is whether or not a newborn baby is admitted to neonatal intensive care. The dataset *birth* records information on 141 babies including the response variable, i,e admittance to neonatal intensive care (*admin_nc* coded on 0/1 with 0=``no'' and 1=``yes''), weight in kg (*weight*) and a bunch of other predictors. A boxplot of *weight* by *admin_nc* (omitted) shows that babies with *admit.nc*=1 tend to have lower birthweights. A simple logistic shows a very significant effect of *weight* with $\hat\beta_1=-1.64$, $p=7.7e-5$ meaning that  the probability of admission to neonatal intensive care *decreases* with increasing birthweight. 
+
+**R code and output**
+
+```{r,collapse=TRUE}
+birth <- read.csv("birth.csv")
+birth<-data.frame(birth)
+model1 <- glm(admit.nc ~ weight, family=binomial, data=birth)
+summary(model1)
+```
+
+**Stata code and output**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use birth.dta
+logistic admitnc weight, coef
+** OR for a 0.5 kg increase in weight
+disp exp(-1.64*0.5)
+lincom 0.5*weight, or
+```
+
+
+We can interpret the output in terms of OR but we need to choose a meaningful weight increase of, say, 500g=0.5kg, yielding $OR=\exp(-1.64*0.5)=0.44$. So an increase in birthweight of 500g decreases the odds of admittance to neonatal intensive care by $66\%$ (assuming that the model is correct). Fitted and smoothed (spline) curves are plotted below.
+
+
+```{r,echo=FALSE,message=FALSE}
+plot(admit.nc~weight,data=birth)
+lines(smooth.spline(birth$admit.nc~birth$weight,df=5))
+# NB: smooth.spline (fits a smoothing spline to the supplied data)
+lines(fitted(model1)[order(birth$weight)]~sort(birth$weight),lty=2,col="red")
+legend("bottomleft",legend=c("spline","fitted - linear"),lty=1:2, cex=0.8,
+       col=c("black","red"))
+```
+
+**R code**
+
+
+```{r,collapse=TRUE, results='hide',fig.show='hide'}
+plot(admit.nc~weight,data=birth)
+lines(smooth.spline(birth$admit.nc~birth$weight,df=5))
+# NB: smooth.spline (fits a smoothing spline to the supplied data)
+lines(fitted(model1)[order(birth$weight)]~sort(birth$weight),lty=2,col="red")
+legend("bottomleft",legend=c("spline","fitted - linear"),lty=1:2, cex=0.8,
+       col=c("black","red"))
+```
+
+
+**Stata code and output (with a slightly different smoother)**
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use birth.dta
+sort weight
+logistic admitnc weight
+predict proba, pr
+graph twoway (lpoly admitnc weight, degree(1) kernel(epan2) bwidth(0.8))(line proba weight) (scatter admitnc weight)
+** the figure is not displayed (Mardown compatibility with Stata)
+** but you will see it when running the code
+```
+
+
+It's clear that the fitted curve doesn't quite get the curvature that we see in the smoothing spline; this means that the effect of birthweight on the probability of admittance to intensive care is not well captured by this simple model. To get better explanation, we try a quadratic polynomial of birthweight, i.e. fit the model $\log(p/(1-p))=\beta_0+\beta_1 weight+\beta_2 weight^2)$ to the data. 
+
+
+```{r,echo=FALSE,message=FALSE}
+model2 <- glm(admit.nc ~ weight + I(weight^2), family=binomial,data=birth)
+plot(admit.nc~weight,data=birth)
+lines(smooth.spline(birth$admit.nc~birth$weight,df=5))
+lines(fitted(model2)[order(birth$weight)]~sort(birth$weight),lty=2,col="red")
+legend("bottomleft",legend=c("spline","fitted - quad"),lty=1:2, cex=0.7,
+       col=c("black","red"))
+```
+
+**R code**
+
+```{r,collapse=TRUE, results='hide', fig.show='hide'}
+model2 <- glm(admit.nc ~ weight + I(weight^2), family=binomial,data=birth)
+plot(admit.nc~weight,data=birth)
+lines(smooth.spline(birth$admit.nc~birth$weight,df=5))
+# NB: smooth.spline (fits a smoothing spline to the supplied data)
+lines(fitted(model2)[order(birth$weight)]~sort(birth$weight),lty=2,col="red")
+legend("bottomleft",legend=c("spline","fitted - quad"),lty=1:2, cex=0.7,
+       col=c("black","red"))
+```
+
+
+**Stata code and output (with a slighly different smoother)**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use birth.dta
+sort weight
+gen weight2=weight^2
+logistic admitnc weight weight2
+predict proba, pr
+graph twoway (lpoly admitnc weight, degree(1) kernel(epan2) bwidth(0.8))(line proba weight) (scatter admitnc weight)
+** the figure is not displayed (Mardown compatibility with Stata)
+** but you will see it when running the code
+```
+
+
+A much better fit is observed. We can try to fit a cubic polynomial and repeat the procedure. Note that when fitting high order polynomials we may be better off using orthogonal polynomials which results terms that are independent by construction. This can be done using the command $poly()$ in R but does not affect the fitted curve and global interpretation. Irrespective of the basis you choose for the polynomials, you should always keep all of the lower order terms in the model, *even if they are not significant*. To decide which model (linear, quadratic or cubic) is better we can use the AIC. We find AIC=133.9, 130.4 and 131.4 respectively, so the quadratic model is better. A similar conclusion would have been reached using BIC (but they don't always agree). We don't pursue further the modelling of *admin_nc*; of course, other predictors could be added that could potentially confound the association with *weight* but they are extremely unlikely to make the quadratic trend identified earlier disappear.
+
+
+**R code to fit the 3 models and output**
+
+```{r,collapse=TRUE}
+model1 <- glm(admit.nc ~ weight, family=binomial,data=birth)
+AIC(model1)
+model2 <- glm(admit.nc ~ weight + I(weight^2), family=binomial,data=birth)
+AIC(model2)
+model3 <- glm(admit.nc ~ weight + I(weight^2) + I(weight^3), family=binomial,data=birth)
+AIC(model3)
+BIC(model1,model2,model3)
+```
+
+**Stata code to fit the 3 models and output**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use birth.dta
+** various models and AIC
+logistic admitnc weight, coef
+estat ic
+gen weight2=weight^2
+logistic admitnc weight weight2, coef
+estat ic
+gen weight3=weight^3
+logistic admitnc weight weight2 weight3, coef
+estat ic
+```
+
+
+### Splines or more flexible models {.unnumbered}
+
+The truth is that we were lucky that a quadratic polynomial fit could capture so well the effect of weight on the probability of admission to neonatal intensive care. More often than not, we need more flexible models. Building on what we did in week 7, we could fit restricted cubic splines or fractional polynomials. To illustrate their use here, let's consider the *medcare* data where a public insurance program called medcare collected information on 4406 individuals, aged 66 and over. The objective is to determine what factors can impact poor heath represented here by *healthpoor* (0=average health, 1=poor). Potential predictors are available including *age*, *ofp* the number of physician office visits, *male* (0=female, 1=male), *married* (0=no, 1=yes), years of education (*school*). Age is obviously an important predictor, so for sake of simplicity,  we consider a model with a single continuous covariate (*age*) through the standard specification $\log(p/(1-p))=\beta_0+\beta_1 age$) where $p$ is the probability that *healthpoor*=1 given age. One way to generalise this function is to add terms for restricted cubic splines (RCS), Say we are interested in a model with with 4 knots, we need to add two terms $S_2(age)$ and $S_3(age)$ yielding:
+
+$$\log(\frac{p}{1-p})=\beta_0+\beta_1 age+\beta_2S_2(age)+\beta_3S_3(age),$$ 
+with the usual convention that $S_1(age)=age$. As discussed earlier for the linear case, the exact algebraic formulation of $S_1$ and $S_2$ is not important as long as we understand that we fit a smooth curve to the data on the logit scale. The curve is based on cubic polynomials in the middle and linear terms before the first knot and after the last knot, where we have less information. The way to create RCS in R and Stata is the same as before. We need to use *logistic* instead of *regress* in Stata to fit the corresponding logistic regression model; also use the command *lrm* instead of *ols* from the *rms* library in R. The R (or Stata) output has the typical format with the age coefficient being diplayed first. The added terms are listed as $age^\prime$ and $age^{\prime\prime}$ etc in R whereas Stata lets you choose the names.
+
+**R code and output**
+
+
+```{r,collapse=TRUE}
+medcare<- read.csv("medcare.csv")
+medcare<-data.frame(medcare)
+require(rms)
+medcare$age<-medcare$age*10
+# assume that age is in years in these data (unlike in the R library)
+ddist <- datadist(medcare)
+options(datadist='ddist')
+model1 <- lrm(healthpoor  ~  rcs(age,4), data=medcare)
+model1
+plot(Predict(model1, age))
+anova(model1)
+# AICs
+model0 <- lrm(healthpoor  ~  age, data=medcare)
+AIC(model0)
+AIC(model1)
+```
+
+**Stata code and output**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use medcare.dta
+replace age=age*10
+** age in years
+mkspline agespl = age, cubic nknots(4) displayknots
+logistic healthpoor agespl*, coef
+test agespl2 agespl3 
+estat ic
+logistic healthpoor age, coef
+estat ic
+** plot
+drop agespl1 agespl2 agespl3
+mkspline2 agespl = age, cubic nknots(4)
+logistic healthpoor agespl*, coef
+adjustrcspline if age <= 95, custominvlink("xb()")  ytitle("log-odds")
+** the option is necessary to get the plot on the log-odds scale
+** defalut = proba in Stata. 
+** the figure is not displayed (Mardown compatibility with Stata)
+** but you will see it when running the code
+```
+
+To interpret the RCS, we don't look as the coefficients per see but plot the curve and  assess whether these additional terms are needed.  The plot above displays a rather linear effect of age on the log-odds scale (up to a small part of the curve where there does not seem to be real effect for age 66 to 70).  Is it enough to justify the more complex model? Since the difference with simple logistic regression is due to $S_1$ and $S_2$ that have been added to the model, we can easily test whether they are actually needed using the *anova* command in R or test the relevant parameters (i.e. H_0$: $\beta_2=\beta_3=0$) in Stata. The corresponding $p$-value is $p=0.26$ providing little evidence that the RCS are necessary. In other words linearity in age is plausible on this data. Another way to look at this is to use the AIC (or BIC) and compare the two values (with/without splines). This will become particularly helpful when more complex models with several splines are fitted and are not necessarily nested. The AIC is 3294.7 for the simple logistic regression model and 3296.0 for the the RCS model. This favours the simpler model because a smaller AIC is preferable. This is in agreement with both the LRT analysis and the visual impression we get from the plot. 
+
+
+Note that we still have to choose the number of knots (often between 3 and 5) and their location, By default we let the software place them but there may be case where you have a better idea, in which case you can modify the command and list where the knots are. This is similar to what we do in linear regression (see week 6 material). We have illustrated the concept of RCS here but you could add fractional polynomials of age like $\sqrt{age}$ or $age^2$ instead of $S_1$ and $S_2$ and proceed the same way. The plots in the RCS approach may also help find the type of fractional polynomials of potential interest.
+
+
+### Investigation: medcare data {.unnumbered}
+
+In this activity, we will conduct a more thorough analysis of the *medcare* date and consider whether linearity is satisfied for the other continuous covariates.  
+
+1) Start by fitting the initial model including  *male*, *married*, *age*, *school* and *ofp* (model0) and get the corresponding AIC. Do not try to remove the nonsignficant predictors for now.
+
+2) The age effect is assumed to be linear, now we need to assess whether linearity holds for *school* and *ofp*. Fit a model with RCS(4) for both of these covariates (model1). Plot the two splines separately (the command(s) we used for the linear model works here just the same). Are they necessary? Comment on the AIC of this model (compared with model0's). What would you recommend at this stage?
+
+:::{.orange-box}
+Note: here you have to plot two splines (*ols* and *school*). Stata users have to repeat the same procedure (spline definition and refit) to plot the 2nd spline. Otherwise the 2nd spline is not displayed.  Also you need to specify the values for the other variables in the model, e.g. use the sample medians. R-users don't need to worry because the package does it for you. 
+:::
+
+3) There still seems to be some downward curvature in the relationship between *school* and *healthpoor* on the log-odds scale. We decide to investigate this further by replacing the RCS in *school* by a polynomial. Discuss the appropriateness of fitting a quadratic polynomial in *school* (model 2); use preferably the *poly()* command in R. NB: you can keep the RCS(4) for *ofp* as in 2) if need be.
+ 
+4) What is the better fitted model based on the AIC (or BIC)?
+
+5) Is there a way to lower the AIC (or BIC) further? What do suggest we do? 
+
+6) Write your conclusions
+
+
+
+Note that in terms of interpretation of the splines, we have the same options as in linear regression. For simplicity, the splines will only be interpreted qualitatively. Present plots and stay away from a more complex quantitative explanation. This is what most researchers would do in pratice. You may have a choice of the scale to present the results. We will stick to the logit scale (where linearity is expressed) to keep it as simple as possible.
+
+
+We have illustrated the use of RCS (and polynomials) on this example but they are part of suite of techniques you can actually use to make your model more flexible and assess linearity. Other types of splines exist and are particular well developed in R. A common strategy is to use smoothing splines that avoid having to choose knots (they are available via the R library *mgcv*). They are mentioned here for the sake of completeness.  An interesting illustration on how they work can be found in the following *optional* reading.
+
+##### [@Wand2012] Using Semiparametric Regression and Parametric Regression Models: How to Use Data to Get the (Right) Answer?. {#reading_wk11_GAM .unnumbered}
+
+This reading illustrates how a semiparametric model can be fitted to the data and identify structures that could otherwise have been missed using ad-hoc categorisation. The situation described here is a more complex U-shape that can arise in real data. Note as well that ROC (Receiver Operating Curve) and AUC (Area Under the Curve) are used here to assess the model performance of the model. This part can only be understood after studying the next section, so you may want to study it before returning to the reading.
+
+**Lecture 2 in R**
+
+<iframe width="740" height="416"  src="https://www.youtube.com/embed/lcXJ6BnwdSM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[Download video here](https://www.dropbox.com/s/iv5ejo1fho7ccoj/RM1_week11_lecture2_R.mp4?dl=1)
+
+**Lecture 2 in Stata**
+
+<iframe width="740" height="416"  src="https://www.youtube.com/embed/oZQL7Eh2TWM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[Download video here](https://www.dropbox.com/s/8ktzic8mw5p5wxl/RM1_week11_lecture2_Stata.mp4?dl=1)
+
+## ROC curve
+
+In some applications, we may be interested in using a logistic regression model as a tool to classify outcomes of observed individuals based on values of measured predictors. After model fitting, we can compute the fitted probabilities $\hat p_i$ and by using a cutoff decide whether they are predictive of an event or not and compare with the real observations. By doing so, we will determine the sensitivity (i.e. the proportion of events that are well classified), the specificity (i.e. the proportion of no events that are well classified) and their respective complements, the false negative and false positive. The sensitivity and specificity will depend critically on the choice of cutoff probability. In practice, we let this cutoff vary on the (0-1) interval, compute the resulting sensitivity and specificity and draw a plot. Traditionally, it is (1-specificity) that is plotted on the horizontal axis, and sensitivity on the vertical axis. This is called a ROC curve (ROC stands for Receiver Operating Characteristic, which originated in quality control where this technique was first developed). The figure below displays the ROC curve for the final model for *chd69* without the outlier (chol=645 mg/dL)
+
+R code and output
+
+```{r,collapse=TRUE}
+library(pROC)
+wcgs4=wcgs3cc[wcgs3cc$chol < 645,]
+dim(wcgs4)
+out6<-glm(chd69 ~ age_10 + chol_50 + sbp_50 +  bmi_10 + smoke + dibpat + bmichol + bmisbp, family=binomial, data=wcgs4)
+wcgs4$pred.prob<-fitted(out6)
+wcgs4$pred.prob<-fitted(out6)
+roc(wcgs4$chd69,wcgs4$pred.prob, plot=TRUE,ci=TRUE)
+```
+
+
+Stata code and ouput
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use "wcgs.dta"
+gen age10=(age-46.27869)/10    
+gen bmi10=(bmi-24.51837)/10    
+gen chol50=(chol-226.3724)/50  
+gen sbp50=(sbp-128.6328)/50   
+gen bmichol=bmi10*chol50
+gen bmisbp=bmi10*sbp50
+** remove missing cholesterol values and outlier (chol=645)
+drop if chol>=645  
+logistic chd69 age10 chol50 sbp50 bmi10 smoke dibpat  bmichol bmisbp, coef 
+lroc
+** with 95%CI
+predict fitted, pr
+roctab chd69 fitted
+```
+
+In general, the more the ROC curve is stretched towards the top left corner, the more accurate the model is. The area under the ROC curve called the AUC (or $C$-statistic) provides an overall measure of classification accuracy, with the value of one representing perfect accuracy. The AUC returned here is 0.754, 95\% CI=(0.72 ; 0.78) which could be seen as fair. In general, the following categories are considered: 0.5 - 0.6 = no discrimination, 0.6 - 0.7 = poor; 0.7 - 0.8 = fair; 0.8 - 0.8 = good; and 0.9 - 1 = excellent. 
+
+The AUC is not the only tool that can be used to assess the performance of a model but it is by far the most common. Alternatives include the Brior score or Somer's D statistic. An important point must be stressed here: because the data have been used twice (to build the model and to assess its discriminative ability), the AUC or any other statistic are *optimistic*. They tend to return a slightly better estimate than would have been obtained with new data. This is  called *optimism bias* in the literature. We will see in Week 12 that this (usually small) bias  can be corrected using bootstrapping or cross-validation.
+
+
+
+## Goodness of fit
+
+
+Two other checks can be found in the literature to assess the adequacy of a model. The first is a *specification* test available in Stata through the command *linktest* direcly after a model fit. This test involves fitting a second model using the right hand since (the linear predictor in the logistic model) called $\_hat$ and its square called $\_hatsq$. You expect the first Wald test for $\_hat$ to be  significant if your model can explain the data. If the second test corresponding $\_hatsq$ is significant further modelling is required. Running this command after  fitting the same model examined above indicated no evidence that the quadratic term $\_hatsq$ is needed (p=0.146), therefore we don't have evidence of model inadequacy. The test has obvious limitations but is provided as a standard tool in Stata (a R  counterpart requires a few lines of code). Another tool is to perform a goodness of fit (GoF) test due to Hosmer and Lemershow. The test works by forming groups of ordered predicted probabilities and comparing observed vs expected frequencies. It's not clear how many groups should be used although 10 is often used in practice. The test is directly available in Stata via the command *lfit, group(10) table*. You need to work a bit harder in R to get it or use the *ResourcesSelection* library.
+
+
+R code and output
+
+```{r,collapse=TRUE}
+library(ResourceSelection)
+hl<-hoslem.test(x = wcgs4$chd69, y = fitted(out6), g = 10)
+hl
+# syntax: x = outcome, y=predicted values, g = number of groups
+# observed vs expected can also be listed
+cbind(hl$observed,hl$expected)
+hl1<-hoslem.test(x = wcgs4$chd69, y = fitted(out6), g = 20)
+hl1
+# link test
+wcgs4$linpred<-predict(out6,type="link")
+wcgs4$linpred2=wcgs4$linpred^2
+out.link<-glm(chd69 ~ linpred + linpred2, family=binomial, data=wcgs4)
+summary(out.link)
+```
+
+Stata code and output
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+gen age10=(age-46.27869)/10    
+gen bmi10=(bmi-24.51837)/10    
+gen chol50=(chol-226.3724)/50  
+gen sbp50=(sbp-128.6328)/50   
+gen bmichol=bmi10*chol50
+gen bmisbp=bmi10*sbp50
+** remove missing cholesterol values and outlier (chol=645)
+drop if chol>=645  
+** n=3141 observations
+logistic chd69 age10 chol50 sbp50 bmi10 smoke dibpat  bmichol bmisbp, coef 
+** GoF test and link test
+linktest, nolog
+lfit, group(10) table
+lfit, group(20)
+```
+
+
+There is no evidence of violation of the goodness of fit assumptions using this procedure ($p > 0.18$ with either 10 or 20 groups). This GoF test is presented here for the sake of completeness. It's not always a reliable test and it should be used with caution. In particular, because power of GoF tests increases with  sample size, practically irrelevant discrepancies between observed and expected number of events are increasingly likely to cause the rejection of the hypothesis of a good fit in large samples. Calibration plots displaying observed vs predicted probabilities (see week 12() can be used to get a visual impression of how well the model fit. They constitute a reasonable alternative but can also be affected by optimism bias as well.
+
+
+## Summary {#summary_wk11 .unnumbered}
+
+:::{#box1 .green-box}
+The following are the key takeaway messages from this week:
+
+1. Most diagnostic tools developed for the linear model can be extended to logistic regression
+
+2. Restricted cubic splines or fractional polynomials provide a way to assess linearity. 
+
+3. AIC can be used to compare non-nested models and decide which model to keep.
+
+4. ROC curves are a very convenient way to assess the discriminative ability of a model but we need to be aware of optimism bias
+
+5. Goodness of fit tests are available for binary logistic regression but should only be used with caution.
+:::
+
+
+<!-- To help you with this investigation, we have provided a heavily commented code describing how R and Stata can fit RCS in this setting and illustrates options you may want to use in the future. Click here for the R code and there for Stata's. Once you are familiar with this code, you should be able to answer the questions above.
+-->

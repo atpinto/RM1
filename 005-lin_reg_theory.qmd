@@ -1,0 +1,371 @@
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+# Multiple linear regression theory {#linreg_theory}
+
+## Learning objectives {#learn_obj_wk05 .unnumbered}
+
+This week materials provide the theoretical basis for multiple linear regression that you have been using in the previous 4 weeks. It is somehow more technical but it is nevertheless important that you understand where these results come from.
+
+By the end of this week you should be able to:
+
+1.  Be familiar with the basic facts of matrix algebra and the way in which they are used in setting up and analysing regression models
+
+2.  Understand the algebraic formulation of the LS estimator and its properties
+
+3.  Discover the principal forms of statistical inference applied to the multiple regression model, and in particular how these relate to partitioning of the total sum of squares
+
+4.  Learn how 95% confidence intervals and 95% prediction intervals are derived
+
+5.  Discover how this is linked to likelihood-based inference
+
+## Learning activities {#learn_act_wk05 .unnumbered}
+
+This week's learning activities include:
+
+| Learning Activity  | Learning objectives |
+|--------------------|---------------------|
+| Lecture 1          | 1, 2, 3             |
+| Lecture 2          | 3, 4, 5             |
+| Practice/Exercises | 1, 2, 4             |
+| Discussion         | All                 |
+
+**Lecture 1 in R**
+
+<iframe width="740" height="416" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/50ded7bd-f88c-4931-8a47-750970694ff7" frameborder="0">
+
+</iframe>
+
+[Download video here](https://www.dropbox.com/s/cwfls3oq6usdfud/RM1_week5_lecture1_R.mp4?dl=1)
+
+**Lecture 1 in Stata**
+
+<iframe width="740" height="416" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/ca1a7448-fc89-4213-8f38-d461beb8391c" frameborder="0">
+
+</iframe>
+
+[Download video here](https://www.dropbox.com/s/nfsxb3t2azsu115/RM1_week5_lecture1_Stata.mp4?dl=1)
+
+## Matrix algebra for simple linear regression {.unnumbered}
+
+<!-- link to an example given in week 1 -->
+
+```{=html}
+<!-- I don't think these references add much to the notes 
+
+This first section is based on readings from Weisberg 2005 or 2013. The two readings below are optional, but helpful if: you want a recap on matrix properties and algebra; or you want to see further details of the matrix derivations we show in the lecture and notes below.
+
+#### [@Weisberg_2013] Weisberg 2013, Appendix A.6, A.7 and A.8, pages 278-86 {#reading_wk05_A6_A8 .unnumbered}
+
+This reading provides an introduction to matrix algebra, definitions, terminology, random vectors/matrices and the concepts of mean and variance covariance matrices in the context of Least squares using matrices. Most of this material should, in principle, be known to you.
+
+##### [@Weisberg2005] Weisberg 2005, Section 3.2,3.3 and 3.4, pages 55-60 only {#reading_wk05_sections .unnumbered} 
+
+
+
+Reading 5.2. Weisberg 2005, Section 3.2,3.3 and 3.4, pages 55-60 only. This reading introduces the matrix form of multiple linear regression and the different types of linear regression that we will investigate in the coming weeks.
+
+-->
+```
+## Notational convention {.unnumbered}
+
+All vectors are assumed to be column vectors. So for example a vector of length $n$ with elements $a_1,...,a_n$ is defined as the *column vector*
+
+$$a=\left[\begin{array}{c} a_1 \\ \vdots \\ a_n \end{array} \right],$$
+
+so its *transpose* is the *row vector* $a'$ (or $a^T$) with $a'=(a_1,\ldots,a_n)$.
+
+Generally, we will use capital letters for matrices, as commonly done (in many textbooks and other writings, is also common the have the names of vectors and matrices in boldface but we \*do not 8follow this convention in these notes for simplicity and let the context decide).
+
+Consider the simple linear regression model:
+
+$$y_i = \beta_0 + \beta_1 x_i + \varepsilon_i$$
+
+We can write this in terms of vectors/matrices:
+
+$$\left[\begin{array}{c} y_1 \\ y_2 \\ \vdots \\ y_n \end{array}
+\right]=\left[\begin{array}{cc} 1 & x_1 \\ 1 & x_2 \\ \vdots & \vdots \\ 1 & x_n \end{array}
+\right]\left[\begin{array}{c} \beta_0 \\ \beta_1 \end{array} \right]+\left[\begin{array}{c}
+\varepsilon_1 \\ \varepsilon_2 \\ \vdots \\ \varepsilon_n \end{array} \right]$$
+
+And, more compactly, as $Y=X\beta+\varepsilon$.
+
+Notice that the matrix $X$ consists of two columns (i.e. has dimension $n\times 2$) - the column vector of 1's and the column vector of covariate values ($x_1, x_2,..., x_n$) corresponding to observations $i,\dots,n$
+
+### Exercise 1 {.unnumbered}
+
+To illustrate some of the important matrix operations we ask you to carry through "by hand" a regression analysis using just 10 pairs of ($x, y$) values.
+
+Below the exercise is interactive so you are able to write the R code (sorry, only works for R, but see below the Stata code) and execute it.
+
+````{=html}
+<!--For instance, let $x=age$ and $y=glucose$ for 10 patients without diabetes chosen at random in the *hers* data, yielding:
+
+|              Age              |             Glucose              |
+|:-----------------------------:|:--------------------------------:|
+| 62 72 60 69 66 73 72 66 61 75 | 113 105 125 94 99 95 84 94 86 98 |
+
+A simple fit use R or Stata gives the following results:
+
+```{r, echo=FALSE,collapse = TRUE}
+age<-c(62,72,60,69,66,73,72,66,61,75)
+glucose<-c(113,105,125,94,99,95,84,94,86,98)
+hers.small<-data.frame(cbind(age,glucose))
+out<-lm(glucose ~ age, data=hers.small)
+summary(out)
+```
+-->
+````
+
+<iframe width="740" height="840" allowfullscreen="true" allow="autoplay *" src="https://bca-biostats.shinyapps.io/regression/?_ga=2.28039038.339108429.1679454243-1994767059.1667449587">
+
+</iframe>
+
+::: {#note-text .note}
+See below for the Stata code for Exercise 1
+:::
+
+
+<!--
+**R code and output**. I HAVE SUBSTITUTED THIS BY A LEARNR module. IT IS LOADED IN IFRAME ABOVE
+
+```{r, collapse = TRUE}
+# create user-defined vectors by hand
+x<-c(10, 20, 25, 18, 43, 13, 50)
+y<-c(100, 130, 125, 98, 149, 89, 149)
+# transforming a vector into a matrix and a column of 1's for the intercept
+Y<-as.matrix(y,ncol=1)
+X<-as.matrix(cbind(1,x),ncol=2)
+# by the same token you can transform part of an existing dataset as a matrix
+# check the dimension 
+dim(X)
+dim(Y)
+
+# To multiply two matrices in R Use: %*%
+# The addition is standard, use: + 
+# transpose of a matrix: t(X)
+# inverse of a (full rank) square matrix M: solve(M)
+
+# X'X is placed in a new object, a matrix called XTX
+XTX<-t(X) %*% X
+print("matrix X'X")
+XTX
+# check the difference with X%*%t(X) 
+print("matrix XX'")
+X%*%t(X)
+# inverse of XTX
+invXTX<-solve(XTX)
+## compute the LSE called b and print it
+b<-invXTX%*%t(X)%*%Y
+print("LSE")
+b
+## Extract the diagonal of the squared matrix (here invXTX) and list it
+D=diag(invXTX)
+print("Diagonal of (X'X)^{-1}")
+D
+## compute SEs and print them
+#variances=summary(out)$sigma^2*D
+#SE<-sqrt(variances)
+#SE
+## compare with output
+#summary(out)$coeff[,2]
+```
+
+-->
+
+
+**Stata code and output**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+## here we suppose that you have entered the following data 
+## by hand using the Stata editor. The data has two columns xx and yy 
+## where: xx^T=(10, 20, 25, 18, 43, 13, 50) 
+## yy^T=(100, 130, 125, 98, 149, 89, 149)
+use test_data.dta
+## generate a column of ones (called cons)
+gen cons =1 
+## Create a matrix consisting of the column of 1's and xx and store this in a matrix called X
+mkmat cons xx, matrix(X) 
+## Create a matrix with one column containing the yy's  and call it Y 
+mkmat yy, matrix(Y) 
+## Create the matrix X’X (with the name XTX) 
+matrix XTX = X’*X 
+## Create the inverse of XTX and call it XTX 
+matrix invXTX = inv(XTX)  
+## compute the LSE anc call it b 
+matrix b=invXTX*X’*Y
+## list b
+matrix list b
+## Extract the diagonal of the squared matrix (here invXTX) and list it
+matrix D=vecdiag(invXTX)
+matrix list D
+## more information on matrix expressions in Stata can be found here: 
+## https://www.stata.com/manuals/u14.pdf
+```
+
+## Least squares estimates for multiple linear regression {.unnumbered}
+
+The formulation of the least squares (LS) principle in multiple regression model and the derivation of the LS estimation will now be briefly described. Suppose we have $p$ independent variables, the LS solution requires finding the values of the regression parameters $\beta_0,\beta_1,\dots,\beta_p$, that minimise the sum of squares: $$S=\sum_{i=1}^n[y_i-(\beta_0+\beta_1x_{i1}+ \dots +\beta_px_{pi})]^2.$$
+
+Using the matrix formulation of the model just as we did with simple linear regression but having this time $p$ covariates, $Y=X\beta+\varepsilon$ and we can write this sum as: $$S=(Y-X\beta)^\prime( Y-X\beta)= Y^\prime Y-2 Y^\prime X\beta+\beta^\prime X'X \beta.$$ This is actually a scalar quantity (i.e. a single number), calculated from vectors and matrices, so to solve for the values of $\beta_0,\beta_1,\dots,\beta_p$ that minimise $S$, we need to find the zero of its derivative with respect to the $\beta$ coefficients.
+
+Before we proceed,we need to understand how to differentiate a function of a vector quantity. Let $g(\beta)=g(\beta_1,\dots,\beta_p)$ be a function of $\beta=(\beta_1,\dots,\beta_p)^\prime$ that returns a scalar (single number) answer. An example of such a function $g(.)$ is a linear combination of $(\beta_1,\dots,\beta_p)$, say $a'\beta= a_1\beta_1+\dots+a_p\beta_p$. Define $$\frac{\partial g(\beta)}{\partial \beta}=\left[\begin{array}{c}
+\frac{ \partial g(\beta)}{ \partial \beta_1} \\ \vdots \\ \frac{ \partial g(\beta)}{\partial \beta_p} \end{array} \right],$$ where we have used the $\partial$ notation to indicate partial derivatives, i.e. the derivatives of $g(\beta)$ with respect to each component $\beta_j$ of $(\beta_1,\dots,\beta_p)$, holding all other components fixed. Then it is easy to see that $$\frac{\partial( a'\beta)}{\partial \beta}=\left[\begin{array}{c}{ \frac{\partial
+ a'\beta}{\partial \beta_1}} \\ \vdots \\{ \frac{\partial
+ a'\beta}{\partial \beta_p}} \end{array} \right] =
+\left[\begin{array}{c} a_1 \\ \vdots \\ a_n \end{array} \right]= a,$$ and it is also true (although not quite as simple to show) that $$\frac{\partial(\beta' A\beta)}{\partial\beta}=(A+A')\beta$$ and in the important special case when $A$ is symmetric $$\frac{\partial(\beta'A\beta)}{\partial\beta}=2 A\beta$$
+
+We may now apply these results where $g(\beta)$ is the sum $S$ above, to produce the matrix formula for the LS estimates. Differentiating with respect to $\beta$ we get: $$\frac{\partial S}{\partial \beta}=0-2 X'Y+2 X'X\beta=-2 X'Y+2 X'X\beta$$ Solving $\frac{\partial S}{\partial \beta}=0$ yields $X'X\beta=X'Y$, and so the solution is $$\hat\beta=\left[\begin{array}{c} \hat\beta_0 \\ \vdots \\ \hat\beta_p \end{array} \right]=(X'X)^{-1}X'Y$$. Estimates can be computed without matrix calculation but the general formula given above applies to all cases including $p=1$.
+
+### Exercise 2: Adjusted regression of glucose on exercise in non-diabetes patients, Table 4.2 in Vittinghof et al. (2012) {.unnumbered}
+
+1)  Reproduce the adjusted analysis of glucose carried out in p. 72. Make sure that you exclude diabetes patients
+
+2)  Use matrix operations in Stata or R to create the $X$, $Y$, $X^\prime X$ and $X^\prime Y$ matrices and use these to obtain the LS estimates. \[Caution: there are missing values in some of these covariates so delete first all observations with missing values before any matrix manipulation\]
+
+3)  Optional: Use an explicit matrix calculation in Stata/R to obtain the variance-covariance matrix for $b$ in the regression of glucose on the previous covariates. Calculate the standard errors and confirm your results by comparing with the regression output.
+
+::: note
+To help you with this exercise, you may want check the code given in the lectures (R or Stata depending on your favourite software). Also, for Stata users, some key commands will be reminded at the beginning of the solutions. You may have to increase the memory before creating matrices by typing: *set matsize 2500*. It turns out that the memory for matrices is pretty limited by default. We expect you to try on your own before looking at the solutions.
+:::
+
+It is worth noting that the normal equations $X'X\beta=X'Y$ are *not* solved by using methods that involve the direct calculation of the inverse matrix $(X'X)^{-1}$. Computer programs use numerical algorithms that are both quicker and more numerically stable than working out the full inverse and then multiplying it with $X'Y$ to obtain $\hat\beta$.
+
+<!-- One of these methods is called ``QR'' decomposition where a symmetric matrix is rewritten as the product of an orthogonal matrix $Q$ and upper triangular matrix $R$. Inversion then follows easily in two separate steps. see here for details: https://rstudio-pubs-static.s3.amazonaws.com/251311_c8970d1f1a8541aaa5884d86b1487ea6.html-->
+
+## Predicted values and residuals {.unnumbered}
+
+It is now simple to write the vector of predicted values (at the observed covariate values) using the matrix notation: $$\widehat{Y}=\left[\begin{array}{c} \widehat{Y}_1 \\ \widehat{Y}_2 \\ \vdots \\ \widehat{Y}_n \end{array} \right]=\left[\begin{array}{cccc} 1 & x_{11} & \ldots & x_{p1} \\ 1 & x_{12} & \ldots & x_{p2} \\ \vdots & \vdots & \ldots & \vdots \\ 1 & x_{1n} & \ldots & x_{pn} \end{array} \right] \left[\begin{array}{c} \hat\beta_0 \\ \hat\beta_1 \\ \vdots \\ \hat\beta_p \end{array} \right]= X\hat\beta=X(X'X)^{-1}X'Y$$ Letting $H=X(X'X)^{-1}X'$, we then have $\widehat{Y}= HY$.
+
+The matrix $H$ is often called the "hat" matrix, as it "puts the hat on $Y$", that is, it transforms $Y$ into $\widehat{Y}$. In the previous weeks, we introduced the diagonal elements of $H$ in the form of $h_{ii}$ and termed the values *leverages*. This explains technically how leverage is computed and, again, some simpler formulas can be derived for the simple regresssion case. In general, this $H$ matrix as an important role since many additional regression results can be expressed simply in terms of the matrix $H$.
+
+The matrix $H$ has some important properties. We can see easily that:\\ (i) $H$ is symmetric \\ (ii) $H^2$=$H$ \[and so $H$ is *idempotent* in mathematical terms\]
+
+An important property of idempotent matrices is that their trace (sum of diagonal elements) is equal to the rank of the matrix. It then follows that since $H$ is idempotent its rank is equal to the sum of its diagonal elements (i.e., $\sum_{i=1}^n h_{ii}$), which is the number of columns in $X$ (or equivalently the number of parameters in the regression model - assuming $X$ is of full rank). So, for example, for simple linear regression the rank of $H$ is 2.
+
+Using the matrix $H$, we can express residuals in the simple form $e=Y-\widehat{Y}=(I-H)Y$ and immediately deduct that their expectation is 0. Note that the sum of residuals is also zero for all models with an intercept. Deriving their variance-covariance is slightly more complicated but a bit of algebra and the properties of the $H$ matrix yield $var (e)=(I-H)\sigma^2$. This is used to compute standardised residuals in all statistical packages. Note that the variance is different from $\sigma^2 I$ which is variance of the (true) error vector $\varepsilon$.
+
+## Geometric interpretation {.unnumbered}
+
+It is possible to interpret LS estimation as a projection onto the linear space spanned by the regressors. Watch this short video to understand why:
+
+[Watch video here](https://www.youtube.com/watch?v=XfgohvQmKPU)
+
+## Standard inference in multiple linear regression {.unnumbered}
+
+<!-- ### Means and variance-covariance matrix of least squares estimates -->
+
+The first level of inference for a multiple regression model does not require specific distributional assumptions about the random errors, which we can now represent as the vector $\varepsilon$. By this we refer to the fact that the expected value (and therefore unbiasedness) of regression coefficients and the variances of estimates - and covariances between estimates - all follow from the assumption that $\varepsilon \sim (0,\sigma^2 I_n)$, i.e. that the elements of $\varepsilon$ are independently distributed with common variance $\sigma^2$. The additional standard assumption that the errors follow a *normal distribution* is important in providing the formal basis for the calculation of confidence intervals and tests based on the $t$ distribution.
+
+A simple calculation using matrix algebra for random vector to shows that $\hat\beta$ is an unbiased estimate of $\beta$. The The variance-covariance matrix of $\hat\beta$, assuming the errors $\varepsilon \sim (0,\sigma^2 I_n)$, is: $$var( \hat\beta)=var[(X'X)^{-1} X'Y]= (X'X)^{-1}X'var(Y)X(X'X)^{-1}=\sigma^2(X'X)^{-1}$$ (using the general result that $var(CY) = C\times var(Y)\times C'$ for any matrix $C$). For simple linear regression this is a $2 \times 2$ matrix, and the (2,2) element is $var(\hat\beta_1)=\sigma^2 / \sum_{i=1}^n(X_i-\bar{X})^2$.
+
+To use the formula for the variance of $\hat\beta$ we need to replace $\sigma^2$ in the formula with an estimated value, and the natural (unbiased) estimate is the Mean Square for Error from the analysis of variance table, $MSE$ (more on this below). For multiple regression, the *estimated* variance-covariance matrix of $\hat\beta$ is thus $\widehat{var}(\hat\beta)=MSE\times(X'X)^{-1}$. The diagonal elements of this matrix are generally the ones of interest, since they provide the squared standard error for each coefficient estimate. However, the covariance terms can also be important, as these reflect the extent to which inferences about each coefficient are independent of each other. In fact you have already seen an important application of this idea in Week 4 where you had to test whether the difference of two coefficients was equal to 0. Specifically, you were asked to compute the mean SBP difference between the much less active group and the much more active group (called $\beta_4 - \beta_5$) after adjusting for age, BMI and alcohol consumption. A subset of *hers* data was used for this analysis. To obtain the corresponding $SE$ we need to compute first the following variance: $$\widehat{var}(\hat\beta_4-\hat\beta_5)=\widehat{var}(\hat\beta_4)+\widehat{var}(\hat\beta_5)-2\widehat{cov}(\hat\beta_4,\hat\beta_5)$$ SE is the squared root conveniently provided to us using the "lincom" command in Stata and "glht" in R. We can check the results by asking the package to output the variance-covariance matrix for the vector $\hat\beta$ after fitting the model, extract the terms we need, and finally derive $\widehat{var}(\hat\beta_4+\hat\beta_5)$ using the formula given above. The corresponding SE is simply the square root. Then, we can proceed with the $t$-test (or $z$-test for large samples) as commonly done.
+
+We don't provide here the detail of this calculation, only the logic that illustrates the importance of the whole variance-covariance matrix.
+
+<!-- say something on the variance of the residuals here; better placed than above (not sure?) -->
+
+```{=html}
+<!-- 2nd video illustrates the ANOVA decomposition, the inferential aspects of LS theory and
+the link with the MLE -->
+```
+**Lecture 2 in R** <iframe width="560px" height="320px" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/8b1db15b-4c2d-4160-8606-2f5249cf4534" frameborder="0"> </iframe> [Download video here](https://www.dropbox.com/s/hrp4wv1wmvqkm8b/RM1_week5_lecture2_R.mp4?dl=1)
+
+**Lecture 2 in Stata** <iframe width="560px" height="320px" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/0c4e181b-c9c7-4080-8b01-8dca9fe6d7ad" frameborder="0"></iframe> [Download video here](https://www.dropbox.com/s/kr1a8ut54c126dl/RM1_week5_lecture2_Stata.mp4?dl=1)
+
+## The analysis of variance for multiple linear regression (SST decomp) {.unnumbered}
+
+The output of a fitted model in linear regression is typically displayed as an ANOVA table. The fundamental idea is that the total Sum of Squares (denoted $SST$ is decomposed into two components, the Regression Sum of Squares ($SSR$) and the Error (or Residual) Sum of Squares ($SSE$): $SST = SSR + SSE$.
+
+The Total Sum of Squares measures the total variation of the $Y$ values around the sample mean $\bar{Y}$, and the ANOVA decomposition displays the two components and what fraction of the total variation can be "explained" by the regression model. The fraction $SSR/SST$ is the $R^2$ (\`$R$-squared"), sometimes called the *coefficient of determination*. $R^2$ (and its squared root $R$) are essentially descriptive quantities that provide a measure of the strength of association between $X$ representing several covariates considered jointly and the outcome $Y$. In simple regression, $R^2$ is equal to the square of the correlation coefficent between the outcome and lone covariate.
+
+<!--Add an optional text to clic on explaining the algebra behing the ANOVA table - see box in original LMR (not essential) -->
+
+An important point to note is that all three sums of squares are quadratic forms, meaning that they can be expressed as $YAY$ for some symmetric matrix $A$. This is important in deriving the sampling properties of the sums of squares and related standard errors and test statistics, which we now review without giving full details or derivations. The fundamental fact about quadratic forms is that under a normal error model and with appropriate scaling they have chi-squared distributions.
+
+The ANOVA table for a (multiple) regression model $E(y_i)=\beta_0+\beta_1x_{1i}+\beta_2x_{2i}+\dots+\beta_px_{pi}$ is as follows (in Stata):
+
++---------------------+-------------+-------------+--------------------------------------+
+| Source of variation | $SS$        | $df$        |          MS                          |
++:===================:+:===========:+:===========:+:====================================:+
+| Regression Error    | SSR SSE     | p n-(p+1)   | $MSR=SSR / p$ $MSE = SSE /[n-(p+1)]$ |
++---------------------+-------------+-------------+--------------------------------------+
+| Total               | SST         | n-1         |                                      |
++---------------------+-------------+-------------+--------------------------------------+
+
+The final column, of Mean Squares, is obtained by dividing each $SS$ by its degrees of freedom ($df$). Note that the $df$ for $SSR$ is now $p$, representing the number of independent covariates fitted in the regression model (not counting the constant), while the $df$ for $SSE$ is reduced accordingly, to $n-(p+1)$. The Mean Square for Error ($MSE$) is especially important because dividing by $df$ gives a quantity that has expected value $\sigma^2$, making it a natural estimate for $\sigma^2$. Furthermore, $SSE/\sigma^2 \sim \chi^2$ with $n-(p+1)$ degrees of freedom. This is the reason that for the normal error regression model we can use the standard inferences for each estimated regression coefficient, based on $SE(\hat\beta_j)^2 = j^{th}$ diagonal element of the estimated variance-covariance matrix $\widehat{var}(\hat\beta)=MSE\times( X'X)^{-1}$. In particular, confidence intervals and tests are constructed in the familiar way using this estimated standard error and the $t$ distribution with $n-(p+1)$ degrees of freedom.
+
+Some additional output is also provided, e.g. the overall test of the (global) null hypothesis that $\beta_1 =\beta_2 =...=\beta_p = 0$. We are effectively testing whether the model under investigation is better than a model with only the intercept. This is carried out by forming the $F$-ratio: $F^* = MSR / MSE$. Under the null hypothesis, $MSR$ is proportional to a chi-squared random variable and has expected value $\sigma^2$, so $F^*$ has an $F$ distribution with degrees of freedom $p, n-(p+1)$.
+
+Stata code and output
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use hersdata, clear
+regress glucose exercise age drinkany BMI if diabetes == 0
+```
+
+In the example of the previous section that we reproduce here, we see that $F^*=30.22$, which is an extremely high value for an $F$ distribution with degrees of freedom $(4,2023)$, leading to $P < .001$, and the unsurprising conclusion that the data are highly inconsistent with the null hypothesis.
+
+Note that this anova table is not provided in R where a simpler output is displayed. It is possible to obtain something close to this using the *anova* command *after* a fit of the same linear model provided by *ols* from the *rms* library (developed by F Harrell).
+
+R code and output using *ols*
+
+```{r, collapse = TRUE, eval = FALSE}
+library(rms)
+# library(haven)
+# hers<-read_dta("hersdata.dta") 
+hers <- read.csv("hers.csv")
+hers.nondiab<-hers[hers$diabetes ==0,]
+fit <- ols(glucose ~ exercise + age + drinkany + BMI, data = hers.nondiab)
+anova(fit)
+```
+
+## Prediction in multiple regression (95% CI + 95% prediction interval) {.unnumbered}
+
+The idea of using a fitted model to create predictions of either the expected (mean) value of the outcome variable or the value to be expected for a new individual response at a given covariate value was explored in week 1. It naturally carries over to the multiple regression case. The matrix notation makes it easy to justify how this is done. Assume that we are interested in getting a predicted value of $y^*$ the expected outcome when $x=x^*$ that may or may not be a vector of covariates from the sample. Here $x^*$ is now a $(p+1) \times 1$ vector containing 1 and the values of the $p$ covariates). A prediction for $y*$ is $\hat y*=x^{*\prime}\hat\beta$ i.e. we just plug-in the LS estimate in the linear combination for a patient with that profile. For inference concerning this quantity, the relevant standard error is given by: $$SE(\hat y^*)=\hat\sigma\times\sqrt{x^{*\prime}( X'X)^{-1} x^*},$$ where $\hat\sigma$ is the root-MSE. For inference concerning the predicted value for a new individual $y$ at $x = x^*$ the relevant standard error is given by: $$SE(\hat y^*+\epsilon)=\hat\sigma\times\sqrt{1+ x^{*\prime} (X'X)^{-1} x^*}.$$ The notation used on the left-hand side here is a reminder that the uncertainty involved in making a prediction for a new individual involves not only the uncertainty in the estimated parameters, but also the contribution due to the random error term $\epsilon$.
+
+The corresponding 95% CI or 95% prediction interval follows by using the usual formula (e.g. $\hat y \pm 1.96SE(\hat y^*)$ for the 95% CI in large samples). When the sample is not so large the .975 quantile from the $t$-distribution with $n-(p+1)$ degrees of freedom should be used instead of 1.96.
+
+Computational note: In Stata and R, as in most packages, the regression command comes equipped with a facility for generating predicted values with appropriate standard errors. The command *predict* command works just the same for multiple regression as for simple regression.
+
+### Exercise 3: 95% CI for glucose in non-diabetes patients - Optional {.unnumbered}
+
+We will use the same model as in Exercise 5.2 (and Table 4.2 p. 72).
+
+1)  Using your favourite software compute the 95% CI for the mean glucose of a patient aged 65, who does not drink nor exercise and has BMI=29.
+
+2)  Can you reproduce this result using matrix manipulations and the formula given above?
+
+::: note
+You are on your own for this exercise. By now you should be more familiar with matrix manipulation and be able to reproduce in 2) the 95% CI for the mean glucose obtained using your favourite software.
+:::
+
+## Likelihood-based inference with the normal error model {.unnumbered}
+
+The OL estimator is the same as the maximum likehood estimator (MLE) under the assuption of normality $N(0,\sigma^2)$ for the error term. To see this, we can just write the log-likelihood of the data under normal linear model, yielding:
+
+$$LL(\beta)=-\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-(\beta_0+\beta_1x_{1i}+\dots+\beta_px_{pi}))^2$$ The log-likelihood $LL(\beta)$ is proportional to the negative of $S=S(\beta)$ used earlier up to a constant that only depends on $\sigma$. Therefore, minimising $S(\beta)$ is equivalent to maximising $LL(\beta)$, the multiplicative constant $1/(2\sigma^2)$ playing no role in this problem since it does not depend on the regression parameter. You can also derive separately the MLE of $\sigma^2$. StraightforWard calculation leads to: $$\hat{\sigma}_{ML}^2=\frac{( Y-X\hat\beta)'( Y-X\hat\beta)}{n}=
+\frac{SSE}{n}=\frac{(n-(p+1))}{n}MSE.$$ This shows that the MLE of $\sigma^2$ is slightly biased in small samples, the bias becoming negligible for large $n$'s. All statistical packages use the unbiased estimate to deal with all possible situations.
+
+Finally, we note without giving further detail that the standard $F$-tests of multiple linear regression are also *likelihood ratio tests*. The $F$ distribution provides an exact sampling distribution for these test statistics. For large sample sizes (as the estimate of $\sigma^2$ becomes better, i.e. the denominator of $MSE$ can be regarded as effectively fixed) this approaches the chi-squared distribution that applies for large $n$ to all likelihood ratio tests.
+
+It is important to establish this connection given that the ML theory will be used in generalised linear models that extend linear regression. This includes logistic regression for binary data that will be studied in weeks 9-12 of this unit.
+
+## Summary {.unnumbered}
+
+::: {#box1 .green-box}
+The following are the key takeaway messages from this week:
+
+1.  LS estimates and their variance can be derived from linear algebra
+
+2.  The properties of the LS estimator have been justified theoretically
+
+3.  95% confidence intervals and 95% prediction intervals can also be expressed using matrix formulation.
+
+4.  The LS estimate is the maximum likelihood estimator under the assumption of a Gaussian error term.
+:::

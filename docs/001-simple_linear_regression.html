@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Regression Modelling for Biostatistics 1 - 1&nbsp; Simple Linear Regression</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./002-checking_assumptions.html" rel="next">
+<link href="./index.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./001-simple_linear_regression.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Simple Linear Regression</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./images/bca.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Regression Modelling for Biostatistics 1</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-simple_linear_regression.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Simple Linear Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-checking_assumptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Checking Assumptions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-binary_covariates_and_outliers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Binary Covariates, Outliers, and Influential Observations</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-multiple_linear_regression_application.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Multiple Linear Regression - Application</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-lin_reg_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Multiple linear regression theory</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-interaction_collinearity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Interaction and Collinearity</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-lin_reg_splines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Violations of assumptions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-model_building.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regression model building and variable selection</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-logistic_regression_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-logistic_regression_conf_inter.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-logistic_regression_splines_validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-logistic_regression_model_building.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">model building for binary outcomes</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learn_obj_wk01" id="toc-learn_obj_wk01" class="nav-link active" data-scroll-target="#learn_obj_wk01">Learning objectives</a></li>
+  <li><a href="#learn_act_wk01" id="toc-learn_act_wk01" class="nav-link" data-scroll-target="#learn_act_wk01">Learning activities</a>
+  <ul class="collapse">
+  <li><a href="#preperation-for-week-2" id="toc-preperation-for-week-2" class="nav-link" data-scroll-target="#preperation-for-week-2">Preperation for week 2</a></li>
+  </ul></li>
+  <li><a href="#video_wk01_into" id="toc-video_wk01_into" class="nav-link" data-scroll-target="#video_wk01_into">Introduction to regression</a>
+  <ul class="collapse">
+  <li><a href="#reading_wk01_intro" id="toc-reading_wk01_intro" class="nav-link" data-scroll-target="#reading_wk01_intro">Book Chapter 1. Introduction to section 1.3.3 (pages 1-4).</a></li>
+  <li><a href="#reading_wk01_sec3_3" id="toc-reading_wk01_sec3_3" class="nav-link" data-scroll-target="#reading_wk01_sec3_3">Book Chapter 3. Section 3.3 to 3.3.3 (pages 35-38).</a></li>
+  <li><a href="#reading_wk01_sec3_3_5" id="toc-reading_wk01_sec3_3_5" class="nav-link" data-scroll-target="#reading_wk01_sec3_3_5">Chapter 3. Section 3.3.5 to 3.3.9 (pages 39-42).</a></li>
+  </ul></li>
+  <li><a href="#regression-in-stata-and-r" id="toc-regression-in-stata-and-r" class="nav-link" data-scroll-target="#regression-in-stata-and-r">Regression in Stata and R</a>
+  <ul class="collapse">
+  <li><a href="#stata-lecture" id="toc-stata-lecture" class="nav-link" data-scroll-target="#stata-lecture">Stata Lecture</a></li>
+  <li><a href="#r-lecture" id="toc-r-lecture" class="nav-link" data-scroll-target="#r-lecture">R Lecture</a></li>
+  </ul></li>
+  <li><a href="#exercise_wk_01_01" id="toc-exercise_wk_01_01" class="nav-link" data-scroll-target="#exercise_wk_01_01">Exercises</a></li>
+  <li><a href="#live-tutorial-and-discussion" id="toc-live-tutorial-and-discussion" class="nav-link" data-scroll-target="#live-tutorial-and-discussion">Live tutorial and discussion</a></li>
+  <li><a href="#summary_wk01" id="toc-summary_wk01" class="nav-link" data-scroll-target="#summary_wk01">Summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="slr" class="quarto-section-identifier"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Simple Linear Regression</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="learn_obj_wk01" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="learn_obj_wk01">Learning objectives</h2>
+<p>By the end of this week you should be able to:</p>
+<ol type="1">
+<li><p>Describe the different motivations for regression modelling</p></li>
+<li><p>Formulate a simple linear regression model</p></li>
+<li><p>Understand the least squares method of parameter estimation and its equivalence to maximum likelihood</p></li>
+<li><p>Interpret statistical output for a simple linear regression model</p></li>
+<li><p>Calculate and interpret confidence intervals and prediction intervals for simple linear regression</p></li>
+</ol>
+</section>
+<section id="learn_act_wk01" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="learn_act_wk01">Learning activities</h2>
+<p>This week’s learning activities include:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Learning Activity</th>
+<th>Learning objectives</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Preparation for week 2</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Video 1</td>
+<td>1, 2, 3</td>
+</tr>
+<tr class="odd">
+<td>Readings</td>
+<td>1, 2, 3, 4</td>
+</tr>
+<tr class="even">
+<td>Video 2</td>
+<td>4, 5</td>
+</tr>
+<tr class="odd">
+<td>Independent exercises</td>
+<td>2, 4, 5</td>
+</tr>
+<tr class="even">
+<td>Live tutorial/discussion</td>
+<td>2, 4, 5</td>
+</tr>
+</tbody>
+</table>
+<section id="preperation-for-week-2" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="preperation-for-week-2">Preperation for week 2</h3>
+<div class="orange-box">
+<p>In week 2 you will be required to collaboratively complete some exercises. To do this, in week 1 you will be allocated into groups of 3-4 and you are encouraged to meet with your group in week 2 by zoom at a mutually beneficial time. Each group has their own discussion board, which you can use to help organise a meet up time. Interacting, discussing, and working through problems with your peers is an important skill for any biostatistician. This is also nice activity to get to know your peers in this online course.</p>
+</div>
+</section>
+</section>
+<section id="video_wk01_into" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="video_wk01_into">Introduction to regression</h2>
+<p>This lecture introduces you to the purpose of regression models to answer three types of research questions: prediction; isolating the effect of a single predictor; and understanding multiple predictors. You will also learn what a simple linear regression looks like and learn about the method used to estimate it’s parameters.</p>
+<!-- 
+
+In future use the following code to embed videos.
+
+<video width="512" height="380"  controls>
+    <source src="videos/RM1 Week 1 Lecture 1.mp4" type="video/mp4">
+</video>
+-->
+<iframe width="740" height="416" src="https://www.youtube.com/embed/xxqLq69THAQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+</iframe>
+<section id="reading_wk01_intro" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="reading_wk01_intro">Book Chapter 1. Introduction to section 1.3.3 (pages 1-4).</h3>
+<p>This reading supplements lecture 1 with a similar motivation for the need for regression models (which they refer to as multipredictor regression models) to answer three types of research questions: prediction; isolating the effect of a single predictor; and understanding multiple predictors. Nothing new is introduced in this reading, so its purpose is to allow you to become familiar with the writing style of the textbook that we follow in this course.</p>
+</section>
+<section id="reading_wk01_sec3_3" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="reading_wk01_sec3_3">Book Chapter 3. Section 3.3 to 3.3.3 (pages 35-38).</h3>
+<p>This reading introduces the simple linear regression model and describes how to interpret each parameter of the model. This will be further explored in lecture 2. It also describes the error term between individual observations and the mean behaviour of the population – which is important as the assumptions of linear regression are all about the error term. Stata and R code corresponding to the output in this reading can be found below</p>
+<p><strong>Stata code and output</strong></p>
+<div class="cell" data-collectcode="true">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> hersdata, <span class="kw">clear</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 90896</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">sample</span> 10</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">reg</span> SBP age</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>## (2,487 observations deleted)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =       276</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(1, 274)       =     11.70</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>##        Model |  4595.93381         1  4595.93381   Prob &gt; <span class="fu">F</span>        =    0.0007</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>##     Residual |  107671.294       274  392.960929   R-squared       =    0.0409</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.0374</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>##        Total |  112267.228       275  408.244466   Root MSE        =    19.823</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>##          SBP | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>##          age |   .6411057   .1874638     3.42   0.001     .2720533    1.010158</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |   93.87961   12.43407     7.55   0.000     69.40115    118.3581</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><strong>R code and output</strong></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>hers_subset <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"hers_subset.csv"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>lm.hers <span class="ot">&lt;-</span> <span class="fu">lm</span>(SBP <span class="sc">~</span> age, <span class="at">data =</span> hers_subset)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.hers)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Call:</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="do">## lm(formula = SBP ~ age, data = hers_subset)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="do">## Residuals:</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="do">##     Min      1Q  Median      3Q     Max </span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="do">## -49.193 -14.346  -1.578  13.391  57.961 </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="do">## Coefficients:</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="do">##             Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept)  93.8796    12.4341    7.55 6.48e-13 ***</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="do">## age           0.6411     0.1875    3.42 0.000722 ***</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="do">## ---</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="do">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="do">## Residual standard error: 19.82 on 274 degrees of freedom</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Multiple R-squared:  0.04094,    Adjusted R-squared:  0.03744 </span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="do">## F-statistic:  11.7 on 1 and 274 DF,  p-value: 0.0007219</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(lm.hers)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="do">##                  2.5 %     97.5 %</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept) 69.4011476 118.358063</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="do">## age          0.2720533   1.010158</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This table does not use the complete HERS dataset, rather it takes a random sample of 10% of the data. In Stata this is achieved by using <code>set seed 90896</code> and <code>sample 10</code>.</p>
+<p>Here the <code>set seed 90896</code> ensures that the random sample is reproducible. i.e.&nbsp;we draw the same random sample each time. As random sampling is hard to replicate across statistical programs, to get the same output in R we needed to take the random sample in Stata and then import this subset of the data into R. A copy of this subset is provided in the data resources titled <code>hers_subset.csv</code></p>
+</div>
+</div>
+<section id="notes_wk_01_notation" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="notes_wk_01_notation">Notation</h4>
+<p>Before continuing further with the theory of linear regression it is helpful to see some of the variations in notation around regression formula. In general greek letters are used for true population values, whereas the latin (or modern) alphabet is used to denote estimated values from a sample. The hat symbol (^) can also be used to indicated estimated or fitted values. Subscripts on the <span class="math inline">\(Y\)</span>’s and <span class="math inline">\(x\)</span>’s indicate the observation number. Some examples of the different ways regression notation is used in this course is shown below. Don’t worry if some of these terms are not familiar to you yet, they will be introduced to you in due course.</p>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 43%">
+<col style="width: 36%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>True population</th>
+<th>Estimated from data/sample</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Regression line</td>
+<td><span class="math inline">\(\text{E}(Y) =\beta_0 +\beta_1 x\)</span><span class="math inline">\(Y_i = \beta_0 +\beta_1 x_i + \varepsilon_i\)</span></td>
+<td><span class="math inline">\(\bar {Y_x} = \hat{\beta_0 } + \hat{\beta_1} x\)</span><br>
+<span class="math inline">\(\bar {Y_x} = b_0 + b_1 x\)</span><br>
+<span class="math inline">\(\hat{Y}_i = b_0 + b_1 x_i +e_i\)</span></td>
+</tr>
+<tr class="even">
+<td>Expected values / means</td>
+<td><p><span class="math inline">\(\text{E}(Y)\)</span></p>
+<p><span class="math inline">\(\text{E}(x)\)</span></p></td>
+<td><p><span class="math inline">\(\bar{Y}\)</span></p>
+<p><span class="math inline">\(\bar{x}\)</span></p></td>
+</tr>
+<tr class="odd">
+<td>Parameters, regression coefficients</td>
+<td><span class="math inline">\(\beta\)</span></td>
+<td><span class="math inline">\(\hat{\beta}\)</span> , <span class="math inline">\(b\)</span></td>
+</tr>
+<tr class="even">
+<td>Error terms</td>
+<td><span class="math inline">\(\varepsilon\)</span> - called “error”</td>
+<td><span class="math inline">\(e\)</span> or <span class="math inline">\(\hat{\varepsilon}\)</span> called “residual” or “residual error”</td>
+</tr>
+<tr class="odd">
+<td>Variance of error</td>
+<td><span class="math inline">\(\sigma^2\)</span>, <span class="math inline">\(\text{Var}(\varepsilon)\)</span></td>
+<td>Mean square error, MSE, <span class="math inline">\(\hat{\sigma}^2\)</span>, <span class="math inline">\(\hat{\text{
+Var}}(\varepsilon)\)</span>, <span class="math inline">\(s^2\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes_wk_01_ols" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="notes_wk_01_ols">Properties of ordinary least squares</h4>
+<p>There are many ways to fit a straight line to data in a scatterplot. Linear regression uses the principle of <em>ordinary least squares</em>, which finds the values of the parameters (<span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>) of the regression line that minimise the sum of the squared <em>vertical</em> deviations of each point from the fitted line. That is, the line that minimises: <span class="math display">\[ \sum(Y_i - \bar{Y}_i)^2 = \sum(Y_i - (\hat{\beta}_0 + \hat{\beta}_1x_i))^2\]</span></p>
+<p>This principle is illustrated in the diagram below, where a line is shown passing near the value of <span class="math inline">\(Y\)</span> for six values of <span class="math inline">\(x\)</span>. Each choice of values for <span class="math inline">\(\hat{\beta}_0\)</span> and <span class="math inline">\(\hat{\beta}_1\)</span> would define a different line resulting in different values for the vertical deviations. There is however one pair of parameter values that produces the least possible value of the sum of the squared deviations called the least squares estimate.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/OLS.png" class="img-fluid figure-img" style="width:50.0%"></p>
+<figcaption class="figure-caption">Ordinary least squares minimises the square of the vertical distance between data and the line</figcaption>
+</figure>
+</div>
+<p>In the scatterplot below, you can see how the line adjusts to points in the graph. Try <em>dragging</em> some of the points, or creating new points by clicking in an empty area of the plot, and see how the equation changes. In particular, notice how moving up and down a point at the extremes of the <span class="math inline">\(x\)</span> scale, affects the fitted line much more than doing the same to a point in the mid-range of the <span class="math inline">\(x\)</span> scale. We will see later that this is the reason for caution when we have outliers in the data.</p>
+<script> window.onload=(function(){
+var n = 29;
+
+var points = [{
+     x: 39*9,
+     y: 144*2
+}, {
+     x: 45*9,
+     y: 138*2
+}, {
+     x: 47*9,
+     y: 145*2
+}, {
+     x: 65*9,
+     y: 162*2
+}, {
+     x: 46*9,
+     y: 142*2
+}, {
+     x: 67*9,
+     y: 170*2
+}, {
+     x: 42*9,
+     y: 124*2
+}, {
+     x: 67*9,
+     y: 158*2
+}, {
+     x: 56*9,
+     y: 154*2
+}, {
+     x: 64*9,
+     y: 162*2
+}, {
+     x: 56*9,
+     y: 150*2
+}, {
+     x: 59*9,
+     y: 140*2
+}, {
+     x: 34*9,
+     y: 110*2
+}, {
+     x: 42*9,
+     y: 128*2
+}, {
+     x: 48*9,
+     y: 130*2
+}, {
+     x: 45*9,
+     y: 135*2
+}, {
+     x: 17*9,
+     y: 114*2
+}, {
+     x: 20*9,
+     y: 116*2
+}, {
+     x: 19*9,
+     y: 124*2
+}, {
+     x: 36*9,
+     y: 136*2
+}, {
+     x: 50*9,
+     y: 142*2
+}, {
+     x: 39*9,
+     y:120*2
+}, {
+     x: 21*9,
+     y:120*2
+}, {
+     x: 44*9,
+     y:160*2
+}, {
+     x: 53*9,
+     y:158*2
+}, {
+     x: 63*9,
+     y:144*2
+}, {
+     x: 29*9,
+     y:130*2
+}, {
+     x: 25*9,
+     y:125*2
+}, {
+     x: 69*9,
+     y:175*2
+}]    
+    
+    
+
+var drag_point = -1;
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+//ctx.setTransform(1,0,0,-1,200,250); //INVERT THE SCALE
+
+canvas.onmousedown = function(e) {
+  var pos = getPosition(e);
+  drag_point = getPointAt(pos.x, pos.y);
+  if (drag_point == -1) {
+    points.push(pos);
+    n=n+1;
+    redraw();
+   //ctx.fillText(pos.x, pos.x, pos.y);
+
+  }
+};
+
+canvas.onmousemove = function(e) {
+  if (drag_point != -1) {
+    var pos = getPosition(e);
+    points[drag_point].x = pos.x;
+    points[drag_point].y = pos.y;
+    redraw(); 
+  }
+};
+
+canvas.onmouseup = function(e) {
+  drag_point = -1;
+};
+
+function getPosition(event) {
+  var rect = canvas.getBoundingClientRect();
+  var x = event.clientX - rect.left;
+  var y = event.clientY - rect.top;
+  return {x, y};
+}
+
+
+function getPointAt(x, y) {
+  for (var i = 0; i < points.length; i++) {
+    if (
+      Math.abs(points[i].x - x) < pointSize &&
+      Math.abs(points[i].y - y) < pointSize
+    )
+      return i;
+  }
+  return -1; 
+}
+
+function redraw() {
+  if (points.length > 0) {
+    ctx.clearRect(0, 0, 800, 400);
+    drawRegLine();
+    drawPoints();
+
+  }
+}
+
+function drawLines() {
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  ctx.strokeStyle = "blue";
+  ctx.lineWidth = 2;
+  points.forEach((p) => {
+    ctx.lineTo(p.x, p.y);
+  })
+  ctx.stroke();
+}
+
+function drawRegLine(){
+        var lr = {};
+        var sum_x = 0;
+        var sum_y = 0;
+        var sum_xy = 0;
+        var sum_xx = 0;
+        var sum_yy = 0;
+   
+
+        for (var i = 0; i < n; i++) {
+
+            sum_x += points[i].x;
+            sum_y += points[i].y;
+            sum_xy += (points[i].x*points[i].y);
+            sum_xx += (points[i].x*points[i].x);
+            sum_yy += (points[i].y*points[i].y);
+        } 
+
+        lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x);
+        lr['intercept'] = (sum_y - lr.slope * sum_x)/n;
+        lr['r2'] = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
+
+        var IntEquation = 400-lr.intercept;
+        var SlEquation = -100*lr.slope;
+
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'red';
+        ctx.beginPath();
+        ctx.moveTo(0, lr.intercept);
+        ctx.lineTo(800, lr.intercept + lr.slope*800);
+        ctx.stroke();
+        ctx.font = "bold 24px arial";
+        var sign = " + ";
+        if (SlEquation<0) {
+          sign = " ";
+        }
+      
+        ctx.fillText("Fitted line", 350, 60);
+        ctx.fillText("y = " + IntEquation.toFixed(1) + sign + SlEquation.toFixed(1) + "x", 350, 80);
+
+
+     return lr;
+}
+  
+
+function drawPoints() {
+  ctx.strokeStyle = "blue";
+  ctx.lineWidth = 10;
+  pointSize = 5;
+  points.forEach((p) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, pointSize, 0, Math.PI * 2, true);
+    ctx.stroke();
+  })
+}
+
+redraw()
+
+}); 
+</script>
+<canvas id="canvas" width="640" height="400">
+</canvas>
+<p>Linear regression uses least squares to estimate parameters because when regression assumptions are met (more on this later) the estimator is BLUE: <em>Best Linear Unbiased Estimator</em>. Unbiased means that over many repetitions of sampling and fitting a model, the estimated parameter values average out to equal the true “population” parameter value (i.e.&nbsp;<span class="math inline">\(\text{E}[\hat{\beta}_1]=\beta_1\)</span>). Unbiasedness does not mean that all parameter estimates are close to the true value—in fact it says nothing about the sample-to-sample variability in the parameter estimates, since that is a precision issue. The “linear” means that the class of estimators are those that can be written as linear combinations of the observations <span class="math inline">\(Y\)</span>. More specifically, any linear unbiased estimator of the slope parameter <span class="math inline">\(\beta_1\)</span> can be written as <span class="math inline">\(\sum_{i=1}^n a_iY_i\)</span> where the values of <span class="math inline">\((a_1,...a_n)\)</span> must be such that <span class="math inline">\(\text{E}(\sum_{i=1}^n a_iY_i)=\beta_1\)</span>. This was important when computational power was limited as linear estimators can be easily computed. The “best” component of BLUE says that least squares estimators are best in the sense of having the smallest variance of all linear unbiased estimators. That is, they have the best precision or they are the most efficient.</p>
+<p>The mathematical theorem and proof that the least squares estimator is the best linear unbiased estimator (BLUE) is called the <em>Gauss-Markov theorem</em>. The least squares estimator also identical to the maximum likelihood estimator when the regression assumptions are met.</p>
+</section>
+</section>
+<section id="reading_wk01_sec3_3_5" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="reading_wk01_sec3_3_5">Chapter 3. Section 3.3.5 to 3.3.9 (pages 39-42).</h3>
+<p>The reading describes the basic properties of regression coefficients including: their standard error; hypothesis testing; confidence intervals; and their involvement in the calculation of <span class="math inline">\(R^2\)</span>.</p>
+</section>
+</section>
+<section id="regression-in-stata-and-r" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="regression-in-stata-and-r">Regression in Stata and R</h2>
+<p>The lecture below (which you can watch for either Stata or R (or both if you are keen)) shows how to carry out and interpret the results of a simple linear regression in statistical software. It then shows how to calculate and interpret confidence and prediction intervals.</p>
+<section id="stata-lecture" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="stata-lecture">Stata Lecture</h3>
+<iframe width="740" height="416" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/ffe05595-d38b-441b-914b-f80c0c563e61" frameborder="0">
+</iframe>
+<p><a href="https://canvas.sydney.edu.au/files/23345921/download?download_frd=1">Download video</a></p>
+</section>
+<section id="r-lecture" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="r-lecture">R Lecture</h3>
+<iframe width="740" height="416" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/8d25c66e-8446-42aa-8794-444b9438d115" frameborder="0">
+</iframe>
+<p><a href="https://canvas.sydney.edu.au/files/23345916/download?download_frd=1">Download video</a></p>
+</section>
+</section>
+<section id="exercise_wk_01_01" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="exercise_wk_01_01">Exercises</h2>
+<p>The following exercise will allow you to test yourself against what you have learned so far. The solutions will be released at the end of the week.</p>
+<p>Using the dataset <a href="https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1">hers_subset.csv</a> dataset, use simple linear regression in R or Stata to measure the association between diastolic blood pressure (DBP - the outcome) and body mass index (BMI - the exposure).</p>
+<ol type="a">
+<li><p>Summarise the important findings by interpreting the relevant parameter values, associated P-values and confidence intervals, and <span class="math inline">\(R^2\)</span> value. Three to four sentences is usually enough here.</p></li>
+<li><p>From your regression output, calculate by how much the mean DBP changes for a 5kgm<sup>-2</sup> increase in BMI? Can you verify this by modifying your data and re-running your regression?</p></li>
+<li><p>Manually calculate the <span class="math inline">\(\beta_1\)</span> standard error, the t-value, p-value and <span class="math inline">\(R^2\)</span></p></li>
+<li><p>Based on your regression, make a prediction for the mean diastolic blood pressure of people with a BMI of 28kgm<sup>-2</sup>.</p></li>
+<li><p>Calculate and interpret a confidence interval for this prediction.</p></li>
+<li><p>Calculate and interpret a prediction interval for this prediction.</p></li>
+</ol>
+</section>
+<section id="live-tutorial-and-discussion" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="live-tutorial-and-discussion">Live tutorial and discussion</h2>
+<p>The final learning activity for this week is the live tutorial and discussion. This tutorial is an opportunity for you to to interact with your teachers, ask questions about the course, and learn about biostatistics in practice. You are expected to attend these tutorials when possible for you to do so. For those that cannot attend, the tutorial will be recorded and made available on Canvas. We hope to see you there!</p>
+</section>
+<section id="summary_wk01" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="summary_wk01">Summary</h2>
+<p>This week’s key concepts are:</p>
+<div id="box1" class="green-box">
+<ol type="1">
+<li><div id="summary001" class="summary" style="color:gray">
+<ul>
+<li><p>Regression models have three main purposes: prediction; isolating the effect of a single exposure; and understanding multiple predictors. The purpose of a regression model will influence the procedures you follow to build a regression model, and this will be explored more in week 8.</p></li>
+<li><p>Simple linear regression measures the association between a continuous outcome and a single exposure. This exposure can be continuous, or binary (in which case simple linear regression is equivalent to a two-sample students t-test).</p></li>
+<li><p>The relevant output to interpret and report from a simple linear regression includes:</p>
+<ul>
+<li><p>The p-value for the exposure’s regression coefficient (slope)</p></li>
+<li><p>The effect size of the exposure regression coefficient and 95% confidence interval</p></li>
+<li><p>The amount of variation in the outcome explained by the exposure (<span class="math inline">\(R^2\)</span>)</p></li>
+</ul></li>
+<li><p>The confidence interval for a prediction represents the uncertainty associated with an estimated predicted mean. Conversely, the prediction interval represents the uncertainty associated with the spread of observations around the predicted mean.</p></li>
+</ul>
+</div></li>
+</ol>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Preface</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./002-checking_assumptions.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Checking Assumptions</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

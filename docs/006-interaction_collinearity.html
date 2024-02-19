@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Regression Modelling for Biostatistics 1 - 6&nbsp; Interaction and Collinearity</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./007-lin_reg_splines.html" rel="next">
+<link href="./005-lin_reg_theory.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./006-interaction_collinearity.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Interaction and Collinearity</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./images/bca.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Regression Modelling for Biostatistics 1</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-simple_linear_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Simple Linear Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-checking_assumptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Checking Assumptions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-binary_covariates_and_outliers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Binary Covariates, Outliers, and Influential Observations</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-multiple_linear_regression_application.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Multiple Linear Regression - Application</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-lin_reg_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Multiple linear regression theory</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-interaction_collinearity.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Interaction and Collinearity</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-lin_reg_splines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Violations of assumptions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-model_building.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regression model building and variable selection</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-logistic_regression_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-logistic_regression_conf_inter.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-logistic_regression_splines_validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-logistic_regression_model_building.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">model building for binary outcomes</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learn_obj_wk06" id="toc-learn_obj_wk06" class="nav-link active" data-scroll-target="#learn_obj_wk06">Learning objectives</a></li>
+  <li><a href="#learn_act_wk06" id="toc-learn_act_wk06" class="nav-link" data-scroll-target="#learn_act_wk06">Learning activities</a></li>
+  <li><a href="#independent-investigation---collinearity" id="toc-independent-investigation---collinearity" class="nav-link" data-scroll-target="#independent-investigation---collinearity">Independent investigation - Collinearity</a></li>
+  <li><a href="#independent-exercise" id="toc-independent-exercise" class="nav-link" data-scroll-target="#independent-exercise">Independent Exercise</a></li>
+  <li><a href="#interaction-effect-modification" id="toc-interaction-effect-modification" class="nav-link" data-scroll-target="#interaction-effect-modification">Interaction (effect modification)</a>
+  <ul class="collapse">
+  <li><a href="#a-regression-model-for-interaction" id="toc-a-regression-model-for-interaction" class="nav-link" data-scroll-target="#a-regression-model-for-interaction">A regression model for interaction</a></li>
+  <li><a href="#interaction-in-statistical-software" id="toc-interaction-in-statistical-software" class="nav-link" data-scroll-target="#interaction-in-statistical-software">Interaction in statistical software</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">Example</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="interaction_collinearity" class="quarto-section-identifier"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Interaction and Collinearity</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="learn_obj_wk06" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="learn_obj_wk06">Learning objectives</h2>
+<p>By the end of this week you should be able to:</p>
+<ol type="1">
+<li><p>Understand and explain the concept of interaction (effect modification)</p></li>
+<li><p>Carry out linear regression analysis that accounts for interaction and interpret the key findings</p></li>
+<li><p>Understand the concept of collinearity and how it affects linear regression</p></li>
+<li><p>Implement model building strategies for dealing with collinearity</p></li>
+</ol>
+</section>
+<section id="learn_act_wk06" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="learn_act_wk06">Learning activities</h2>
+<p>This week’s learning activities include:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Learning Activity</th>
+<th>Learning objectives</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Reading</td>
+<td>1, 2</td>
+</tr>
+<tr class="even">
+<td>Collaborative exercise</td>
+<td>1, 2</td>
+</tr>
+<tr class="odd">
+<td>Independent investigation</td>
+<td>3, 4</td>
+</tr>
+<tr class="even">
+<td>Independent exercises</td>
+<td>3, 4</td>
+</tr>
+<tr class="odd">
+<td>Live tutorial/discussion</td>
+<td>3, 4</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="independent-investigation---collinearity" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="independent-investigation---collinearity">Independent investigation - Collinearity</h2>
+<p>This week you will be practicing learning independently an unfamiliar biostatistics topic. This is aimed to provide to you the skills of independent learning a biostatistician needs to carry out an unfamiliar analysis that was not covered in the Master of Biostatistics. These are skills that will also be needed in your workplace placement project (Master students only).</p>
+<p>The topic of this weeks independent learning exercise is collinearity. Collinearity is an issue that can be faced in any regression model with more than one covariate. This week you will independently investigating collinearity and methods to deal with this statistical phenomena. To do this perform the steps below:</p>
+<ol type="1">
+<li><p>Use appropriate resources to learn about collinearity in linear regression. Specifically, by the end of this investigation you should be able to:</p>
+<ul>
+<li><p>Describe what collinearity is in linear regression</p></li>
+<li><p>Carry out an investigation to detect collinearity</p></li>
+<li><p>Be familiar with methods of dealing with collinarity</p></li>
+</ul></li>
+<li><p>Investigate the reliability of your source. Some helpful questions to ask yourself are:</p>
+<ul>
+<li><p>How does this information compare to other sources?</p></li>
+<li><p>What authority does the author have to provide this information?</p></li>
+<li><p>When was this resource developed and is the information likely to have changed?</p></li>
+<li><p>What is the purpose of this resource?</p></li>
+</ul></li>
+<li><p>Create a resource that describes to your peers your findings. This resource could be a short video, or just a discussion board post. The resource should include the following</p>
+<ul>
+<li><p>A description of what is collinearity</p></li>
+<li><p>Instructions on how to detect collinearity in linear regression analysis</p></li>
+<li><p>A description of at least one technique of dealing with collinearity</p></li>
+<li><p>Your proposed solution to the exercise below (optional)</p></li>
+</ul></li>
+</ol>
+<p>For the third task, each learning resource should be relatively short (taking 2-4 minutes to watch or read) and be posted in the week 5 independent task assignment (even though it is not an assignment). All learning resources that are posted will receive feedback from the unit coordinator. Your resource will also be available to other students who may also wish to provide some peer feedback and or encouragement.</p>
+</section>
+<section id="independent-exercise" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="independent-exercise">Independent Exercise</h2>
+<p>In managing children with asthmas and other respiratory diseases, it is important to monitor various measures of lung function, one of the most import of which is the volume of air that can be forced out fot he lungs in one second, known as the Forced Expiratory Volume (1 second) or FEV1 for short (measured in litres). The “<a href="https://www.dropbox.com/s/2cs0z39v2ekni81/lungfun.csv?dl=1">lungfun.csv</a>” dataset contains the following variables:</p>
+<ul>
+<li><p>idnum: patient identification number</p></li>
+<li><p>age: age in years</p></li>
+<li><p>wt: weight in kg</p></li>
+<li><p>height: in cm</p></li>
+<li><p>armsp: arm span in cm (the distance between the fingertips of left and right hands when hands outstretched)</p></li>
+<li><p>ulna: ulna length in cm (the ulna is the main bone of the arm below the elbow)</p></li>
+<li><p>farm: forearm length in cm (distance from elbow to the fingertip)</p></li>
+<li><p>fev1: Forced Expiratory Volume in 1 second (L)</p></li>
+</ul>
+<p>Carry out a regression with fev1 as the outcome, and all covariates included (excluding idnum). Describe any collinearity you observe. How would you recommend dealing with this collinearity?</p>
+</section>
+<section id="interaction-effect-modification" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="interaction-effect-modification">Interaction (effect modification)</h2>
+<p>In previous weeks we assumed that the true underlying effect of an exposure on an outcome was constant over all individuals. This is not always the case and when the effect of the exposure is different for different groups this is called “interaction”. Another term frequently used instead of interaction is “effect modification”. You may wish to review your epidemiology notes for more information and examples of interaction.</p>
+<p>The panel of images below is a helpful visual representation of the differences in regression models with and without interaction. The first column shows simple linear regression with a single relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(Y\)</span> (a continuous <span class="math inline">\(x\)</span> is shown in the top 3 panels, and a binary <span class="math inline">\(x\)</span> is shown in the bottom three. The second column shows multiple linear regression as we have used it so far. Here a binary “group” variable is included to adjust for the mean difference in <span class="math inline">\(Y\)</span> across groups A and B. As the two lines are parallel along <span class="math inline">\(x\)</span> the mean difference between groups is constant for all values of <span class="math inline">\(x\)</span>. In the third panel, we see that the relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(Y\)</span> is different for group A and group B. That is, there is interaction between <span class="math inline">\(x\)</span> and the group variable. The lines are not parallel so the mean difference between group A and B depends on the value of x.</p>
+<p><img src="images/interaction.jpg" class="img-fluid" style="width:90.0%"></p>
+<section id="a-regression-model-for-interaction" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="a-regression-model-for-interaction">A regression model for interaction</h3>
+<p>We introduce the mathematical form of the regression model for interaction by considering a regression model with two covariates <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> which are regressed on our outcome variable <span class="math inline">\(Y\)</span>. The equation for this model without interaction is shown below:</p>
+<p><span class="math display">\[\text{E}(Y) = \beta_0 +\beta_1 x_1 + \beta_2 x_2\]</span></p>
+<p>The term we add to this model to account for, and test for interaction is the <em>product</em> of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> as follows:</p>
+<p><span class="math display">\[\text{E}(Y) = \beta_0 +\beta_1 x_1 + \beta_2 x_2 + \beta_3 x_1 x_2\]</span> To see why this works, consider the following factorisations of this regression equation</p>
+<p><span class="math display">\[\text{E}(Y) = \beta_0 +\beta_1 x_1 + (\beta_2 + \beta_3 x_1) x_2\]</span> Here, that the effect of <span class="math inline">\(x_2\)</span> on <span class="math inline">\(Y\)</span> equals <span class="math inline">\(\beta_2 + \beta_3 x_1\)</span>. That is the effect of <span class="math inline">\(x_2\)</span> is dependent on the value of <span class="math inline">\(x_1\)</span> - the definition of interaction. Also, you could instead factor out <span class="math inline">\(x_1\)</span> instead of <span class="math inline">\(x_2\)</span> to obtain the following</p>
+<p><span class="math display">\[\text{E}(Y) = \beta_0 + (\beta_1 + \beta_3 x_2) x_1 + \beta_2 x_2\]</span> where we see that the effect of <span class="math inline">\(x_1\)</span> equals <span class="math inline">\(\beta_1 + \beta_3 x_2\)</span>. That is, the effect of <span class="math inline">\(x_1\)</span> is dependent on the value of <span class="math inline">\(x_2\)</span>.</p>
+<p>This factorisation is also useful when considering the interpretation of each of the regression coefficients <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, <span class="math inline">\(\beta_2\)</span> and <span class="math inline">\(\beta_3\)</span>. These are:</p>
+<ul>
+<li><span class="math inline">\(\beta_0\)</span>: the mean of <span class="math inline">\(Y\)</span> when <span class="math inline">\(x_1 = x_2 = 0\)</span></li>
+<li><span class="math inline">\(\beta_1\)</span>: the effect of <span class="math inline">\(x_1\)</span> when <span class="math inline">\(x_2 = 0\)</span>. i.e.&nbsp;The mean of <span class="math inline">\(Y\)</span> will increase by <span class="math inline">\(\beta_1\)</span> for every one unit increase in <span class="math inline">\(x_1\)</span> when <span class="math inline">\(x_2 = 0\)</span>.</li>
+<li><span class="math inline">\(\beta_2\)</span>: the effect of <span class="math inline">\(x_2\)</span> when <span class="math inline">\(x_1 = 0\)</span>. i.e.&nbsp;The mean of <span class="math inline">\(Y\)</span> will increase by <span class="math inline">\(\beta_2\)</span> for every one unit increase in <span class="math inline">\(x_2\)</span> when <span class="math inline">\(x_1 = 0\)</span>.</li>
+<li><span class="math inline">\(\beta_3\)</span>: How the effect of <span class="math inline">\(x_1\)</span> changes for every one unit increase in <span class="math inline">\(x_2\)</span>. Or alternatively, how the effect of <span class="math inline">\(x_2\)</span> changes for every one unit increase in <span class="math inline">\(x_1\)</span>.</li>
+</ul>
+<p>Importantly, the statistical test for trend here is the test with the null hypothesis <span class="math inline">\(\beta_3 = 0\)</span>. Therefore the P-value for <span class="math inline">\(\beta_3\)</span> should be interpreted as the evidence for interaction between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.</p>
+</section>
+<section id="interaction-in-statistical-software" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="interaction-in-statistical-software">Interaction in statistical software</h3>
+<p>There are two approaches for implementing an interaction regression model in statistical software. The first is to manually create a new column of data which is the product of the two columns you wish to test for interaction for. You can then include this new variable as a covariate in the regression. The second method is to allow Stata or R to do this automatically, by specifying the interaction in the regression formula. The second method is always recommended as interaction involving categorical variables of more than two categories requires more than just creating a product of two covariates, but instead creating a product of all dummy variables involved in the categorical variable.</p>
+<section id="stata" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="stata">Stata</h4>
+<p>In Stata the hash symbol <code>#</code> is used to specify interaction. E.g. <code>reg Y x1 x2 x1#x2</code> would be a regression model with outcome <span class="math inline">\(Y\)</span>, covariates <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> and interaction between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. Alternatively you can use the double hash <code>##</code> as a shorthand to specify the inclusion of both covariates and interaction between them. i.e.&nbsp;<code>reg Y x1 x2 x1#x2</code> is equivalent to <code>reg Y x1##x2</code></p>
+</section>
+<section id="r" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="r">R</h4>
+<p>In R the colon symbol <code>:</code> is used to specify interaction. E.g. <code>lm(Y ~ x1 + x2 + x1:x2, data=...)</code> would be a regression model with outcome <span class="math inline">\(Y\)</span>, covariates <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> and interaction between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. Alternatively you can use the star <code>*</code> as a shorthand to specify the inclusion of both covariates and interaction between them. i.e.&nbsp;<code>lm(Y ~ x1 + x2 + x1*x2, data=...)</code> is equivalent to <code>lm(Y ~ x1:x2, data=...)</code>.</p>
+</section>
+<section id="reading_wk06_sec4_6_5" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="reading_wk06_sec4_6_5">Book Chapter 4. Section 4.6.5 (pages 107-108).</h4>
+<p>This small reading provides brief descriptions of several important factors to consider when using a regression model with interaction.</p>
+</section>
+</section>
+<section id="example" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="example">Example</h3>
+<p>We will show two examples from the textbook that demonstrate interaction. These are examples 4.6.1 (interaction between two binary variables) and 4.6.2 (interaction between a binary variable and a continuous variable). You can also of course have interaction between two continuous variables.</p>
+<section id="example-4.6.1" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="example-4.6.1">Example 4.6.1</h4>
+<p>We return to the HERS dataset with low-density lioprotein (<code>LDL</code>) as the outcome and statin use (<code>statin</code>) and hormone therapy (<code>HT</code>) as the two binary covariates. Note that the results below will differ to those in the text book as the textbook uses <code>LDL1</code> as the outcome instead of <code>LDL</code>. The regression model with interaction is:</p>
+<p><strong>Stata code and output</strong></p>
+<div class="cell" data-collectcode="true">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> hersdata, <span class="kw">clear</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">reg</span> LDL i.HT i.statins  i.HT#i.statins</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =     2,752</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(3, 2748)      =     44.06</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>##        Model |  180425.141         3  60141.7137   Prob &gt; <span class="fu">F</span>        =    0.0000</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>##     Residual |  3750983.32     2,748  1364.98665   R-squared       =    0.0459</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.0449</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>##        Total |  3931408.46     2,751  1429.08341   Root MSE        =    36.946</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>## --------------------------------------------------------------------------------------</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>##                  LDL | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>## ---------------------+----------------------------------------------------------------</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>##                   HT |</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>##     hormone therapy  |   .6656023   1.764553     0.38   0.706    -2.794382    4.125587</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>##                      |</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>##              statins |</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>##                 yes  |   -15.8714   2.055967    -7.72   0.000     -19.9028   -11.84001</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>##                      |</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>##           HT#statins |</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>## hormone therapy#yes  |  -1.918487   2.931023    -0.65   0.513    -7.665717    3.828743</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>##                      |</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>##                <span class="dt">_cons</span> |   150.7981   1.257647   119.90   0.000     148.3321    153.2642</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>## --------------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><strong>R code and output</strong></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>hers <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://www.dropbox.com/s/7f5lnv19drg6655/hersdata.csv?dl=1"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning in file(file, "rt"): cannot open URL</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="do">## 'https://www.dropbox.com/s/dl/7f5lnv19drg6655/hersdata.csv': HTTP status was</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="do">## '400 Bad Request'</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in file(file, "rt"): cannot open the connection to 'https://www.dropbox.com/s/7f5lnv19drg6655/hersdata.csv?dl=1'</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>lm.hers <span class="ot">&lt;-</span> <span class="fu">lm</span>(LDL <span class="sc">~</span> HT <span class="sc">+</span> statins <span class="sc">+</span> HT<span class="sc">:</span>statins, <span class="at">data =</span> hers)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(mf, parent.frame()): object 'hers' not found</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.hers)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'lm.hers' not found</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(lm.hers)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'lm.hers' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>You may notice here that the R and Stata output have some differences as they choose different reference categories for the HT variable (Stata chose the placebo group as the first observation in the dataset is from the placebo group, and R chose the hormone therapy group as “hormone therapy” is before “placebo” when arranging in alphabetical order). In both instances here however the primary result is the same: “There is no evidence of interacation between HT and statin use (P = 0.513)”. As there is no evidence for interaction, you would then proceed with a non-interaction regression model.</p>
+</section>
+<section id="example-4.6.2" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="example-4.6.2">Example 4.6.2</h4>
+<p>Using the same HERS data as example 4.6.1 we now investigate possible interaction between statin use (binary variable) and body mass index (BMI - a continuous variable). In this example, we also adjust for several other covariates including <code>age</code>, <code>nonwhite</code>, <code>smoking</code> and <code>drinkany</code>. We also use a centered version of the BMI variable. Unlike in example 4.6.1 our results should match the textbook as we both use the <code>LDL</code> variable.</p>
+<p><strong>Stata code and output</strong></p>
+<div class="cell" data-collectcode="true">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> hersdata, <span class="kw">clear</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> BMIc = BMI - 28.57925</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">regress</span> LDL i.statins##c.BMIc age nonwhite smoking drinkany</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>## (5 <span class="fu">missing</span> <span class="kw">values</span> generated)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =     2,745</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(7, 2737)      =     22.85</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>##        Model |  216681.484         7  30954.4978   Prob &gt; <span class="fu">F</span>        =    0.0000</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>##     Residual |     3707501     2,737  1354.58568   R-squared       =    0.0552</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.0528</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>##        Total |  3924182.49     2,744  1430.09566   Root MSE        =    36.805</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>## --------------------------------------------------------------------------------</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>##            LDL | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>## ---------------+----------------------------------------------------------------</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>##        statins |</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>##           yes  |  -16.25301   1.468788   -11.07   0.000    -19.13305   -13.37296</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>##           BMIc |   .5821275    .160095     3.64   0.000     .2682082    .8960468</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>##                |</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>## statins#c.BMIc |</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>##           yes  |   -.701947   .2693752    -2.61   0.009    -1.230146   -.1737478</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>##                |</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>##            age |  -.1728526   .1105696    -1.56   0.118    -.3896608    .0439556</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>##       nonwhite |   4.072767   2.275126     1.79   0.074    -.3883704    8.533903</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>##        smoking |   3.109819    2.16704     1.44   0.151    -1.139381    7.359019</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>##       drinkany |  -2.075282   1.466581    -1.42   0.157    -4.950999    .8004355</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>##          <span class="dt">_cons</span> |   162.4052   7.583312    21.42   0.000     147.5356    177.2748</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>## --------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><strong>R code and output</strong></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>hers <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://www.dropbox.com/s/7f5lnv19drg6655/hersdata.csv?dl=1"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning in file(file, "rt"): cannot open URL</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="do">## 'https://www.dropbox.com/s/dl/7f5lnv19drg6655/hersdata.csv': HTTP status was</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="do">## '400 Bad Request'</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in file(file, "rt"): cannot open the connection to 'https://www.dropbox.com/s/7f5lnv19drg6655/hersdata.csv?dl=1'</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>hers<span class="sc">$</span>BMIc <span class="ot">&lt;-</span> hers<span class="sc">$</span>BMI <span class="sc">-</span> <span class="fl">28.57925</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'hers' not found</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>lm.hers <span class="ot">&lt;-</span> <span class="fu">lm</span>(LDL <span class="sc">~</span> statins<span class="sc">*</span>BMIc <span class="sc">+</span> age <span class="sc">+</span> nonwhite <span class="sc">+</span> smoking <span class="sc">+</span> drinkany, <span class="at">data =</span> hers)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(mf, parent.frame()): object 'hers' not found</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm.hers)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'lm.hers' not found</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(lm.hers)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'lm.hers' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We can see from the output above that there is strong evidence for interaction between body mass index and statin use, after adjusting for age, nonwhite, smoking, and drinkany covariates (P = 0.009). Given the strong evidence for interaction, we would decide to keep interaction in this model. This makes the interpretation of the base <code>statins</code> and <code>BMIc</code> variables different as follows:</p>
+<ul>
+<li><p><code>statins</code>. When BMIc = 0, the those taking statins have a LDL on average 16.25mg/dL lower than those not taking statins. Here we can see the value of centering BMI, as BMIc = 0 corresponds to the effect of statin use for the mean BMI of this sample. Otherwise it would correspond to the effect of statins for a BMI of 0 (which is not appropriate to calculate)</p></li>
+<li><p><code>BMIc</code>. For those not taking statins (i.e.&nbsp;statins = 0), for every 1kg/m<sup>2</sup> increase in BMI, the mean LDL increases by 0.58mg/dL.</p></li>
+</ul>
+<p>To calculate the mean effect of BMI on those taking statins, we would need to take linear combinations of the above regression coefficients. In this case the mean effect would be 0.58 - 0.70 = -0.12. To get a more accurate calculation of this, along with the corresponding confidence interval use the <code>lincom BMIc + 1.statins#c.BMIc</code> statement in stata and the <code>summary(glht(lm.hers, "BMIc + statinsyes:BMIc = 0"))</code> command in R (you can swap “summary” with “confint” in this statement to obtain the confidence intervals).</p>
+</section>
+</section>
+</section>
+<section id="summary" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="summary">Summary</h2>
+<p>This weeks key concepts are:</p>
+<div id="box1" class="green-box">
+<ol type="1">
+<li><p>Collinearity occurs when two or more covariates in a regression model are associated with each other, and do not have sufficient independent associations with the outcome</p></li>
+<li><p>Collinearity increases standard errors of regression coefficients</p></li>
+<li><p>You should check for collinearity when carrying out linear regression. If detected, the effects of collinearity can be determined by removing some of the collinear covariates.</p></li>
+<li><p>Interaction between two covariates occurs when the effect size for variable 1, depends on the level of covariate 2. This is also called effect modification.</p></li>
+<li><p>Interaction between two variables in regression can be tested by including an additional covariate in your regression model that is the multiplication of your two covariates. If one or more of these covariates is categorical (with more than 2 categories), this will be the addition of several interaction terms between all dummy variables.</p></li>
+<li><p>The interpretation of regression models with interaction terms is more complex as effect sizes are not constant for interacting covariates.</p></li>
+</ol>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./005-lin_reg_theory.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Multiple linear regression theory</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./007-lin_reg_splines.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Violations of assumptions</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

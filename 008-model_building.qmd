@@ -1,0 +1,112 @@
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+# Regression model building and variable selection {#mlr_model_building}
+
+## Learning objectives {#learn_obj_wk08 .unnumbered}
+
+By the end of this week you should be able to:
+
+1. Understand how model diagnostics are used to compare regression models
+
+2. Build regression models suitable for prediction
+
+3. Build regression models suitable for isolating the effect of a single predictor
+
+4. Build regression models suitable for understanding multiple predictors 
+
+## Learning activities {#learn_act_wk04 .unnumbered}
+
+This week's learning activities include:
+
+| Learning Activity           | Learning objectives |
+|-----------------------------|---------------------|
+| Reading                     | 1                   |
+| Independent exercise        | 1                   |
+| Lecture 1                   | 2                   |
+| Lecture 2                   | 3                   |
+| Lecture 2                   | 4                   |
+
+### Model building  {.unnumbered}
+The previous weeks provide the tools to carry out a multiple linear regression in Stata or R and interpret the results. However, the process of choosing exactly which regression model best answers your research question is not always clear. This process involves choosing: which covariates to include, what functional form they should take, and what (if any) transformations may be necessary. Before we illustrate these steps in three different contexts, it is helpful to first introduce several measures of regression model performance to help inform our decisions.
+
+#### F-tests and Likelihood ratio tests for nested models {.unnumbered}
+The first method of comparing regression models is one we have already been using all course: P-values that test the specific inclusion or exclusion of a variable or groups of variables (e.g. a group of dummy variables associated with a categorical covariate) from the model. This is achieved in linear regression with an F-test which produces an equivalent p-value to the t-test P-value shown in the common regression output for continuous and binary variables. For linear regression, this is also equivalent to a likelihood ratio test P-value. Although this method of comparison is the most intuitive, it is limited in that it can only compare *nested* models - models that differ by the inclusion of one or more variables. So it is not useful for comparing models that differ in other ways. e.g. comparing models with different methods of adjusting for non-linearity (categorisation, cubic-splines, or log-transformation of the covariate). For these comparisons, different model comparison measures need to be employed.
+
+#### $R^2$ {.unnumbered}
+We are already familiar with *coefficient of determination* R^2^ from [weeks 1's reading](#reading_wk01_sec3_3_5). Recall that this is the proportion of the total variability of the outcome that can be explained by the covariates in the model. Or alternatively 1 minus the proportion of variability remaining unexplained.
+
+$$ R^2 = \frac{\text{Model sum of squares}}{\text{Total sum of squares}}
+= 1 - \frac{\text{Residual sum of squares}}{\text{Total sum of squares}}$$
+
+R^2^ therefore provides a natural and intuitive measure of regression performance with higher R^2^ values indicating better model performance (as more variability of the outcome can be explained). However, issues arise when R^2^ is used to compare models as it will always favour more complex models regardless of whether that increased complexity is justified. This will lead to over paramaterised, or overfitted models. Therefore R^2^ is only a useful *comparitive* measures for models of equal complexity e.g. models with the same number of parameters.
+
+#### Adjusted $R^2$ {.unnumbered}
+The adjusted R^2^ attempts to compensate for the overfitting issues associated with the *unadjusted* R^2^ by penalising the R^2^ calculation by the number of parameters of the model. There are several ways of doing this, and the exact method isn't too important, so the common formula below is shown purely so you can compare the calculation to the regular R^2^.
+
+$$ \text{adjusted } R^2 = 1 - \frac{\text{Residual sum of squares}/(n-p)}{\text{Total sum of squares}/(n-1)}$$
+where $n$ is the number of observations and $p$ is the number of parameters of the model (equal to the number of regression coefficients). So the adjusted R^2^ will only increase if the residual error in the more complex model reduces enough to compensate for the penalty of the extra parameter (increasing $p$).
+
+#### AIC {.unnumbered}
+The adjusted R^2^ is just one of many ways to penalise unnecesary complexity to avoid over fitting. One popular method of adjustment would be the Akaike Information Criterion, commonly known as the AIC. Here, instead of quantifying the model fit through least squares, the *maximum likelihood* is used to compare models - again with a penalty proportional to the number of paramaters. Using a likelihood based approach has the advantage that it can be applied in models not fit through ordinary least squares (such as logistic regression taught in the second half of this course). AIC is calculated as 
+
+$$ \text{AIC} = 2p - 2\log(\mathcal{L}) $$
+
+where $p$ is the number of paramaters and $\mathcal{L}$ is the maximum likelihood value of the model fit. As we are subtracting the maximum likelihood, lower AIC values indicate better models (i.e. higher likelihoods are better). The AIC can be either negative or positive, and so it is important to remember that a "lower" AIC could mean either a smaller positive AIC value, or a "more negative" negative AIC value.
+
+#### BIC  {.unnumbered}
+The Bayesian Information Criterion (BIC) is very similar to the AIC, however instead of penalising by $2p$, it penalises by $2p\log(n)$.
+
+$$ \text{BIC} = 2p\log(n) - 2\log(\mathcal{L})$$
+
+This change in penalty between BIC and AIC is important for two reasons. Firstly, the BIC penalty is a stricter penalty than AIC. Secondly, the BIC penalties become progressively stricter as the sample size increases. Both of these generally lead to BIC favouring more simple models than AIC. 
+
+### Independent exercise {.unnumbered}
+Use the tools above to investigate the ideal number of knots for the week 7 investigation between HDL and BMI.
+
+### Lecture 1 - Prediction (more done in week 10) {.unnumbered}
+In this video, we will look at how the tools above can be used to help build regression models suitable for prediction, where the goal is to minimise the predictive error.
+
+<iframe width="740" height="416" src="https://www.youtube.com/embed/Ffomiy0qPPg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+[Download video here](https://www.dropbox.com/s/s3mymik8m65nwjd/RM1%20Week%208%20Prediction%20models.mp4?dl=1)
+
+
+
+### Lecture 2 - Isolating the effect of a single predictor {.unnumbered}
+In this video, we will look at how the tools above can be used to help build regression models suitable for measuring the effect of an exposure on an outcome, where the goal is to measure this effect without bias due to confounding.
+
+
+<iframe width="740" height="416" src="https://www.youtube.com/embed/vSHAb_c78rg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+[Download video here](https://www.dropbox.com/s/d2xb68sfl3qxuja/RM1%20Week%208%20Epi%20models.mp4?dl=1)
+
+### Lecture 3 - Understanding multiple predictors {.unnumbered}
+In this video, we will look at how the tools above can be used in exploratory research, where the goal is to identify which covariates are associated with an outcome. It is common in this type of research for potential confounders or predictors of interest to be less well established.
+
+<iframe width="740" height="416" src="https://www.youtube.com/embed/vKXzmSfL9GM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+[Download video here](https://www.dropbox.com/s/7x0sfgsbs1jwigt/RM1%20Week%208%20multiple%20predictors.mp4?dl=1)
+
+## Summary {.unnumbered}
+This weeks key concepts are:
+
+:::{#box1 .green-box}
+
+1. There are several measures available to help statistically compare regression models - including P-values from t-tests and f-tests, R^2^, adjusted R^2^, AIC and BIC.
+
+2. How these tools will be applied will be different depending on the context of your research question
+
+3. This course focuses on prediction models, models to understand the effect of a single exposure, and understanding multiple predictors
+
+4. All types of models should also consider contextualised field specific issues and norms.
+
+5. You should not use automatic covariate selection algorithms for use in this course. Rather build models where you are comfortable justifying the inclusion or exclusion of each covariate.
+
+
+:::
+

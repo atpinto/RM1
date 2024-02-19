@@ -1,0 +1,290 @@
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+# Logistic Regression {#logreg}
+
+## Learning objectives {#learn_obj_wk09 .unnumbered}
+
+By the end of this week you should be able to:
+
+1.  Understand the motivation for logistic regression modelling
+
+2.  Realise how logistic regression extends linear regression for binary outcomes
+
+3.  Understand the link between odd-ratios derived from a frequency table and logistic regression
+
+4.  Interpret statistical output for a multiple logistic regression model with or without confounding
+
+5.  Understand the likelihood ratio test and how to use it in this setting
+
+6.  Interpret a logistic regression model with grouped data/categorical covariates
+
+## Learning activities {#learn_act_wk09 .unnumbered}
+
+This week's learning activities include:
+
+| Learning Activity        | Learning objectives |
+|--------------------------|---------------------|
+| Lecture 1                | 1, 2, 3             |
+| Readings                 | 1, 2, 3, 4, 5       |
+| Lecture 2                | 4, 5, 6             |
+| Pratice/Investigation    | 3, 4, 6             |
+| Discussions              | 3, 4, 5, 6          |
+
+
+
+## Introduction to logistic regression  {.unnumbered}
+<!-- comment for now = {#video_wk09_intro} -->
+
+In simple linear regression, the expectation of a continous variable $y$ is modelled as a linear function of a covariate $x$ i.e.
+ $$E(y)=\beta_0 + \beta_1 x$$
+It's therefore natural to wonder whether a similar idea could not be used for a binary endpoint $y$ taking only 0 or 1 values. Such outcomes are frequent in biostatistics because investigators are typically interested in events affecting a patient's life like complete response at 3 months, resolution of a targeted tumour at 6 months or 28 day mortality. Using directly the linear model would lead to wrong conclusions because the response is clearly not normally distributed and linearity on this case is very unlikely. Here $E(y |x)=P(y=1 |x)=p(x)$ because $y$ can only be 0 or 1 with 1 representing the occurence of the event and 0 its absence. What we need is a proper way to model this probability $p$ and inevitably the question of an appropriate scale arises. It turns out that a convenient way to model $p$ is to use the logistic function $g$ where $g(p)=\log (p/(1-p))$. Then the natural counterpart to simple linear regression is the simple logistic regression model expressed as:
+  
+$$\log \frac{p(x)}{(1-p(x))}=\beta_0 + \beta_1 x$$ yielding that linearity arises on the logistic scale. Read p. 139 - 143 of the book for more motivation on this choice of the scale. Assuming that the model is correct for $n$ independent observations from a sample we can write the log-likehood of this sample and derive the maximum likehood estimates (MLE) of the parameters $\beta_0$ and $\beta_1)$. As before, we will note them $\hat\beta_0$ and $\hat\beta_1$ (or $b_0$ and $b_1$). The MLE in logistic regression and its corresponding standard error are routinely provided in all statistical packages. 
+
+<!-- properties of the MLE in 2-3 sentences perhaps -->
+
+**Lecture 1 in R**
+
+<iframe width="740" height="416" src="https://www.youtube.com/embed/oLHoGYNgaJY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+[Download video here](https://www.dropbox.com/s/dqhs6wap5ui5t3q/RM1_week9_lecture1_R.mp4?dl=1)
+
+**Lecture 1 in Stata**
+
+<iframe width="740" height="416" src="https://www.youtube.com/embed/_EPOoxmacOU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+
+[Download video here](https://www.dropbox.com/s/gjtpdw5yrtuas3g/RM1_Week9_lecture1_Stata.mp4?dl=1)
+
+## Interpretation of regression coefficients {.unnumbered}
+ 
+ To illustrate the use of logistic regression, we consider data from the Western Collaborative Group Study (WCGS), a large epidemiological study designed to investigate the relationship between coronary heart disease (CHD) and various potential predictors including behavioural patterns. The dataset is called *wcgs.csv* and the outcome is *chd69* (0/1) with 1 indicating the occurence of a coronary event over the course of the study. An association of interest to the original investigators was the relationship between CHD risk and the presence/absence of corneal arcus senilis (*arcus*) among participants upon entry into the study. Arcus senilis is is a whitish annular deposit around the iris that occurs in a small percentage of older adults and is a legitimate predictor since it is thought to be related to serum cholesterol level. An exploratory analysis indicates that patients arcus senilis are more likely to develop CHD compared with the others (11\% vs 7\%) and a standard Chi2 test returns a significant result (p=0.000). A simple logistic regression analysis of the same data is given below.
+
+**R code and output**
+
+```{r,message=FALSE,collapse=TRUE}
+wcgs <- read.csv("wcgs.csv")
+wcgs<-data.frame(wcgs)
+model0<-glm(chd69 ~ arcus,  family=binomial, data=wcgs)
+summary(model0)
+exp(model0$coefficients)[2] 
+exp(confint(model0))[2,]
+```
+
+**Stata code and output**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+** fitted model with coefficients
+logistic chd69 arcus, coef
+** fitted model with OR (default in Stata)
+logistic chd69 arcus
+** arcus is coded 0/1 so i.arcus is not needed
+```
+
+The coefficient label (Intercept) or $\_$cont in Stata is the intercept ($\hat\beta_0$) in the model and the coefficient for arcus is $\hat\beta_1$ representing the effect of this condition on CHD in the analysis. To interpret the coefficient, we go back to the general formula above and notice that linearity is specified on the log-odd scale. Applying this to our example reveals that the log-odds of CHD is $\hat\beta_0=-2.599$ in patients *without* arcus and $\hat\beta_0+\hat\beta_1=-2.107$ in patients *with* arcus. The difference in CHD risk due to arcus is then $\hat\beta_1=.492$ on the *log-odds scale*, i.e. the corresponding odds-ratio (OR) is $\exp(.492)=1.64$. By the same token we can  compute the 95\% CI for this odds-ratio leading to (1.25 ; 2.12) and the effect is statistically significant ($p< 0.000$).
+
+### Exercise {.unnumbered}
+ 
+You can certainly remember that we can derive an OR from a 2x2 table. Using the same WCGS data, carry out the following analysis:
+
+a) Reproduce the exploratory analysis with the $\chi^2$-test 
+
+b) Compute the OR and check that is exactly the same result as the one obtained via simple logistic regression
+
+c) A large sample formula for the standard error of the log-OR estimate in a 2x2 table is given by: $SE(log(\hat{OR}))=\sqrt{1/a+1/b+1/c+1/d)}$ where $a$, $b$, $c$ and $d$ are the frequencies in the 2x2 table. Compute the 95\% CI for the estimate you have just computed. How does it compare with the 95\% obtained from logistic regression. Hint: start by computing a 95\% CI for the log-OR.
+
+
+##### [@vittinghoff2012] Chapter 5. Logistic regression (Section 5.1.1) but read also all pages 139 - 146 for the introduction). {#reading_wk09_coeff_cont .unnumbered}
+
+This reading explains how the same logic can be used to interpret the coefficient of a continuous predictor in a logistic regression model. The example is age that is thought to be associated with CHD as well.
+
+<!-- Give a link to the data and the R code somewhere here (preferably) or at the bottom -->
+
+## Multiple logistic regression  {.unnumbered}
+
+Like in linear regression the simple logistic regression model can be extendend to include multiple predictors $x_1,\dots,x_p$ . We can follow the same logic and model $E(Y |x_1,\dots,x_p)=P(Y=1 |x_1,\dots,x_p)=p(x_1,\dots,x_p)$ on the logistic scale yielding:
+$$\log \frac{p(x_1,\dots,x_p)}{(1-p(x_1,\dots,x_p))}=\beta_0 + \beta_1 x_1+\dots+\beta_p x_p$$.
+This can be seen as an extension of multiple linear regression using similar arguments to the simple case. the interpretation of the coefficients in terms of log log-OR also holds with the difference that the analysis is  now adjusted for the other covariates.
+
+##### [@vittinghoff2012] Chapter 5. Logistic regression (Section 5.2) p. 150-54). {#reading_wk09_multiple_logreg .unnumbered}
+
+This reading  shows how potential predictors like age, cholesterol, sytolic blood pressure (SBP), body max index (BMI) and smoking can be included in a logistic regression model for CHD. It also illustrates the interpretation of the coefficients and how rescaling of the covariates affects the coefficients but leads to a similar interpretation. 
+
+**Lecture 2 in R**
+
+<iframe width="740" height="416" src="https://www.youtube.com/embed/RlCbF0Mr8pQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+[Download video here](https://www.dropbox.com/s/fb0tv0uz4egl6ee/RM1_week9_Lecture2_R.mp4?dl=1)
+
+**Lecture 2 in Stata**
+
+<iframe width="740" height="416" src="https://www.youtube.com/embed/ZmpAaCZE5dU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+[Download video here](https://www.dropbox.com/s/qwu18y4afkrljqq/RM1_week9_Lecture2_Stata.mp4?dl=1)
+
+## Likelihood ratio tests {.unnumbered}
+
+The likelihood ratio  tests (LRT) has been introduced in PSI, it has an important role to play in (logistic) regression analysis since it allows us to compare two nested models. The word *nested* means that a model is bigger than the other in the sense that it contains all the covariates of the smaller model. 
+
+They are particular useful when investigating the contribution of more than one covariate or predictors with multiple levels. Say we want to assess the impact of self-reported behaviour called *behpat* representing different behaviours (type (A or B)) subdivided into two further levels leading to 4 categories $A_1$, $A_2$, $B_3$ and $B_4$ (coded 1-4 respectively). The null hypothesis corresponding to this question
+is $H_0$: $\beta_6=\beta_7=\beta_8=0$ since the coefficients corresponding to all *behpat* except the reference $A_1$ are $beta_6$, $\beta_7$, and $\beta_8$.
+The LRT can be used to test thus (multiple) null hypothesis $H_0$ by computing the difference in twice the log-likelihood (logLL) between the two models. We often used the term *full model* for the larger model (all previous covariates and *behpat*) and *reduced model* for the smaller one (only the previous covariates). The term *reduced* stems from the restrictions to the full model by imposing that all the coefficients for the *behpat* categories except the reference are zero. We know that, under the absence of effect of *behpat*, the LRT statistic follow a Chi2 distribution  with 3 degrees of freedom (i.e. the number of parameters tested in the model, that is the number of categories minus 1).
+
+$$LRT=2\times logLL(full) - 2\times logLL(reduced)=2\times(-784.81-(-807.19)=24.76$$
+
+The corresponding $p$-value is derived from a Chi2 distribution with 3 degrees of freedom yielding $p=1.7e-05 < 0.0001$.  A neat effect of the self-reported behavious is observed overall. 
+
+**R code and output**
+
+```{r,message=FALSE, collapse=TRUE}
+myvars <- c("id","chd69", "age", "bmi", "chol", "sbp", "smoke", "dibpat", "behpat_type")
+wcgs1 <- wcgs[myvars]
+wcgs1=wcgs1[wcgs1$chol <645,]
+wcgs1cc=na.omit(wcgs1)
+# remove missing values - complete case (cc) analysis
+wcgs1cc<-na.omit(wcgs1)
+# rescale variables
+wcgs1cc$age_10<-wcgs1cc$age/10
+wcgs1cc$bmi_10<-wcgs1cc$bmi/10
+wcgs1cc$chol_50<-wcgs1cc$chol/50
+wcgs1cc$sbp_50<-wcgs1cc$sbp/50
+# define factor variable
+wcgs1cc$behpat<-factor(wcgs1cc$behpat_type)
+reduced<-glm(chd69 ~ age_10+chol_50+bmi_10+sbp_50+smoke, family=binomial, data=wcgs1cc)
+summary(reduced)
+full<-glm(chd69 ~ age_10+chol_50+bmi_10+sbp_50+smoke+factor(behpat), family=binomial, data=wcgs1cc)
+summary(full)
+LRT=2*(logLik(full)-logLik(reduced))
+# LRT and p-value
+LRT  
+pval=1-pchisq(LRT,3)
+pval
+# another way using anova (possibly quicker)
+out<-anova(reduced,full)
+out
+1-pchisq(as.vector(out$Deviance)[2],3)
+```
+
+**Stata code and output**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+gen age_10=age/10
+gen chol_50=chol/50
+gen bmi_10=bmi/10
+gen sbp_50=sbp/50
+** fit reduced and full model without outlier (chol=645)
+logistic chd69 age_10 chol_50 bmi_10 sbp_50 i.smoke if chol<645
+estimates store mod1
+logistic chd69 age_10 chol_50 sbp_50 bmi_10 i.smoke i.behpat if chol<645  
+lrtest mod1
+** the command estimates is needed to store the 1st fit and computes the LRT
+
+
+**
+** NB: if you use the csv dataset you have to use behpat_type and recode
+**     i. does not work with string, Then use the same commands
+** gen behpat=1 if behpat_type=="A1"
+** replace behpat=2 if behpat_type=="A2"
+** replace behpat=3 if behpat_type=="B3"
+** replace behpat=4 if behpat_type=="B4"
+** drop behpat_type
+**
+
+```
+
+##### [@vittinghoff2012] Chapter 5. Logistic regression (Section 5.2.1) p. 154-56). {#reading_wk09_multiple_logreg .unnumbered}
+
+This reading gives you the two fitted models, the calculation of the LRT in Stata and some explanation of why this test is important.
+
+We woud like to end this paragraph by stressing out that it is important to have no missing values in the dat, at least in the covariates involved in the computation of the LRT. Many statistical packages will always provide log-likelihood values irrespective of the presence of missing data. The calculation of the LRT will be wrong since you are basically computing the log-likelihood from *different* samples. They are different because the packages delete the missing data before fitting the model. As a result, you may end up having a different number of observations in the full and reduced models, which makes the whole calculation meanningless. 
+
+### Investigation - group variables {.unnumbered}
+
+In this activity, you are asked to investigate the impact of a risk factor with multiple levels that are possibly ordered. Age has been divided in 5 age group categories given by *agec*. Draw a $2\times 5$ table investigating the association between *chd69* and *agec* and compute the corresponding ORs. Can you get similar results using logistic regression, how? Can you test the global effect of *agec* on *chd69*. How would you go about it? [Hint: it may help to look at p. 146-148] This analysis is unadjusted, what do you suggest we do next?
+
+
+## Confounding {.unnumbered}
+
+<!-- comment for now = {#video_wk10_more} -->
+
+Confounding can occur in logistic regression for the same reasons as in linear regression. The same criteria can be applied here, i.e. a variable $c$ is a confounder of a relationship $x \rightarrow y$ where $y$ is a binary endpoint if 1) $c$ associated with $y$; 2) $c$ associated with $c$; $c$ is not on the causal pathway $x \rightarrow y$.  Several predictors can also act as potential confounders in practice. To briefly illustrate the concept in this setting, consider the association between CHD and a behaviour pattern considered previously, the only difference being that for simplicity, we only consider type $A$ or $B$. The resulting binary covariate is *dibpat* coded 0/1 with 0 for $B$ or 1 for $A$. A simple logistic regression analysis returns a ``crude" OR=2.36, 95\%CI=(1.80 ; 3.12) after deletion of an outlier (a case with a cholesterol reading of 645 mg/dl = 16.68 mmol/l at the beginning of the study). The word crude (or raw) OR is used to indicate that the analyis is unadjusted. Potential confounders include age, BMI, cholesterol, SBP and smoking but, to facilate the reading and comparison with the textbook, we use rescaled versions of these predictors. For example, the authors were interested to produce OR for ten-year increase in age, so they use *age_10=age/10* with the subscript indicating the scaling factor.  It is easy to see that all the predictors are independently associated with *chd69* - criterion 1). They are also linked to *dibpat* - criterion 2) - with the exception of BMI and we let you check this as an exercise. Criterion 3) is always harder to assess and come mainly from the knowledge of the field; in this case, it is unlikely to be met for either of these factors.  All predictors but BMI can confound the association of interest so it is legitimate to wonder what impact they have collectively. An adjusted analysis is then conducted yielding:
+
+**R code and output**
+
+```{r,message=FALSE, collapse=TRUE}
+#   chd69, smoke and dibpat are assumed to be coded 0/1
+# wcgs <- read.csv("wcgs.csv")
+myvars <- c("id","chd69", "age", "bmi", "chol", "sbp", "smoke", "dibpat")
+wcgs1 <- wcgs[myvars]
+wcgs1=wcgs1[wcgs1$chol <645,]
+wcgs1cc=na.omit(wcgs1)
+# remove missing values - complete case (cc) analysis
+wcgs1cc<-na.omit(wcgs1)
+# rescale variables
+wcgs1cc$age_10<-wcgs1cc$age/10
+wcgs1cc$bmi_10<-wcgs1cc$bmi/10
+wcgs1cc$chol_50<-wcgs1cc$chol/50
+wcgs1cc$sbp_50<-wcgs1cc$sbp/50
+# adjusted
+out1<-glm(chd69 ~ age_10+chol_50+bmi_10+sbp_50+smoke + dibpat, family=binomial, data=wcgs1cc)
+summary(out1)
+# ORs and 95% CIs
+## adjusted
+exp(out1$coefficients)[2:7] 
+exp(confint(out1))[2:7,]
+# unadjusted
+out1<-glm(chd69 ~  dibpat, family=binomial, data=wcgs1cc)
+exp(out1$coefficients)[2] 
+exp(confint(out1))[2,]
+
+```
+
+**Stata code and output**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+gen age_10=age/10
+gen chol_50=chol/50
+gen bmi_10=bmi/10
+gen sbp_50=sbp/50
+** delete missing and outliers permanently
+drop if missing(chd69) | missing(bmi) | missing(age) | missing(sbp) | missing(smoke) | missing(chol) | missing(dibpat)  
+drop if chol ==645 
+**
+** turns out to be equivalent to: drop if chol >=645 
+** This is because the missing are in cholesterol and 
+** missing values are eliminated by the condition
+**
+** adjusted ORs
+logistic chd69 bmi age sbp smoke chol dibpat
+**  smoke and dibpat are coded 0/1 so it is equivalent to using i.smoke and i.dibpat
+** unadjusted ORs
+logistic chd69 dibpat
+
+
+```
+
+The adjusted OR for *dibpat* (type A) is smaller OR=2.01 95%CI =(1.52 ; 2.67) than the unadjusted OR=2.36 95\%CI=(1.80 ; 3.12), so some degree of confounding indeed occurs. This example illustrates what researchers typically do in practice, i.e. they compare the unadjusted analysis with the adjusted analysis with all potential confounders added to the model, irrespective of whether they are indeed confounders or not, and sometimes without looking at significance. This is somehow a looser interpretation of the criteria listed above but can also be understood in a global context where, for instance, a factor like BMI may not appear to confound the association between *chd69* and *dibpat* in this dataset but might have been in other similar epidemiological studies.
+
+You can also read Section 5.2.2. p. 156-58 of the book for a slightly more elaborate discussion of this example - optional reading.
+
+<!-- Do we need a tutorial or a discussion here to recap what we learned I am not sure. It makes sense only if we discuss the group variable case -->
+
+## Summary {#summary_wk09 .unnumbered}
+
+The following are the key takeaway messages from this week:
+
+1. Logistic regression is the natural way to extend the notion of odds-ratio by modelling the log-odds of an event as linear combination of covariates.
+
+2. Binary logistic regression models the expected response (i.e. the probability of an event occurence) on the log-odds scale and inference relies on maximum likelihood theory; it is therefore an extension of linear regression for binary outcomes.
+
+3. Likelihood ratio tests are very useful in this context. They can allow us to test a null hypothesis involving several regression parameters.
+
+4. General concepts like adjustment and interaction are similar to the ones described for linear regression.

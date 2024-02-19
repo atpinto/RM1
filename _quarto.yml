@@ -1,0 +1,36 @@
+project:
+  type: book
+  output-dir: docs
+book:
+  title: "Regression Modelling for Biostatistics 1"
+  author: "Schlub T, Heritier S, Teixeira-Pinto A"
+  date: "2/19/2024"
+  chapters:
+    - index.qmd
+    - 001-simple_linear_regression.qmd
+    - 002-checking_assumptions.qmd
+    - 003-binary_covariates_and_outliers.qmd
+    - 004-multiple_linear_regression_application.qmd
+    - 005-lin_reg_theory.qmd
+    - 006-interaction_collinearity.qmd
+    - 007-lin_reg_splines.qmd
+    - 008-model_building.qmd
+    - 009-logistic_regression_intro.qmd
+    - 010-logistic_regression_conf_inter.qmd
+    - 011-logistic_regression_splines_validation.qmd
+    - 012-logistic_regression_model_building.qmd
+  sidebar:    
+    logo: "images/bca.png"  
+
+format:
+  html:
+    theme: cosmo
+    code-fold: true
+    code-summary: "Show the code"
+  pdf:
+    documentclass: scrreprt
+    keep-md: true
+    keep-tex: true
+    
+editor: visual
+

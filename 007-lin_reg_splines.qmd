@@ -1,0 +1,778 @@
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+
+# Violations of assumptions {#linreg_splines}
+
+
+
+
+## Learning objectives {#learn_obj_wk07 .unnumbered}
+
+
+By the end of this week you should: 
+
+1. Be able to run polynomial regression
+
+2. Know about restricted cubic splines and how they can model nonlinearities
+
+3. Have a general understanding of the use of flexible techniques to evaluate the shape of a regression function
+
+4. Be familar with the bootstrap and its use in linear regression
+
+5. Understand how heteroscedasticity can be handled in practice
+
+
+## Learning activities {#learn_act_wk07 .unnumbered}
+
+This week's learning activities include:
+
+| Learning Activity             | Learning objectives |
+|-------------------------------|---------------------|
+| Lecture 1                     | 1, 2, 3             |
+| Reading                       | 4                   |
+| Lecture 2                     | 4, 5                |
+| Investigations                | 2, 4                |
+
+
+
+**Lecture 1 in R**
+
+<iframe width="740" height="416" src="https://www.youtube.com/embed/b1Vm9Mg3GyM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+[Download video here](https://www.dropbox.com/s/9pkw9yphe4aj7ma/RM1_week7_lecture1_R.mp4?dl=1)
+
+
+**Lecture 1 in Stata**
+
+<iframe width="740" height="416"  src="https://www.youtube.com/embed/oSib7b4FtP0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+[Download video here](https://www.dropbox.com/s/poiu22qxad1sh4n/RM1_week7_lecture1_Stata.mp4?dl=1)
+
+
+We have seen how to use residuals to identify non-linearities, this week we will first revisit the issue and introduce new modelling techniques to deal with nonlinear associations. 
+
+<!-- triceps data for this section  -->
+
+## Polynomial regression {.unnumbered}
+
+<!-- notation + cubic polynomial + figure (lowess + cubic) -->
+
+To motivate, we consider data on 892 females under 50 years collected in three villages in West Africa. Investigators are interested in exploring the relationship between age  and triceps skinfold thickness, a crude measure of body fat. The dataset is called *triceps* and include *age*, *thick* and *logthick*, for respectively age in years, triceps skinfold thickness in mm and its logarithm. The figure below displays the the relationship between *age* and *logthick* and it is immediately clear that  this relationship in nonlinear on such a wide age span. A nonparametric smoother (LOWESS) can be applied to the data  and returns the blue fitted line confirming the visual impression. 
+
+```{r, echo=FALSE, message=FALSE}
+# add path here
+triceps<-read.csv("https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1")
+triceps<-data.frame(triceps)
+#colnames(triceps)<-c("age","logthick","thick")
+plot(logthick~age,xlab="Age",ylab="Skinfold thickness (log)",data=triceps)
+lines(lowess(triceps$logthick ~ triceps$age, f=.2), col=4,lwd=2)
+```
+
+A simple regression model of the form $logthick_i=\beta_0+\beta_1 age_i+\epsilon_i$ for $i=1,\dots,n=892$ would hardly give an approximation of the observed pattern, so the question arises: how can we modify it to make it more realistic? The first strategy is to replace the linear function of age by a cubic polynomial: $f(age)=\beta_0+\beta_1 age +\beta_2 age^2 + \beta_2 age^3$. The term ``cubic'' is used because we are fitting a polynomial of degree 3 due to the largest exponent being 3. A quadratic curve could also be fitted but would not be appropriate given the shape of the plot.  Such a model is naturally called polynomial regression, irrespective of the degree of the polynomial function $f(x)$. Although we can define by hand the quadratic and cubic terms it's preferable to use the built-in tool *poly(x,3)* in R to define the polynomial (here $x$ refers to the variable of interest, e.g. $x=age$). This leads to a simpler univariate smooth model of the form: $y_i=f(x_i)+\epsilon_i$ where $y$ is the generic term for the response ($y=logthick$ in our example). 
+
+The following fit is now obtained and there is clearly some improvement over a linear fit but we may be left with the visual impression that fitting a cubic polynomial is not quite enough to capture the structure of the data, especially around year 10 where the fit does not seem so good.
+
+```{r, echo=FALSE, message=FALSE}
+triceps <- triceps[order(triceps$age),] # order data by age
+plot(logthick~age,xlab="Age",ylab="Skinfold thickness (log)",data=triceps)
+fit.poly <- lm(logthick ~ poly(age,3),data=triceps) #cubic polynomial (orthogonal)
+fit.poly <- lm(logthick ~ poly(age,3,raw="TRUE"),data=triceps) # raw polynomial
+lines(triceps$age, predict(fit.poly, data.frame(age=triceps$age)), col="red", lwd=2)
+```
+
+
+Although all polynomial coefficients are significant - results not shown -,  we should *not* use significance to decide to include a particular term or not. Another parametrisation based on orthogonal polynomials is often preferable as it is more stable, especially for high-degree polynomials. Using this parametrisation which is the default parametrisation in R yields a non-significant quadratic term.  It is nevertheless needed to give the same fit. The F-test (or a LRT test) can help decide whether the cubic polynomial in age is necessary and is, for instance, better than a quadratic polynomial or a simple linear fit. We leave this as an exercise. 
+
+The R code for this section and a slightly simpler version for Stata are given below: 
+
+R Code 
+
+```{r, echo=FALSE, message=FALSE}
+# scatter plot and lowess fit
+triceps<-read.csv("https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1")
+triceps<-data.frame(triceps)
+#colnames(triceps)<-c("age","logthick","thick")
+plot(logthick~age,xlab="Age",ylab="Skinfold thickness (log)",data=triceps)
+lines(lowess(triceps$logthick ~ triceps$age, f=.2), col=4,lwd=2)
+
+# scatter plot and cubic polynomial
+triceps <- triceps[order(triceps$age),] # order data by age
+plot(logthick~age,xlab="Age",ylab="Skinfold thickness (log)",data=triceps)
+# polynomial regression + plot
+fit.poly <- lm(logthick ~ poly(age,3),data=triceps) #cubic polynomial (orthogonal)
+fit.poly <- lm(logthick ~ poly(age,3,raw="TRUE"),data=triceps) # raw polynomial
+lines(triceps$age, predict(fit.poly, data.frame(age=triceps$age)), col="red", lwd=2)
+```
+
+
+Stata code and output
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+import delimited "https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1"
+gen age2 = age^2
+gen age3 = age^3
+regress logthick age age2 age3
+quiet predict pred
+twoway  scatter logthick age || line pred age, sort 
+test age2 age3  
+## compare cubic polynomial fit to linear fit
+```
+
+
+
+
+
+## Restricted cubic splines {.unnumbered}
+
+The disadvantage of polynomials is that they tend to fit the data globally and are not very good locally, for instance around year 10 for *logthick*. One way to get around this issue is to partition the range of $age$ (or the covariate $x$ in general) into smaller intervals, utilising a small number of points called *knots*. We can then fit (cubic) polynomials locally but by doing this we will get discontinuities. A simple remedy is to impose constraints on these polynomials so that the global result is a *smooth* function. We typically do this by forcing the successive derivatives of the function to be continuous up to some order (e.g. 2). The resulting function is called a spline. Different splines exist and a common type consists of portions of cubic polynomials in the middle joined together at the knots that become linear in the edges (i.e before the first knot and after the last one).  Such splines are called Restricted Cubic Splines (RCS) with RCS(4) denoting a RCS with 4 knots. Restrictions are imposed to the different parts to yield a smooth function. It is not necessary to know  their complex algebraic expression but we can see how the look on Figure 7.1 below:
+
+
+```{r, echo=FALSE, message=FALSE}
+require(rms)
+par(mfrow=c(1,2))
+kk<-c(1.5, 6, 12, 23, 42 )
+age.grid=seq(1,52,0.025)
+tt<-rcspline.eval(age.grid,knots=kk,nk=5,inclx=TRUE)
+# left panel
+plot(age.grid,tt[,1],lty=1,col="blue",type="l",xlab="Age",ylab="Spline basis")
+lines(age.grid,tt[,2],lty=2,col="red",type="l")
+lines(age.grid,tt[,3],lty=2,col="magenta",type="l")
+lines(age.grid,tt[,4],lty=2,col="green",type="l")
+# right panel
+colnames(triceps)<-c("age","logthick","thick")
+fit.rcs <- ols(logthick ~ rcs(age,kk),data=triceps)
+pred.rcs<-predict(fit.rcs,data.frame(age=age.grid))
+plot(age.grid,pred.rcs,lty=1,col="blue",type="l",xlab="Age",ylab="f(age)",ylim=c(1,3.5))
+```
+
+** Figure 7.1:** Spline basis functions and fitted line
+
+
+There are 4 terms because we choose 5 knots (i.e, d.f. = number of knots minus 1) noted $S_1(age)=age$ in blue, $S_2(age)$ in red, $S_3(age)$ in magenta, $S_4(age)$ in green on the left panel. Each individual spline function (called spline basis) should not be interpreted individually. What matters is their ``combined effect", i.e the function $f(age)=b_0 + b_1S_1(age)+b_2S_2(age)+b_3S_3(age)+b_4S_4(age)$ which is very smooth and seems to capture well the features of the data. Here the coefficients $b_0,b_1,\dots,b_4$ where calculated by fitting $f(a)$ to the data. Such a fit is possible using standard commands since the function *linear in the coefficients*  despite its *nonlinearity in age*. 
+
+### Syntax and outputs {.unnumbered}
+
+This is how you can fit such a model in R. This requires a slightly different syntax from what you have been using so far. R makes use of the *rms* library and the command *ols* instead of *lm*. The spline function itself is specified by adding *rcs* within the formula yielding:
+
+```{r, message=FALSE}
+require(rms)
+ddist <- datadist(triceps)
+options(datadist='ddist')
+fit.rcs <- ols(logthick ~ rcs(age,4),data=triceps)
+```
+
+The command *rcs(age,4)* specifies a RCS in age with 4 knots placed at their default location. Note that the first two lines after calling the *rms* library are not absolutely needed to get the fit but there will be used to plot the splines, so it's recommended to add them anyway. The output is given below:
+
+```{r, message=FALSE, collapse=TRUE}
+fit.rcs
+```
+
+You may notice that the syntax is slightly different from the standard way to display an output after typing the *lm* command since *summary()* is not used. The display is rather unsual and indicates the coefficients for the various spline bases with the notation $age^\prime$ and $age^{\prime\prime}$ corresponding to two additional splines terms $S_2(a)$ and $S_3(a)$ that are never interpreted separarely.
+
+The Stata syntax still uses the usual *regress* command but it's preceeded by a command *mkspline* explaining what splines need to be fitted. Below the syntax and output in Stata.
+
+Stata code and output
+```{stata, collectcode=TRUE, collapse=TRUE }
+import delimited "https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1"
+mkspline age_spl = age, cubic nknots(4)
+regress logthick  age_spl* 
+```
+
+The command *mkspline age_spl = age, cubic nknots(4)* asks Stata to create a RCS in age with 4 knots, Stata will generate the correspponding terms called *age_spl1*, *age_spl2* and *age_spl3*. Note that *age_spl1* is always *age* so that the syntax is equivalent to 
+ *regress logthick  age age_spl1 age_spl2*. The generic command with * makes sure that *all*  terms are included. Some other options are available that you can explore using the help.
+
+What remained to be discussed is: 1) how do we choose the knots?; 2) how many knots do we choose?; and possibly 3) how do we know that the splines are needed?
+
+
+### Choosing the knots and their number {.unnumbered}
+
+Typically a small number of knots is recommended, say between 3 and 5. We chose 5 knots earlier because we have a lot of data but 4 is ofen appropriate. Their location is critical and up to the investigator. A default choice have been fortunately implemented in Stata and R at specific quantiles of the variable of interest. The two figures below gives you the data and 2 different fits, one with 4 knots located using the default (Figure 7.2)  and at age 10, 20, 35, 45 (Figure 7.3). We added the vertical dotted lines to indicate their location.
+
+
+```{r, echo=FALSE, message=FALSE}
+require(rms)
+par(mfrow=c(1,1))
+
+# sort the data by increasing age
+triceps<-triceps[order(triceps$age),]
+
+# top panel: default
+ddist <- datadist(triceps)
+options(datadist='ddist')
+fit.rcs4a <- ols(logthick ~ rcs(age,4),data=triceps)
+pred4a<-predict(fit.rcs4a)
+plot(logthick~age, xlab="Age",ylab="Skinfold thickness (log)", data=triceps)
+lines(triceps$age,pred4a,  col="red", lwd=2,lty=2)
+abline(v=quantile(triceps$age,c(0.05,0.35,0.65,0.95)),lty=2,col="red")
+```
+
+** Figure 7.2:** A RCS spline fit with 4 knots (default location)
+
+```{r, echo=FALSE, message=FALSE}
+require(rms)
+par(mfrow=c(1,1))
+# bottom panel: manual 
+ddist <- datadist(triceps)
+options(datadist='ddist')
+fit.rcs4b <- ols(logthick ~ rcs(age,c(10,20,35,45)),data=triceps)
+pred4b<-predict(fit.rcs4b)
+plot(logthick~age, xlab="Age",ylab="Skinfold thickness (log)",data=triceps)
+lines(triceps$age,pred4b,  col="blue", lwd=2,lty=2)
+mini<-max(which(triceps$age <10))
+maxi<-min(which(triceps$age >=45))-1
+lines(triceps$age[mini:maxi],pred4b[mini:maxi],  col="red", lwd=2,lty=1)
+# poor fit for lower age
+abline(v=c(10,20,35,45),lty=2,col="blue")
+```
+
+** Figure 7.3:** A RCS spline fit with 4 knots at age 10, 20, 35 and 45.
+
+We clearly see that the default choice (Figure 7.2) gives a better fit visually than the manual choice with knots at 10, 20, 35, 45 (Figure 7.3), the first two knots being too high. By default, the knots in Figure 7.2 are chosen at the $.05^{th}$, $.35^{th}$, $.65^{th}$ and $.95^{th} quantiles of *age*, e.g the first knot is at age 1.2775 (!), the second at 8.1955. Note in Figure 7.3 that the function is indeed linear for extreme age values (blue dotted line). This is also the case for Figure 7.2 but it's less apparent on the plot.
+
+### Do we need the splines? Which fit should we choose? {.unnumbered}
+
+Because the first spline basis is always the variable of interest (here *age*) we can use a F-test to test whether the added terms are needed. This is typically carried out in R using the *anova* command following the fit obtained previously. The F-test concludes that the additional terms are indeed needed with either the default choice of knots or the one chosen by the investigator (p< 0.0001). 
+
+The R and Stata code to fit splines with explanation is below. 
+
+
+**R Code** 
+
+```{r, collapse = TRUE, results="hide"}
+# Figure 7.2
+par(mfrow=c(1,1))
+# sort the data by increasing age
+triceps<-triceps[order(triceps$age),]
+# top panel: default
+ddist <- datadist(triceps)
+options(datadist='ddist')
+fit.rcs4a <- ols(logthick ~ rcs(age,4),data=triceps)
+pred4a<-predict(fit.rcs4a)
+plot(logthick~age, xlab="Age",ylab="Skinfold thickness (log)", data=triceps)
+lines(triceps$age,pred4a,  col="red", lwd=2,lty=2)
+abline(v=quantile(triceps$age,c(0.05,0.35,0.65,0.95)),lty=2,col="red")
+
+# Testing whether the additional splines terms are necessary
+anova(fit.rcs4a)
+# look at age nonlinear with 2 df. Highly significant. Splines necessary
+
+# Figure 7.3
+fit.rcs4b <- ols(logthick ~ rcs(age,c(10,20,35,45)),data=triceps)
+pred4b<-predict(fit.rcs4b)
+plot(logthick~age, xlab="Age",ylab="Skinfold thickness (log)",data=triceps)
+lines(triceps$age,pred4b,  col="blue", lwd=2,lty=2)
+abline(v=c(10,20,35,45),lty=2,col="blue")
+mini<-max(which(triceps$age <10))
+maxi<-min(which(triceps$age >=45))-1
+lines(triceps$age[mini:maxi],pred4b[mini:maxi],  col="red", lwd=2,lty=1)
+# poor fit for lower age
+# Figure without fancy colours, do not run the last 3 lines
+
+# Testing whether the additional splines terms are necessary
+anova(fit.rcs4b)
+# look at age nonlinear with 2 df. Highly significant. Splines necessary
+
+```
+Indications on how to produce a simpler figure in R were also provided. We don't suggest you produce complex figures like this one. Even the vertical lines displaying the knots location are often omitted.
+
+
+**Stata code and output** 
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+## Figure 7.2, default knots, and fit
+import delimited "https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1"
+mkspline age_spl = age, cubic nknots(4) displayknots
+regress logthick  age_spl*
+predict pred
+twoway scatter logthick age, xline(1.243  8.1865  17.469 42.72) || line pred age, sort clstyle(solid) 
+
+# Testing whether the additional splines terms are necessary
+test age_spl2 age_spl3
+
+## Figure 7.3, knots at 10, 20, 35 and 45, and fit
+
+drop pred age_spl*
+mkspline age_spl = age, cubic knots(10 20 35 45)
+matrix list r(knots)
+regress logthick  age_spl*
+predict pred
+twoway scatter logthick age, xline(10 20 35 45) || line pred age, sort clstyle(solid) 
+
+# Testing whether the additional splines terms are necessary
+test age_spl2 age_spl3
+```
+
+
+Now we have produced 3 different fits of the same data (ignoring the RCS(5) fit given to show what a spline function is): a) cubic polynomial; b) RCs(4), default knots; c) RCS(4), knots at age 10, 20 35, 45. Visually, it's clearly that b) gives the better fit, so this is the one we'll choose. There are many other fits you could get by playing with the number of knots and their location, so you could add them to the list. There is a way to compare such models that are not nested, we defer the explanation to week 8 but hopefully the approach agrees with the visual impression.
+
+
+### Interpretation {.unnumbered}
+
+
+There are several ways you can interpret the results after fitting a spline model to the data and concluding that splines are indeed necessary. Let's for instance consider the RCS(4) model used for the triceps data. The simplest (and possibly most common) way is to display a plot like Figure 7.2 or only the spline function with its 95% CI and interpret it *qualitatively*. Here log-thickness decreases with age until the age of 8-9 and starts to increase again to reach a maximum slighlty above 2.5 around 30-35. From then on, it does not change much with a very slow reduction as women get older (up to the maximum age in the data, i.e. 52).
+
+The second way is to try to quantify the relationship. One might wonder what the average change in log-thickness per each additional year of age is? The problem is more complicated than usual as we have fitted a function of age, $f(age)=b_0+b_1age+b_2S_2(age)+b_3S_3(age)$. Any increment of age will also affect the spline functions $S_2(age)$ and $S_3(age)$ so we can not interpet each coefficient separately. However, the same principle applies and, at least theoretially, we can compute the marginal change in log-thickness associated with a i year increment. To make things simpler, let's choose a particular age, say 10. What we need to do is compute the (expected) change in log-thickness for a change in age from 10 to 11. This amounts to computing the difference: $d=f(11)-f(10)=b_1+b_2[S_2(11)-S_2(10)]+b_3[S_3(11)-S_3(10)]$. This is a *linear* combination of the model coefficients $b_1$, $b_2$, $b_3$ so in principle we should be able to estimate this but the difficulty is to get the ``weights" $w_2=S_2(11)-S_2(10)$ and $w_3=S_3(11)-S_3(10)$  that involve the spline basis functions. The weight of age in $f(age)$ is always one here by construction. 
+
+OPTIONAL: Regarding this calculation, Stata users have the edge since the software provides an approximation through the derivative since $f(11)-f(10)\simeq f'(10)$. In general, $f(a+1)-f(age))\simeq f'(a)$ thanks to a Taylor expansion.  The R users don't have this luxury and have to work out for themselves what this difference is. For that reason, what follows is considered optional but Stata users should not have any problem to run the few lines of code that are needed. Note that the splines have to be generated using the command *mkspline2* command instead of *mkspline*. This command and the one that computes the derivative are available once a user-defined code has been installed (type: *ssc install postrcspline*). 
+
+
+**Stata code**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+import delimited "https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1"
+mkspline2 age_spl = age, cubic nknots(4)
+regress logthick  age_spl*
+mfxrcspline, gen(delta lower upper)
+sort age
+
+## --------------------------------------------------
+## this additional command allows you to browse (only) 
+## the new variables created. Deactivated here.
+## You can also browse the data manually
+## ---------------------------------
+
+## br age delta lower upper 
+```
+
+The code plots the derivative as a function of age and produces the marginal difference per additional year of age for each datapoint in the triceps dataset. The last two lines allow us to sort the data and list all the differenes (variable *delta* and *lower* and *upper* for the 95\% CI). If we look at what was produced, we can see that for a women aged 10, the average change in log-thickness for a 1-year change in age is: 0.026, 95\% CI=0.022 ; 0.0299). We choose 10 since it is an age that we have in the dataset to make things simpler. This can be obtained by looking at the results (type*br age delta lower upper* to see all differences). 
+We typically talk about the rate of change in log-thickness associated with age. Had we chosen age=27, we would have obtained: 0.017, 95\%CI=(0.0144 ; 0.0194).  Of course, when age is beyond the last knot (i.e. 42.7 years) or prior to the first knot, the rate of change become constant since by definition the RCS is linear in the tails.
+
+
+R-users have to work a lot harder to get something similar. The code below explains how it's done and give you some explanation. Results may be sligthly different since we are not approximating the difference here. An *optional* video is available  so maybe R-users can watch this video first.
+
+Lecture 1b in R [OPTIONAL - help with an interpretation that is not directly provided in R]
+
+<iframe width="740" height="416" src="https://www.youtube.com/embed/iNep-W5SoOA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+[Download video here](https://canvas.sydney.edu.au/files/23346714/download?download_frd=1)
+
+
+
+**R code**
+
+```{r, collapse = TRUE}
+triceps<-read.csv("https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1")
+triceps<-data.frame(triceps)
+triceps <- triceps[order(triceps$age),] 
+
+# fit RCS(4) to the data
+require(rms)
+ddist <- datadist(triceps)
+options(datadist='ddist')
+fit.rcs4 <- ols(logthick ~ rcs(age,4),data=triceps)
+                                                         # Comment
+                                                         # -------
+age.val<-c(10)                                           # Choose a particular age, here 10
+kk=attributes(rcs(triceps$age,4))$parms                  # get the knots
+tt<-rcspline.eval(age.val,knots=kk,nk=4,inclx=TRUE)      # evaluate the spline functions at age=10
+tt1<-rcspline.eval(age.val+1,knots=kk,nk=4,inclx=TRUE)   # evaluate the spline functions at age=11 (add 1)
+diff=tt1-tt                                              # compute the differences
+c(diff)
+
+# these are the "weights"  you need to use in lincom or glht 
+# for coefficients beta1, beta2, beta3 (all splines terms)
+# what I called w_1=1, w_2 and w_3. Note that w_1=1 because the
+# first basis function is age, with the two others used to
+# model non-linearities. In their absence we would go
+# back to the usual interpretation and therefore w1=1 
+# is expected.
+
+require(multcomp)
+test <- rbind("test marginal effect at that age" = c(0,diff)) 
+              # the leading 0 is for the intercept coeff (unused)
+lincom<-glht(fit.rcs4, linfct=test)
+summary(lincom)
+# you can then get the 95% CI "by hand"
+lower=0.032036-1.96*0.002092
+upper=0.032036+1.96*0.002092
+c(lower,upper)
+
+#  95% CI=( 0.02793568 ; 0.03613632)
+# slightly different results in R (no approximation)
+
+# you can repeat the process by choosing another age value (e.g. 27) but make sure your
+# update the manual calculation of the 95% CI
+
+```
+
+
+### Investigation {.unnumbered}
+
+The objective of this activity is to become familiar with RCS using the *hers* data 
+
+1) Start by reading p. 113 - 114 of Vittinghof et al. (2012) where the authors model *HDL* as RCS of *BMI* adjusted for a few covariates, namely *age*, *nonwhite*,  *smoking* and *drinkany* and fit a simple model with these covariates. We suspect the association with BMI may not be linear (see Table 4.20, p. 111 for more)
+
+2) Fit a RCS in BMI with 4 knots while adjusting for the other covariates. Does it change the conclusion regarding the linearity of BMI? Test whether the additional spline terms in BMI are necessary for this data? Note that if you want to reproduce the results of Table 4.21 p. 114, you need to use *age10* (instead of *age* or *agec*) and have 5 knots (not requested). 
+
+3) Plot the fitted line with its 95\% band. To get a nice plot you need to fix the *other* covariates than BMI. One way to do this is to set these covariates at the mean or median value.
+
+
+:::{#note-text .note}
+R users: The latter is provided  by the R command *plot(Predict(fit, BMI))* where *fit* is the RCS fit  obtained earlier. Stick to the plots obtained after fitting a RCS using *rms* and *ols* (and avoid using *lm*).
+
+Stata users: You may have to be cautious here as there are other covariates than BMI. Again, follow the recommendation of Vittinghof et al. (2012) and use the *postrcspline* package. Recreate the splines using the command *mkspline2*. The command *adjustrcspline*  used in combination with *at()* where you specify the other covariate values will give you a nice plot. The choice is up to you but we could use: the mean (or the median) age in the sample for age and 0 for nonwhite, smoking  and drinkany.
+:::
+
+
+4) Change the location of the 4 knots and refit the model. Try also a model with a different number of knots. Does it change your conclusion? Provide a qualitative interpretation of the BMI effect in the model you decide to keep.
+
+
+5) Do we need a RCS model for age? 
+
+
+
+## Fractional polynomials and other methods {.unnumbered}
+
+
+RCS are not the only approach we could use to model nonlinearities. Other types of splines exist including smoothing splines that impose a penalty for a lack of smoothness, they are more nonparametric by nature. We would like to say a few words about fractional polynomials that were introduced by Royston and Atlman (1994) and further developed  since then. For the sake of simplicity, we describe the procedure using a model with a single continuous covariate (called $x$). One way to generalise the linear combination $\beta_0 +\beta_1 x$ is to replace it by a special type of polynomial that might include logarithms, noninteger powers, and repeated powers. One can show that, With a suitable range of powers, such polynomials provide a considerable range of functional forms in $x$ that are useful to model real data. They are called ``Fractional Polynomials'' (FP) to distinguish from standard polynomials. The default set of powers from which FP powers are selected is typically $\{−2, −1, −0.5, 0, 0.5, 1, 2, 3\}$, with 0 signifying $\log$. There is also the convention that, every time a power repeats in an FP function of $x$, it is multiplied by another $\log(x)$. To describe the FP we typically list the series of powers that will be used. For example, a FP in $x$ with powers $(−1, 0, 0.5, 1)$ and coefficients $\beta$ has the following form: $\beta_1 x^{-1}+\beta_2 \log(x) + \beta_3 x^{1/2} + \beta_4 x$; also, a FP with powers $(0, 1, 2, 2)$ will correspond to  $\beta_1 \log(x) + \beta_2 x +\beta_3 x^2 +\beta_4 x^2\log(x)$. Now the key issue will be to choose the best powers. Some automated procedures are available but we strongly suggest that you keep things simple and use plots (possibly some obtained using splines) to guide your choice. We do not present here a full account of this approach available in Stata through the commands *fp* and *mfp*  and in R via the library *mfp*; it's more a note mentioning that they exist and are part of a suite of techniques that could be used in model building. More will be said in week 11 in the context of logistic regression where we have more tools to decide on how to compare different models. Finally, splines and FP are not necessarily opposed. There will be situations like the triceps data where splines are more appropriate due the local flexibiliy they provide, others where FP can be valuably used to capture more general trends that can be extrapolated, and situations where they complement each other. 
+
+<!-- Optional reading to add - it would be good -->
+
+**Lecture 2 in R**
+
+<iframe width="740" height="416" src="https://www.youtube.com/embed/68fndnP_PV0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+[Download video here](https://www.dropbox.com/s/y8nipb5qfqmcriw/RM1_week7_lecture2_R.mp4?dl=1)
+
+**Lecture 2 in Stata**
+
+<iframe width="740" height="416" src="https://www.youtube.com/embed/2PWYd8fWniw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+[Download video here](https://www.dropbox.com/s/ydo0x77b7d3sa2o/RM1_week7_lecture2_Stata.mp4?dl=1)
+
+
+## Other issues {.unnumbered}
+
+### Bootstrapping {.unnumbered}
+
+IN PSI you learned about the bootstrap, a resampling technique widely applicable for inference purposes. This method is very important in regression since it does not rely on normality. Therefore it can be used in situations where the normality assumption is questionable and we have doubt about the validity of standard SEs and 95\%CIs. In addition, by resampling the data (i.e. what is called case resampling), we can also obtain valid SEs and 95\%CI for complex statistics for which nothing has been implemented in standard statistical packages. 
+
+
+#### [@vittinghoff2012] Chapter 3. Section 3.6 (pages 62-63). {#reading_wk07_bootstrap .unnumbered}
+
+Read this short introduction to the different bootstrap CIs that are routinely available in Stata and R, namely the *normal approximation*, the *percentile* method and the *Bias-Corrected and accelerated ($BCa$)* approach. To go beyond this succinct summary and get a bit of practice in Stata or R with this approach, we will conduct this investigation.
+
+
+### Bootstrap investigation {.unnumbered}
+
+Click below to see a heavily-documented code illustrating how the resampling works on the *hers* data and how we can obtain bootstrap-based 95\% CIs.
+
+**R Code**
+
+```{r, collapse = TRUE, results="hide"}
+# Part A)
+require(haven)
+hers<-read_dta("https://www.dropbox.com/s/ndtd4o20qogq7fv/hersdata.dta?dl=1") 
+hers<-data.frame(hers)
+hers.nondiab<-hers[hers$diabetes==0,]
+
+# 1) standard analysis on reduced data + normal probability plot
+
+hers1<-cbind(hers.nondiab$HDL,hers.nondiab$age,hers.nondiab$BMI,hers.nondiab$drinkany)
+colnames(hers1)<-c("HDL","age","BMI","drinkany")
+hers1<-data.frame(hers1)
+hers2<-na.omit(hers1) # 2032 --> 2021
+
+
+# fit the linear model (HDL on age BMI and drinkany() and draw a normality plot of the residual 
+
+# 2) Part A) - bootstrap "by hand"
+
+# we assumed that the reduced dataset is called hers2
+# 2021 observation, 4 columns if you keep only what you need 
+# (i.e. HDL, age, BM, drinkany)
+
+set.seed(1001)
+R=1000
+n=dim(hers2)[1]
+all.replicates<-NULL
+for(r in 1:R){
+  # generate bootstrap sample by resampling the data
+  hers2.r=hers2[sample(nrow(hers2), n,replace = TRUE), ]
+  # fiited model (based on the bootsrap sample)
+  out.r<-lm(HDL~age+BMI+drinkany,data=hers2.r)
+  # store all coefficients in all replicates
+  all.replicates=rbind(all.replicates,out.r$coeff)
+}
+
+# all replicates is a matrix Rx4 (since we have R replicates
+# and 4 coefficients in the model)
+
+head(all.replicates)
+dim(all.replicates)
+
+# draw an histogram of the replicates + normal probability ploy
+# for each coefficient
+# histogram of the replicates + normal probabilty plot
+
+
+# 3) percentiles 95% CI
+
+# get the 2.5% and 95.% percentile for each column
+# either directly (or using apply)
+
+# directly
+
+
+# 4) Part B) - bootstrap using the library boot
+# --------------------------------------------
+
+# We will now use the library boot to do the same job
+
+
+
+library(boot)
+
+# function collecting the coefficients. In general this function
+# derive the statistic we want to bootstrap.
+
+coeff<- function(data, indices){
+  data <- data[indices,] # select obs. in bootstrap sample
+  mod <- lm(HDL~age+BMI+drinkany, data=data) # modify formula here
+  coefficients(mod) # return coefficient vector
+}
+
+# NB: R doc says or parametric bootstrap (i.e. the one we are using)
+#  "the first argument to statistic must be the data"
+#  " The second will be a vector of indices, frequencies or weights 
+#   which define the bootstrap sample".
+
+# LS-based 95% CI
+
+out<-lm(HDL~age+BMI+drinkany,data=hers2)
+confint(out)
+
+# bootsset.seed(1001)
+B = boot(data=hers2,statistic=coeff,R=3000)  
+    # increase the nb of replicates for BCA 
+    # (R=1000 is too small, numerical issues)
+
+# 3 types for the 3rd coeff = BMI's
+boot.ci(B,index=3,type="norm")   # normal
+boot.ci(B,index=3,type="perc")   # percentile
+boot.ci(B,index=3,type="bca")    # BCa CI (3 types_)
+
+# default coverage =95%
+
+# all types in one command
+boot.ci(B,index=3,type=c("norm","perc", "bca")) 
+
+
+# plots
+# -----
+
+plot(B, index=1) # intercept
+plot(B, index=2) # x1=age
+plot(B, index=3) # x2=BMI
+plot(B, index=4) # x3=drinkany
+
+# nicer plots
+all<-B$t
+par(mfrow=c(1,2))
+hist(all[,1],main="Histogram",xlab="Intercept",prob=TRUE)
+qqnorm(all[,1])
+hist(all[,2],main="Histogram",xlab="Age coeff",prob=TRUE)
+qqnorm(all[,2])
+# etc
+
+
+# Alternative coding (part B): slower 
+# -----------------------------------
+
+coeff<- function(data, indices, formula){
+  data <- data[indices,] # select obs. in bootstrap sample
+  mod <- lm(formula=formula, data=data)
+  coefficients(mod) # return coefficient vector
+}
+
+# percentile 95% CI, 3rd coefficient (BMI)
+set.seed(1001)
+B = boot(data=hers2,statistic=coeff,R=3000, formula=HDL~age+BMI+drinkany)
+boot.ci(B,index=3,type="perc")
+
+# percentile 95% CI, 4tg coefficient (drinkany)
+set.seed(1001)
+B = boot(data=hers2,statistic=coeff,R=3000, formula=HDL~age+BMI+drinkany)
+boot.ci(B,index=4,type="perc")
+```
+
+
+**Stata code**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+## read data
+use hersdata.dta
+drop if diabetes ==1   // 731 obs deleted
+drop if mi(HDL) | mi(BMI) | mi(age) | mi(drinkany) // 11 obs deleted
+keep HDL BMI age drinkany
+
+## Part A) = bootstrap "by hand"
+## =============================
+
+## Writing our own bootstrap program requires four steps.
+## 
+## 1) In the first step we obtain initial estimates and store the results in a matrix, 
+## say observe. In addition, we must also note the number of observations used in the analysis. 
+## This information will be used when we summarize the bootstrap results.
+## 
+## 2) Second, we write a program which we will call myboot that samples the 
+## data with replacement and returns the statistic of interest. In this step, 
+## we start by preserving the data with the preserve command, then take a bootstrap
+## sample with bsample. bsample samples the data in memory with replacement,
+## which is the essential element of the bootstrap. From the bootstrap sample 
+## we run our regression model and output the statistic of interest with the return 
+## scalar command. Note that when we define the program, program define myboot, 
+## we specify the rclass option; without that option, we would not be able to output 
+## the bootstrapped statistic. myboot concludes with the restore command, 
+## which returns the data to the original state (prior to the bootstrapped sample).
+## 
+## 3) In the third step, we use the simulate prefix command along with myboot, 
+## which collects the statistic from the bootstrapped sample. 
+## We specify the seed and number of replications at this step, which coincide 
+## with those from the example above.
+## 
+## 4) Finally, we use the bstat command to summarize the results. 
+## We include the initial estimates, stored in the matrix observe, and the 
+## sample size with the stat( ) and n() options, respectively.
+ 
+ 
+ 
+## Step 1 - define model and store the coefficients via the observe command
+regress HDL BMI age drinkany 
+
+matrix observe= (_b[_cons], _b[BMI], _b[age], _b[drinkany])
+matrix list observe
+
+ 
+## Step 2 - program to be repeated
+capture program drop myboot2
+program define myboot2, rclass
+ preserve 
+  bsample
+    regress HDL BMI age drinkany  
+    ## fit model, store coeff 
+	  return scalar b0 = _b[_cons]
+    return scalar b1 = _b[BMI]
+    return scalar b2 = _b[age]
+	return scalar b3 = _b[drinkany]
+ restore
+end
+
+## Step 3 - simulation = resampling the data using the program myboot2, R=1000 replicates
+simulate  b0=r(b0) b1=r(b1) b2=r(b2) b3=r(b3), reps(1000) seed(12345): myboot2
+
+## Step 4 - compute 95% CIs
+bstat, stat(observe) n(2021) 
+                    ## n = nb of observations --> CAUTION HERE
+estat bootstrap, all
+
+## NB: you can reduce the output of estat bootstrap by specifying 
+## the option (e.g. percentile) instead of all 
+
+estat bootstrap, percentile
+
+
+## NB: you can change the number of replicates i.e. the argument of reps()
+##     we need at least 1000 replicates for 95% CU
+##     The seed use here is only there to replicate the simulations
+##     if you don't specify a seed, a random seed will be chosen and different results
+##     will be obtained each time (very similar though). The difference is due to the
+##     Monte Carlo variability.
+
+
+
+##  select the code above and run
+
+## NB: browse the active dataset, the dimension and the columns. NO LONGER hers
+
+desc
+list if _n<20 
+
+
+#  percentile CI for each coefficient & histogram
+#  ------------------------------------------------
+
+## write a one line command for the histogram and another line for the percentile CI (per coefficient)
+
+ 
+##  4) boostrap  using the libary boot - use Part B below
+ 
+
+# Part B) use a Stata command - SIMPLER
+# ======================================
+
+ 
+clear
+## read the dataset again
+ 
+use hersdata.dta
+drop if diabetes ==1  
+drop if mi(HDL) | mi(BMI) | mi(age) | mi(drinkany) 
+keep HDL BMI age drinkany
+
+bootstrap, reps(1000)  seed(12345): regress HDL BMI age drinkany  
+estat bootstrap, all        
+## all 3 types
+
+bootstrap, reps(1000)  seed(12345): regress HDL BMI age drinkany 
+estat bootstrap, percentile 
+## percentile
+
+bootstrap, reps(1000)  seed(12345): regress HDL BMI age drinkany 
+estat bootstrap, normal     
+## normal
+
+## to get the BCa option alone, type this
+bootstrap, bca reps(1000)  seed(12345): regress HDL BMI age drinkany  
+estat bootstrap     
+
+## again you can use more than 1000 replicates and change the seed
+
+```
+
+
+To understand better how the bootstrap works in linear regression, we ask to carry out the following tasks:
+
+1) First, run a multiple linear regression of *HDL* on *BMI*, *age* and  *drinkany* after removing diabetic patients. For simplicity we consider only 3 covariates but this can be extended to a more complex model. Create a *reduced dataset* with only these four variables and *no missing data* before any further treatment (since bootstrapping cannot accommodate missing data). You should get *n=2021* observations. Compute the residuals and observe that there is a bit of curvature on the normal $QQ$-plot.
+
+2) Given the large sample size, normality is not that critical but we are going to check that inference is indeed valid using the bootstrap. Read Part A) of the code above explaining how we can resample the data and calculate $R$ replicates (here $R=1000$) of the coefficients. Run the corresponding code and draw a histogram of the bootstrap samples (or replicates) for each of the coefficients.
+
+3) Can you provide the percentile 95\% CI *directly* (using a one-line command in R/Stata) for each of the 3 coefficients? Compare with what Stata/R gives you using the code provided (NB: R users will have to use the package *boot* to get results - see next question)
+
+4) Fortunately, both Stata and R have a built-in command that avoids having to do the resampling ``by hand''. Use  Part B) of the code to provide the 3 types of bootstrap 95\% cI. Do you see any meaningful difference with the standard LS analysis?
+
+<!-- 5) Optional: Modify Part A) to provide a bootstrap-based 95\% CI for the predicted $HDL$ of a patient having the following characteristics: $BMI=27$, $age=65$ and $drinkany=1$. Compare with the standard 95\% CI. -->
+
+
+### Heteroscedasticity{.unnumbered}   
+
+As discussed over the previous weeks, a critical assumption for the normal theory or even the bootstrap methods to be valid is the assumption of constant variance of the error term. What can we do if this assumption is not met? A standard way to deal with this issue (known as heteroscedasticity) is to transform the endpoint but such a variance-stabilising transformation does not always exists. Another way is to use weighted LS that provide valid inference in situations where the variance of the error term is $var(\varepsilon)=\sigma^2 W^{-1}$, the only issue with this approach is to find a proper symmetric matrix $W$ often chosen diagonal. Its choice can be driven by plots, for instance plot of residuals vs covariate but it's not always straighforward. Ather convenient means of dealing with nonconstant residual variance is to use the so-called  ``robust'' variance matrix due to White. The corresponding SEs allows reliable inference when the constant-variance assumption is violated. 
+
+This little technial note explains how this can be done: robust SEs be calculated in Stata using the option *vce(robust)* of *regress* with a more accurate version *vce(hc3)* being preferable in small samples. R users can install the libraries *sandwich* and *lmtest* and then use *vcovHC*. The same options and a few other alternatives can be obtained through a command like this: *coeftest(m, vcov. = vcovHC(m, type = 'HC3'))*  where *type = "HC3"* specifies the chosen option, here the same as Stata's *vce(hc3)*. The command to match Stata's output for the 95\% CI is: *coefci(out, vcov. = vcovHC(out, type = 'HC3'))*. Of course, the object *out* contains the result of the initial *lm* fit.  We let you explore these options, for instance, you can reproduce the fits given p. 123 of Vittinghof et al. (2012) using the *hers* dataset and the appropriate sandwich matrix.  A textbook example is given in the second lecture so you can also explore that example.
+
+
+
+## Summary {#summary_wk11 .unnumbered}
+
+
+This weeks key concepts are:
+
+:::{#box1 .green-box}
+The following are the key takeaway messages from this week:
+
+1. Polynomial regression and RCS are powerful tools to capture nonlinearities
+
+2. RCS and fractional polynomials are part of a suite of flexible techniques that can be used to model complex relationships
+
+3. The bootstrap provides an alternative way to draw inference in situations where the normality assumption is questionable. It can also be used to get SEs for complex statistics.
+
+4. Sandwich formulas exist to cope with hererescedasticity issues (e.g. non constant variance) when no variance-stabilising transformation exists.
+:::
+
+

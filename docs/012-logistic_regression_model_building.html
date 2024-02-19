@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Regression Modelling for Biostatistics 1 - 12&nbsp; model building for binary outcomes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./011-logistic_regression_splines_validation.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./012-logistic_regression_model_building.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">model building for binary outcomes</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./images/bca.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Regression Modelling for Biostatistics 1</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-simple_linear_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Simple Linear Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-checking_assumptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Checking Assumptions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-binary_covariates_and_outliers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Binary Covariates, Outliers, and Influential Observations</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-multiple_linear_regression_application.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Multiple Linear Regression - Application</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-lin_reg_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Multiple linear regression theory</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-interaction_collinearity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Interaction and Collinearity</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-lin_reg_splines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Violations of assumptions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-model_building.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regression model building and variable selection</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-logistic_regression_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-logistic_regression_conf_inter.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-logistic_regression_splines_validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-logistic_regression_model_building.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">model building for binary outcomes</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learn_obj_wk12" id="toc-learn_obj_wk12" class="nav-link active" data-scroll-target="#learn_obj_wk12">Learning objectives</a></li>
+  <li><a href="#learn_act_wk12" id="toc-learn_act_wk12" class="nav-link" data-scroll-target="#learn_act_wk12">Learning activities</a></li>
+  <li><a href="#result-explaining-the-fundamental-difference-between-explanatory-and-predictive-modelling" id="toc-result-explaining-the-fundamental-difference-between-explanatory-and-predictive-modelling" class="nav-link" data-scroll-target="#result-explaining-the-fundamental-difference-between-explanatory-and-predictive-modelling">Result explaining the fundamental difference between explanatory and predictive modelling</a></li>
+  <li><a href="#how-to-build-a-prediction-model" id="toc-how-to-build-a-prediction-model" class="nav-link" data-scroll-target="#how-to-build-a-prediction-model"><span class="header-section-number">12.1</span> How to build a prediction model</a>
+  <ul class="collapse">
+  <li><a href="#optimism-training-and-validation-datasets" id="toc-optimism-training-and-validation-datasets" class="nav-link" data-scroll-target="#optimism-training-and-validation-datasets">Optimism, training and validation datasets</a></li>
+  <li><a href="#different-forms-of-validation" id="toc-different-forms-of-validation" class="nav-link" data-scroll-target="#different-forms-of-validation">Different forms of validation</a></li>
+  <li><a href="#calibration" id="toc-calibration" class="nav-link" data-scroll-target="#calibration">Calibration</a></li>
+  <li><a href="#practice" id="toc-practice" class="nav-link" data-scroll-target="#practice">Practice</a></li>
+  </ul></li>
+  <li><a href="#recap-on-building-an-model-focusing-on-explanationinterpretation" id="toc-recap-on-building-an-model-focusing-on-explanationinterpretation" class="nav-link" data-scroll-target="#recap-on-building-an-model-focusing-on-explanationinterpretation">Recap on building an model focusing on explanation/interpretation</a></li>
+  <li><a href="#summary_wk12" id="toc-summary_wk12" class="nav-link" data-scroll-target="#summary_wk12">Summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="model_building_binary" class="quarto-section-identifier"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">model building for binary outcomes</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="learn_obj_wk12" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="learn_obj_wk12">Learning objectives</h2>
+<ol type="1">
+<li><p>Revisit the fundamental difference between two aspects of modelling: prediction vs explanation</p></li>
+<li><p>Be familiar with the concept of training and validation datasets</p></li>
+<li><p>Discover the different ways to validate a prediction model, particularly in logistic regression</p></li>
+<li><p>Learn about optimism bias and how it can be removed</p></li>
+<li><p>Discover how calibration plots are built and why they are important</p></li>
+<li><p>Revisit variety of ways in which multiple logistic regression models are constructed when the emphasis is on interpretation</p></li>
+</ol>
+</section>
+<section id="learn_act_wk12" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="learn_act_wk12">Learning activities</h2>
+<p>This week’s learning activities include:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Learning Activity</th>
+<th>Learning objectives</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Lecture 1</td>
+<td>1, 2, 3, 4</td>
+</tr>
+<tr class="even">
+<td>Readings</td>
+<td>2, 3, 4, 5</td>
+</tr>
+<tr class="odd">
+<td>Lecture 2</td>
+<td>5, 6</td>
+</tr>
+<tr class="even">
+<td>Investigation</td>
+<td>3, 4</td>
+</tr>
+<tr class="odd">
+<td>Practice</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<p>We have learnt tools to build a linear or logistic regression model. In this last week of RM1, we take a higher perspective and consider model building strategies <em>in general</em>. Perhaps, in preamble, it is worth reminding that: <em>Successful modeling of a complex data set is part science, part statistical methods, and part experience and common sense</em>. The quote is due to Hosmer and Lemershow (2013) in their book on applied logistic regression but applies to any model. This issue of model building has attracted attention and a lot of controversy over the years and no doubt the discussion will keep going in the foreseeable future. Still, we think it is important for you to know key ideas before you decide on your own strategy and formulate your personal view on this important topic. In this week materials we revisit and expand on what was discussed in the context of linear regression. The first key concept - and probably most statisticians would agree on this - is to make the distinction between prediction and explanation/interpretation. This has clear implications in terms of modelling and that is why this concept is so important.</p>
+</section>
+<section id="result-explaining-the-fundamental-difference-between-explanatory-and-predictive-modelling" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="result-explaining-the-fundamental-difference-between-explanatory-and-predictive-modelling">Result explaining the fundamental difference between explanatory and predictive modelling</h2>
+<p>In prediction, we are typically interested in predicting an outcome <span class="math inline">\(y\)</span> with some function of <span class="math inline">\(x\)</span>, say, <span class="math inline">\(f(x)\)</span> where <span class="math inline">\(x\)</span> is the vector of covariates. To clarify what we mean by <em>predicting</em>, let us say that we would like <span class="math inline">\(f(x)\)</span> to be close to <span class="math inline">\(y\)</span> in some sense. A common way to define close is to consider the squared (expected) error loss of estimating <span class="math inline">\(y\)</span> using <span class="math inline">\(f(x)\)</span>, i.e.&nbsp;<span class="math inline">\(E\big[(y-f(x))^2\big]\)</span>. It then makes sense to minimise this quantity mathematically yielding <span class="math inline">\(f=E(y|x)\)</span>, the conditional expectation of <span class="math inline">\(y\)</span> given <span class="math inline">\(x\)</span> (which is called a regression function). Now we have data <span class="math inline">\((x_i,y_i)\)</span>, <span class="math inline">\(i=1,\dots,n\)</span> to play with and our goal becomes to find <span class="math inline">\(\hat f\)</span> that is a good estimate of the regression function <span class="math inline">\(f\)</span>. For instance, <span class="math inline">\(\hat f\)</span> can be the fitted model at a particular vector of covariates <span class="math inline">\(x\)</span>. The model is choosen to fit the data well. How good is that estimate <span class="math inline">\(\hat f\)</span>? A good <span class="math inline">\(\hat f\)</span> should have a low expected prediction error:</p>
+<p><span class="math display">\[EPE(y,\hat f(x))=E\Big[(y-\hat f(x))^2\big]\]</span> This expectation is over <span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span> and also the sampled data used to build <span class="math inline">\(\hat f\)</span>. Next, we can rewrite <span class="math inline">\(EPE\)</span> as follows:</p>
+<p>`</p>
+<p><span class="math display">\[EPE=\hbox{var}(y) +\hbox{bias} ^2(\hat f(x)) + \hbox{var}(\hat f(x))\]</span> In other words, <span class="math inline">\(EPE\)</span> can be expressed as the sum of 3 terms</p>
+<p><span class="math display">\[EPE=\hbox{irreducible error} + \hbox{bias}^2 + \hbox{variance}\]</span></p>
+<p>where the first term is the irreducible error that results even is the model is correctly specified and accurarely estimated; the second term linked to bias is the result of misspecifying the statistical model <span class="math inline">\(f\)</span>; the third term called (estimation) variance is the result of using a sample to estimate <span class="math inline">\(f\)</span>. The above decomposition reveals a source of the difference between explanatory and predictive modeling: In explanatory modeling the focus is on minimising bias to obtain the most accurate representation. In contrast, predictive modeling seeks to minimise the combination of bias and estimation variance, occasionally sacrificing theoretical accuracy for improved empirical precision. This is essentially a bias-variance tradeoff. A <em>wrong</em> model can sometimes predict better than the correct one! We have used here the <span class="math inline">\(EPE\)</span> to quantify the closeness of <span class="math inline">\(\hat f\)</span> but we could use other measures of prediction error. In binary logistic regression, we may use tools adapted to the nature of the data but the fundamental distinction between prediction and explanation remains.</p>
+</section>
+<section id="how-to-build-a-prediction-model" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="how-to-build-a-prediction-model"><span class="header-section-number">12.1</span> How to build a prediction model</h2>
+<p>This reading lists seven steps that need to be undertaken to build a (risk) prediction model that is often the objective of the investigation in medical statistics. We will not redicuss all the steps but focus on steps 5 and 6 that are essential and have not been fully discussed so far.</p>
+<section id="steyerberg2014-steyerberg-and-vergouwe-2014.-towards-better-clinical-prediction-models-seven-steps-for-development-and-an-abcd-for-validation-reading_wk12_steyerberg-.unnumbered" class="level4" data-number="12.1.0.1">
+<h4 data-number="12.1.0.1" class="anchored" data-anchor-id="steyerberg2014-steyerberg-and-vergouwe-2014.-towards-better-clinical-prediction-models-seven-steps-for-development-and-an-abcd-for-validation-reading_wk12_steyerberg-.unnumbered"><span class="header-section-number">12.1.0.1</span> <span class="citation" data-cites="Steyerberg2014">[@Steyerberg2014]</span> Steyerberg and Vergouwe (2014). Towards better clinical prediction models: seven steps for development and an ABCD for validation {#reading_wk12_Steyerberg .unnumbered}<br>
+</h4>
+<p><br>
+</p>
+<p>This lecture discusses the issue of optimism bias when evaluating the AUC, the notion of training and validation dataset, crossvalidation and how to produce an AUC free of optimism bias.</p>
+<p><strong>Lecture 1 in R</strong></p>
+<iframe width="740" height="416" src="https://www.youtube.com/embed/HOTV5huA748" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+</iframe>
+<p><a href="https://www.dropbox.com/s/e4f0ar2iol8agqe/RM1_week12_lecture1_R.mp4?dl=1">Download video here</a></p>
+<p><strong>Lecture 1 in Stata</strong></p>
+<iframe width="740" height="416" src="https://www.youtube.com/embed/msaKzd-8ync" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+</iframe>
+<p><a href="https://www.dropbox.com/s/dd5tvmou15p1y2h/RM1_week12_lecture1_Stata.mp4?dl=1">Download video here</a></p>
+</section>
+<section id="optimism-training-and-validation-datasets" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="optimism-training-and-validation-datasets">Optimism, training and validation datasets</h3>
+<p>First we need a good measure of prediction error for a binary endpoint. The ROC curve or more exactly the AUC introduced in week 11 could be used since the closer to 1 the AUC is, the better the model discriminates and predict adequately the 0’s and the 1’s. Another common measure is the Brier score that directly measures the prediction error. Since the AUC is very popular we will focus on the AUC but everything we say next will be true for The Brier score or other prediction error measures. The first point to consider is how to we evaluate the AUC? A naive way to proceed is to build a model using possibly steps 1-4 of the reading and then evaluate the AUC using the <em>same</em> data. The problem with this approach is the data is used twice (once to build the model and a second time to evaluate the AUC). This results in an overestimation of the AUC (on average), the problem is known as <em>optimism bias</em> as briefly stated in week 11.</p>
+<p>Bias can be severe when large models are used and tend to overfit the idiosyncrasies of the data and, as a result, will poorly predict new, independent observations. This issue of overfitting is well known in machine learning particularly when using neural networks that are prone to overfitting. The issue is the same with complex statistical models. A way to overcome this avoid the optimism bias is to randomly split the dataset in two: the first dataset is for training and is therefore called the training (or development) dataset; the 2nd data set is for validation therefore its name: validation (or test) dataset. This is known as the <em>split sample validation</em> approach. It aims at addressing the stability of the selection of predictors and the quality of predictions using a random sample for model development and the remaining patients for validation. The logic is rather simple: 1) generate a random variable that splits the data in two (i.e.&nbsp;the equivalent of a coin toss to decide to which dataset each patient) will belong - call this indicator <em>val</em> ; 2) fit the model on the development dataset (<em>val=0</em>); 3) evaluate its performance (e.g.&nbsp;AUC) on the validation dataset (<em>val=1</em>).</p>
+<p>To illustrate, we again use the WGCS data and reproduce the analysis presented in Vittinghof et al.&nbsp;(2012) p.&nbsp;400 but delete the outlier in cholesterol (n=3141 observations). The endpoint is once again <em>chd69</em> and the covariates retained for this exercise <em>age</em>, <em>chol</em>, <em>sbp</em>, <em>bmi</em> and <em>smoke</em>. The AUC is 0.713, 95% CI=(0.67 ; 0.76) in R up to rounding, a slightly lower value and wider CI than what is observed on all patients (n=3141), AUC=0.732, 95% CI=(0.70 ; 0.76)and in the development dataset. A slightly different value may be obtained in Stata (AUC=0.72, 95%=(0.68 ; 0.76) due to the seed choice and a possibly different random number generator.</p>
+<p>R code and output</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>wcgs <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"wcgs.csv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>wcgs<span class="ot">&lt;-</span><span class="fu">data.frame</span>(wcgs) </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>wcgs1<span class="ot">=</span><span class="fu">cbind</span>(wcgs<span class="sc">$</span>age,wcgs<span class="sc">$</span>chol,wcgs<span class="sc">$</span>sbp,wcgs<span class="sc">$</span>bmi,wcgs<span class="sc">$</span>smoke,wcgs<span class="sc">$</span>chd69)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(wcgs1)<span class="ot">=</span><span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"chol"</span>, <span class="st">"sbp"</span>, <span class="st">"bmi"</span>, <span class="st">"smoke"</span>,<span class="st">"chd69"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>wcgs1<span class="ot">=</span><span class="fu">data.frame</span>(wcgs1)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>wcgs1<span class="ot">=</span><span class="fu">na.omit</span>(wcgs1)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>wcgs1<span class="ot">&lt;-</span>wcgs1[wcgs1<span class="sc">$</span>chol <span class="sc">&lt;</span> <span class="dv">645</span>,]  </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># remove outlier in cholesterol</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span><span class="fu">dim</span>(wcgs1)[<span class="dv">1</span>]</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1001</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>wcgs1<span class="sc">$</span>val<span class="ot">=</span><span class="fu">rbinom</span>(n,<span class="dv">1</span>,<span class="fl">0.5</span>) <span class="co"># val =0 for development and val=1 for validation</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(wcgs1<span class="sc">$</span>val)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="do">##    0    1 </span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 1596 1545</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># building model on development dataset</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>wcgs1.dev<span class="ot">=</span>wcgs1[wcgs1<span class="sc">$</span>val<span class="sc">==</span><span class="dv">0</span>,]</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>fit.dev<span class="ot">&lt;-</span><span class="fu">glm</span>(chd69 <span class="sc">~</span> age<span class="sc">+</span>chol<span class="sc">+</span>sbp<span class="sc">+</span>bmi<span class="sc">+</span>smoke, <span class="at">family=</span>binomial, <span class="at">data=</span>wcgs1.dev)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.dev)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="do">## Call:</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="do">## glm(formula = chd69 ~ age + chol + sbp + bmi + smoke, family = binomial, </span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="do">##     data = wcgs1.dev)</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="do">## Coefficients:</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="do">##               Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept) -13.016252   1.397805  -9.312  &lt; 2e-16 ***</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="do">## age           0.063685   0.017046   3.736 0.000187 ***</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="do">## chol          0.013148   0.002172   6.054 1.42e-09 ***</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="do">## sbp           0.019793   0.005747   3.444 0.000573 ***</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="do">## bmi           0.060258   0.036968   1.630 0.103102    </span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="do">## smoke         0.602919   0.203779   2.959 0.003090 ** </span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="do">## ---</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="do">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="do">## (Dispersion parameter for binomial family taken to be 1)</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="do">##     Null deviance: 881.60  on 1595  degrees of freedom</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="do">## Residual deviance: 786.35  on 1590  degrees of freedom</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="do">## AIC: 798.35</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="do">## Number of Fisher Scoring iterations: 6</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="co"># evaluation on the validation dataset  </span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>wcgs1.val<span class="ot">=</span>wcgs1[wcgs1<span class="sc">$</span>val<span class="sc">==</span><span class="dv">1</span>,]</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>wcgs1.val<span class="sc">$</span>pred<span class="ot">&lt;-</span> <span class="fu">predict</span>(fit.dev, wcgs1.val,<span class="at">type=</span><span class="st">"response"</span>)  </span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co"># predicted probabilities for the validation dataset using the previous fit</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(pROC)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="do">## Loading required package: pROC</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="do">## Type 'citation("pROC")' for a citation.</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="do">## Attaching package: 'pROC'</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="do">## The following objects are masked from 'package:stats':</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="do">##     cov, smooth, var</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="co"># ROC + AUC on the validation dataset (suffix .val)</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>out<span class="ot">&lt;-</span> <span class="fu">roc</span>(wcgs1.val<span class="sc">$</span>chd69, wcgs1.val<span class="sc">$</span>pred,<span class="at">plot=</span><span class="cn">TRUE</span>,<span class="at">ci=</span><span class="cn">TRUE</span>)</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="do">## Setting levels: control = 0, case = 1</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="do">## Setting direction: controls &lt; cases</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="012-logistic_regression_model_building_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>out</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Call:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="do">## roc.default(response = wcgs1.val$chd69, predictor = wcgs1.val$pred,     ci = TRUE, plot = TRUE)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Data: wcgs1.val$pred in 1415 controls (wcgs1.val$chd69 0) &lt; 130 cases (wcgs1.val$chd69 1).</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Area under the curve: 0.7127</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="do">## 95% CI: 0.6694-0.756 (DeLong)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Stata code and output</p>
+<div class="cell" data-collectcode="true">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> wcgs.dta</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">drop</span> <span class="kw">if</span> chol&gt;=645 </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>** <span class="fu">missing</span> chol and chol=645 deleted</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 1001</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> val = runiform()&lt;.5   </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>** Derive a prediction <span class="kw">model</span> <span class="kw">for</span> <span class="fu">y</span>-chd69 <span class="kw">using</span> the development dataset</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">logistic</span> chd69 age chol sbp bmi smoke <span class="kw">if</span> val==0</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>**Generate a <span class="kw">new</span> <span class="kw">variable</span> containing the predicted probabilities <span class="kw">for</span> <span class="ot">all</span> observations</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">predict</span> <span class="kw">fitted</span>, pr</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>** AUC <span class="kw">on</span> the development <span class="kw">data</span> (training), n=1578; to <span class="kw">compare</span> to.</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">roctab</span> chd69 <span class="kw">fitted</span> <span class="kw">if</span>  val==0</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>** AUC <span class="kw">on</span> the validation <span class="kw">data</span>  - n= 1563; the one we need!</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="kw">roctab</span> chd69 <span class="kw">fitted</span> <span class="kw">if</span>  val==1</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="kw">roctab</span> chd69 <span class="kw">fitted</span> <span class="kw">if</span>  val==1,  <span class="kw">graph</span> <span class="bn">title</span>(<span class="st">"Validation"</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>## (13 observations deleted)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>## Logistic regression                                     Number <span class="kw">of</span> <span class="kw">obs</span> =  1,578</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>##                                                         LR <span class="fu">chi2</span>(5)    =  86.80</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>##                                                         Prob &gt; <span class="fu">chi2</span>   = 0.0000</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>## Log likelihood = -395.91089                             Pseudo R2     = 0.0988</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>##        chd69 | Odds <span class="kw">ratio</span>   Std. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>##          age |   1.045713   .0178468     2.62   0.009     1.011313    1.081284</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>##         chol |   1.013229   .0021723     6.13   0.000      1.00898    1.017496</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>##          sbp |   1.020727   .0062837     3.33   0.001     1.008485    1.033117</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>##          bmi |   1.046858   .0403416     1.19   0.235     .9707017    1.128988</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>##        smoke |   2.034663   .4094141     3.53   0.000     1.371558    3.018359</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |   6.91e-06   9.78e-06    -8.39   0.000     4.30e-07    .0001109</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>## Note: <span class="dt">_cons</span> <span class="kw">estimates</span> baseline odds.</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>##                       ROC                     Asymptotic <span class="fu">normal</span>  </span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>##            Obs       area     Std. err.      [95% conf. interval]</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>##      ------------------------------------------------------------</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>##          1,578     0.7385       0.0224        0.69452     0.78241</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>##                       ROC                     Asymptotic <span class="fu">normal</span>  </span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>##            Obs       area     Std. err.      [95% conf. interval]</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>##      ------------------------------------------------------------</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>##          1,563     0.7195       0.0219        0.67657     0.76242</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We let you change the seed or the proportion of patients in each dataset and check that you will get slightly different results. Although commonly used, the split sample validation approach is a suboptimal form of internal validation.</p>
+</section>
+<section id="different-forms-of-validation" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="different-forms-of-validation">Different forms of validation</h3>
+<p>A more efficient way of splitting the data is to use <em><span class="math inline">\(h\)</span>-fold cross validation</em> where the whole dataset is used for both steps. We illustrate the procedure using <span class="math inline">\(h=10\)</span>, often considered as the default but other values can be used (typically between 10 and 20).</p>
+<ol type="1">
+<li><p>Randomly divide the data into <span class="math inline">\(h=10\)</span> mutually exclusive subsets of approximately the same size.\</p></li>
+<li><p>In turn, set aside each subset of the data (approximately 10%) and use the remaining other subsets (approximately 90%) to fit the model.</p></li>
+<li><p>Use the parameter estimates to get the summary statistics needed to predict the AUC (or any other measure of prediction error), for the subset of the observations that were set aside. In practice, we typically compute the predicted probabilities for the 10% of the data that we did not use to estimate the model.</p></li>
+<li><p>Repeat this for all 10 subsets and compute a summary estimate of the AUC (or any other measure of prediction error)</p></li>
+</ol>
+<p>In addition, this 4 step procedure can be repeated <span class="math inline">\(k\)</span> times, and the average AUC computed but for simplicity we will consider the case <span class="math inline">\(k=1\)</span>.</p>
+<p>Going back to the WCGS data and model used previously, the naive estimate for the AUC (based on 3141 observations) is 0.732. 95%CI=(0.702 ; 0.763). A 10-fold cross-validated AUC computed through steps 1)-4) is 0.727, 95% CI=(0.697 ; 0.757) in R. Note that the 95% cI is shorter than the one obtained with the split sample approach since all the data has been used.</p>
+<p>R code and output</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(cvAUC)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Loading required package: cvAUC</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning in library(package, lib.loc = lib.loc, character.only = TRUE,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="do">## logical.return = TRUE, : there is no package called 'cvAUC'</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="do">## function required to run CV</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>cv_eval <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">V=</span><span class="dv">10</span>){</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  f.cvFolds <span class="ot">&lt;-</span> <span class="cf">function</span>(Y, V){ <span class="co">#Create CV folds (stratify by outcome)</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    Y0 <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">sample</span>(<span class="fu">which</span>(Y<span class="sc">==</span><span class="dv">0</span>)), <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>V, <span class="at">length=</span><span class="fu">length</span>(<span class="fu">which</span>(Y<span class="sc">==</span><span class="dv">0</span>))))</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    Y1 <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">sample</span>(<span class="fu">which</span>(Y<span class="sc">==</span><span class="dv">1</span>)), <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>V, <span class="at">length=</span><span class="fu">length</span>(<span class="fu">which</span>(Y<span class="sc">==</span><span class="dv">1</span>))))</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    folds <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length=</span>V)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (v <span class="cf">in</span> <span class="fu">seq</span>(V)) {folds[[v]] <span class="ot">&lt;-</span> <span class="fu">c</span>(Y0[[v]], Y1[[v]])}</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(folds)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  f.doFit <span class="ot">&lt;-</span> <span class="cf">function</span>(v, folds, data){ <span class="co">#Train/test glm for each fold</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y<span class="sc">~</span>., <span class="at">data=</span>data[<span class="sc">-</span>folds[[v]],], <span class="at">family=</span>binomial)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, <span class="at">newdata=</span>data[folds[[v]],], <span class="at">type=</span><span class="st">"response"</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(pred)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  folds <span class="ot">&lt;-</span> <span class="fu">f.cvFolds</span>(<span class="at">Y=</span>data<span class="sc">$</span>Y, <span class="at">V=</span>V) <span class="co">#Create folds</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  predictions <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">sapply</span>(<span class="fu">seq</span>(V), f.doFit, <span class="at">folds=</span>folds, <span class="at">data=</span>data)) <span class="co">#CV train/predict</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  predictions[<span class="fu">unlist</span>(folds)] <span class="ot">&lt;-</span> predictions <span class="co">#Re-order pred values</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  ci.pooled.cvAUC</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get CV AUC and confidence interval</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">ci.cvAUC</span>(<span class="at">predictions=</span>predictions, <span class="at">labels=</span>data<span class="sc">$</span>Y, <span class="at">folds=</span>folds, <span class="at">confidence=</span><span class="fl">0.95</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(out)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co"># this fonction requires to have a dataset with only the covariates </span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co"># and the endpoint recoded Y as columns, </span><span class="al">NOTE</span><span class="co"> that the outcome (last</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co"># column) is now named Y)</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>wcgs1<span class="ot">=</span>wcgs1[,<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(wcgs1)<span class="ot">=</span><span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"chol"</span>, <span class="st">"sbp"</span>, <span class="st">"bmi"</span>, <span class="st">"smoke"</span>,<span class="st">"Y"</span>)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">&lt;-</span><span class="fu">glm</span>(Y <span class="sc">~</span> age<span class="sc">+</span>chol<span class="sc">+</span>sbp<span class="sc">+</span>bmi<span class="sc">+</span>smoke, <span class="at">family=</span>binomial, <span class="at">data=</span>wcgs1)</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1001</span>)</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cv_eval</span>(<span class="at">data=</span>wcgs1, <span class="at">V=</span><span class="dv">10</span>)</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in cv_eval(data = wcgs1, V = 10): object 'ci.pooled.cvAUC' not found</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>out</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="do">## Call:</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="do">## roc.default(response = wcgs1.val$chd69, predictor = wcgs1.val$pred,     ci = TRUE, plot = TRUE)</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="do">## Data: wcgs1.val$pred in 1415 controls (wcgs1.val$chd69 0) &lt; 130 cases (wcgs1.val$chd69 1).</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="do">## Area under the curve: 0.7127</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="do">## 95% CI: 0.6694-0.756 (DeLong)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>As expected the naive AUC estimate is slightly bigger than its cross-validated counterpart. This illustrates a small optimism bias discussed above. The fact that the difference is small suggests that the model used to predict <em>chd69</em> is not badly overfitted. Once again, the result depends on the seed and may differ (slighytly) across packages. In this instance, we get a cross-validated AUC=0.727, 95% CI=(0.696 ; 0.758) in Stata with the same seed. The code below shows how to do this.</p>
+<p>Stata code and output</p>
+<div class="cell" data-collectcode="true">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clear</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> wcgs.dta</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">drop</span> <span class="kw">if</span> chol&gt;=645 </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>** <span class="fu">missing</span> chol and chol=645 deleted</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 1001</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">xtile</span> <span class="fu">group</span> = uniform(), nq(10)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">quietly</span> <span class="kw">gen</span> cvfitted = .</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="kw">forvalues</span> i = 1/10 {</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    ** Step 2: estimate <span class="kw">model</span> omitting each subset</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">quietly</span> <span class="kw">xi</span>: <span class="kw">logistic</span> chd69 age chol sbp bmi smoke <span class="kw">if</span> <span class="fu">group</span>~=<span class="ot">`i'</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">quietly</span> <span class="kw">predict</span> cvfittedi, pr</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    ** Step 3: <span class="kw">save</span> <span class="kw">cross</span>-validated statistic <span class="kw">for</span> each omitted subset</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">quietly</span> <span class="kw">replace</span> cvfitted = cvfittedi <span class="kw">if</span> <span class="fu">group</span>==<span class="ot">`i'</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">quietly</span> <span class="kw">drop</span> cvfittedi</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>** Step 4: calculate <span class="kw">cross</span>-validated area under ROC curve</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="kw">roctab</span> chd69 cvfitted</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>## (13 observations deleted)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>##                       ROC                     Asymptotic <span class="fu">normal</span>  </span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>##            Obs       area     Std. err.      [95% conf. interval]</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>##      ------------------------------------------------------------</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>##          3,141     0.7270       0.0157        0.69619     0.75779</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>General crossvalidation is not the only technique that can be used to correct for optimism bias, the bootstrap is also a popular method. We do not describe in detail how it can be used in this context but interested readers can look here (optional)</p>
+<p><a href="https://thestatsgeek.com/2014/10/04/adjusting-for-optimismoverfitting-in-measures-of-predictive-ability-using-bootstrapping/">link</a></p>
+<p>So far we have only talked about internal validation, either using the split sample approach or cross-validation. This word ``internal’’ is used because we only use the dataset under investigation. Another form of validation called <em>external validation</em> exists and is generally considered superior. In that case, data from a different source are used to construct the ROC curve (and compute the AUC). This form of validation addresses transportability rather than reproducibility and constitutes a stronger test for prediction models.</p>
+<p>Investigation: \</p>
+<ol type="1">
+<li><p>The <em>infarct</em> data provides information on 200 female patients who experienced MI. The response is <em>mi</em> (0=no,1=yes), <em>age</em> in years, <em>smoke</em> (0=no,1=yes) and <em>oral</em> for oral contraceptive use (0=no,1=yes). You can check that all covariates are important predictors. We will assume that the age effect is rather linear - you can also check that it seems a reasonable assumption for these data. Give the the naive AUC, its 95% CI and draw the ROC curve. Does the model seem to predict well <em>mi</em>?</p></li>
+<li><p>We have used the same data to build and evaluate the model, so the AUC may be affected by optimism bias. Use the split sample validation approach to compute the AUC. Do you think this is a good approach to use here?</p></li>
+<li><p>Build a 10-fold cross-validated AUC and compare with the naive estimate. What do you conclude?</p></li>
+</ol>
+<p>Of course, the concept of crossvalidation illustrated here in logistic regression is general and can be used in linear regression as well using an appropriate measure of prediction error.</p>
+</section>
+<section id="calibration" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="calibration">Calibration</h3>
+<p>This lecture discusses how calibration plots can be obtained and why they are important in risk prediction modelling.</p>
+<p><strong>Lecture 2 in R</strong></p>
+<iframe width="740" height="416" src="https://www.youtube.com/embed/mFZSkriV6Gc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+</iframe>
+<p><a href="https://www.dropbox.com/s/ne7vkek69xilfi7/RM1_week12_lecture2_R.mp4?dl=1">Download video here</a></p>
+<p>Lecture 2 in Stata</p>
+<iframe width="740" height="416" src="https://www.youtube.com/embed/blw8FfWCrts" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+</iframe>
+<p><a href="https://www.dropbox.com/s/ne7vkek69xilfi7/RM1_week12_lecture2_R.mp4?dl=1">Download video here</a></p>
+<p>Evaluation of a model performance does not stop with the computation of an external or cross-validated AUC and the evaluation of the model discriminative ability. A quality prediction model should also provide a good agreement between observed endpoints and predictions over the whole range of predicted values. In the WCGS example, it may well be that the model correctly predicts the outcome for patients with low risk of CHD but is not so accurate for high risk patients. It is important as poorly calibrated risk estimates can lead to false expectations with patients and healthcare professionals. The term <em>calibration</em> is used to describe the agreement between observed endpoints and predictions. A calibration plot, displaying observed vs predicted probabilities with 95% CI, is often used to get a visual impression on how close they are to the 45 degrees line, seen as a proof of good calibration. Calibration plots can also be affected by overfitting and optimism bias so, again, plots based on external data are preferable. If no external data is available the <em>split sample approach</em> can be used. It may be possible to use cross-validation but it is more complicated since you would have to save predicted probabilities evaluared on the 10% of the data left aside, repeat the procedure, for all other 9 different datasets and draw a single calibration plot at the end. To illustrate the concept, we go back to the WCGS example investigated earlier. The following plot is obtained when data are grouped in 10 categories of risk and split as before in training/validation datasets. We could choose more categories but 10 is often the default choice. A larger number of categories is possible for large dataset, we need to keep in mind that the more categories we choose, the wider the confidence intervals.</p>
+<!-- Code hidden  
+
+
+
+::: {.cell}
+
+:::
+
+-->
+<!-- Calibration plot -->
+<p>`</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(rms)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in library(package, lib.loc = lib.loc, character.only = TRUE,
+logical.return = TRUE, : there is no package called 'rms'</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># val.prob(wcgs1.val$pred, wcgs1.val$chd69, m=150, cex=.5) # without CIs</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># calibration function to get the 95% CI</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>val.prob.ci<span class="ot">&lt;-</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(p, y, logit, group, <span class="at">weights =</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(y)), <span class="at">normwt =</span> F, <span class="at">pl =</span> T, </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">smooth =</span> T, <span class="at">logistic.cal =</span> F, <span class="at">xlab =</span> <span class="st">"Predicted probability"</span>, <span class="at">ylab =</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Observed frequency"</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.02</span>, <span class="dv">1</span>),<span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.15</span>,<span class="dv">1</span>), m, g, cuts, <span class="at">emax.lim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">legendloc =</span>  <span class="fu">c</span>(<span class="fl">0.55</span> , <span class="fl">0.27</span>), <span class="at">statloc =</span> <span class="fu">c</span>(<span class="dv">0</span>,.<span class="dv">85</span>),<span class="at">dostats=</span><span class="fu">c</span>(<span class="dv">12</span>,<span class="dv">13</span>,<span class="dv">2</span>,<span class="dv">15</span>,<span class="dv">3</span>),<span class="at">roundstats=</span><span class="dv">2</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">riskdist =</span> <span class="st">"predicted"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>, <span class="at">mkh =</span> <span class="fl">0.02</span>, <span class="at">connect.group =</span> </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>             F, <span class="at">connect.smooth =</span> T, <span class="at">g.group =</span> <span class="dv">4</span>, <span class="at">evaluate =</span> <span class="dv">100</span>, <span class="at">nmin =</span> <span class="dv">0</span>, <span class="at">d0lab=</span><span class="st">"0"</span>, <span class="at">d1lab=</span><span class="st">"1"</span>, <span class="at">cex.d01=</span><span class="fl">0.7</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">dist.label=</span><span class="fl">0.04</span>, <span class="at">line.bins=</span><span class="sc">-</span>.<span class="dv">05</span>, <span class="at">dist.label2=</span>.<span class="dv">03</span>, cutoff, <span class="at">cex.lab=</span><span class="dv">1</span>, <span class="at">las=</span><span class="dv">1</span>, <span class="at">length.seg=</span><span class="dv">1</span>)  {</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">missing</span>(p))</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>      p <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> logit))</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> logit <span class="ot">&lt;-</span> <span class="fu">log</span>(p<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> p))</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(p) <span class="sc">!=</span> <span class="fu">length</span>(y))</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">"lengths of p or logit and y do not agree"</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(p) <span class="ot">&lt;-</span> <span class="fu">names</span>(y) <span class="ot">&lt;-</span> <span class="fu">names</span>(logit) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(group)) {</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">length</span>(group) <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;&amp;</span> <span class="fu">is.logical</span>(group) <span class="sc">&amp;&amp;</span> group)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        group <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="st">""</span>, <span class="fu">length</span>(y))</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.factor</span>(group))</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        group <span class="ot">&lt;-</span> <span class="cf">if</span>(<span class="fu">is.logical</span>(group) <span class="sc">||</span> <span class="fu">is.character</span>(group)) </span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>          <span class="fu">as.factor</span>(group) <span class="cf">else</span> <span class="fu">cut2</span>(group, <span class="at">g =</span> </span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>                                       g.group)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">names</span>(group) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>      nma <span class="ot">&lt;-</span> <span class="sc">!</span>(<span class="fu">is.na</span>(p <span class="sc">+</span> y <span class="sc">+</span> weights) <span class="sc">|</span> <span class="fu">is.na</span>(group))</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>      ng <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">levels</span>(group))</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>      nma <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">is.na</span>(p <span class="sc">+</span> y <span class="sc">+</span> weights)</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>      ng <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    logit <span class="ot">&lt;-</span> logit[nma]</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> y[nma]</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> p[nma]</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(ng <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>      group <span class="ot">&lt;-</span> group[nma]</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>      weights <span class="ot">&lt;-</span> weights[nma]</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">val.probg</span>(p, y, group, evaluate, weights, normwt, nmin)</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(<span class="fu">unique</span>(p)) <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>      <span class="co">#22Sep94</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>      P <span class="ot">&lt;-</span> <span class="fu">mean</span>(y)</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>      Intc <span class="ot">&lt;-</span> <span class="fu">log</span>(P<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> P))</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>      n <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>      D <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span>n</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>      L01 <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span> <span class="fu">sum</span>(y <span class="sc">*</span> logit <span class="sc">-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(logit)), <span class="at">na.rm =</span> T)</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>      L.cal <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span> <span class="fu">sum</span>(y <span class="sc">*</span> Intc <span class="sc">-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(Intc)), <span class="at">na.rm =</span> T)</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>      U.chisq <span class="ot">&lt;-</span> L01 <span class="sc">-</span> L.cal</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>      U.p <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pchisq</span>(U.chisq, <span class="dv">1</span>)</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>      U <span class="ot">&lt;-</span> (U.chisq <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">/</span>n</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>      Q <span class="ot">&lt;-</span> D <span class="sc">-</span> U</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>      stats <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, D, <span class="dv">0</span>, <span class="dv">1</span>, U, U.chisq, U.p, Q, <span class="fu">mean</span>((y <span class="sc">-</span> p[</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span>])<span class="sc">^</span><span class="dv">2</span>), Intc, <span class="dv">0</span>, <span class="fu">rep</span>(<span class="fu">abs</span>(p[<span class="dv">1</span>] <span class="sc">-</span> P), <span class="dv">2</span>))</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>      <span class="fu">names</span>(stats) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Dxy"</span>, <span class="st">"C (ROC)"</span>, <span class="st">"R2"</span>, <span class="st">"D"</span>, <span class="st">"D:Chi-sq"</span>, </span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"D:p"</span>, <span class="st">"U"</span>, <span class="st">"U:Chi-sq"</span>, <span class="st">"U:p"</span>, <span class="st">"Q"</span>, <span class="st">"Brier"</span>, </span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"Intercept"</span>, <span class="st">"Slope"</span>, <span class="st">"Emax"</span>, <span class="st">"Eavg"</span>)</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(stats)</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">is.infinite</span>(logit)</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>    nm <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="sc">!</span>i)</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(nm <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>      <span class="fu">warning</span>(<span class="fu">paste</span>(nm, </span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"observations deleted from logistic calibration due to probs. of 0 or 1"</span></span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>      ))</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>    f <span class="ot">&lt;-</span> <span class="fu">lrm.fit</span>(logit[i], y[i])</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>    f2<span class="ot">&lt;-</span>    <span class="fu">lrm.fit</span>(<span class="at">offset=</span>logit[i], <span class="at">y=</span>y[i])</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>    stats <span class="ot">&lt;-</span> f<span class="sc">$</span>stats</span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>    n <span class="ot">&lt;-</span> stats[<span class="st">"Obs"</span>]</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>    predprob <span class="ot">&lt;-</span> <span class="fu">seq</span>(emax.lim[<span class="dv">1</span>], emax.lim[<span class="dv">2</span>], <span class="at">by =</span> <span class="fl">0.0005</span>)</span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>    lt <span class="ot">&lt;-</span> f<span class="sc">$</span>coef[<span class="dv">1</span>] <span class="sc">+</span> f<span class="sc">$</span>coef[<span class="dv">2</span>] <span class="sc">*</span> <span class="fu">log</span>(predprob<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> predprob))</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>    calp <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> lt))</span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>    emax <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="fu">abs</span>(predprob <span class="sc">-</span> calp))</span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (pl) {</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>      <span class="fu">plot</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="at">xlim =</span> xlim, <span class="at">ylim =</span> ylim, <span class="at">type =</span> <span class="st">"n"</span>, <span class="at">xlab =</span> xlab, </span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>           <span class="at">ylab =</span> ylab, <span class="at">las=</span>las)</span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>      <span class="fu">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>      lt <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>      leg <span class="ot">&lt;-</span> <span class="st">"Ideal"</span></span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>      marks <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (logistic.cal) {</span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a>        lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">1</span>)</span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">c</span>(leg, <span class="st">"Logistic calibration"</span>)</span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>        marks <span class="ot">&lt;-</span> <span class="fu">c</span>(marks, <span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (smooth) {</span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a>        Sm <span class="ot">&lt;-</span> <span class="fu">lowess</span>(p, y, <span class="at">iter =</span> <span class="dv">0</span>)</span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (connect.smooth) {</span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a>          <span class="fu">lines</span>(Sm, <span class="at">lty =</span> <span class="dv">3</span>)</span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>          lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">3</span>)</span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>          marks <span class="ot">&lt;-</span> <span class="fu">c</span>(marks, <span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> {</span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>          <span class="fu">points</span>(Sm)</span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>          lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">0</span>)</span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>          marks <span class="ot">&lt;-</span> <span class="fu">c</span>(marks, <span class="dv">1</span>)</span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">c</span>(leg, <span class="st">"Nonparametric"</span>)</span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>        cal.smooth <span class="ot">&lt;-</span> <span class="fu">approx</span>(Sm, <span class="at">xout =</span> p)<span class="sc">$</span>y</span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a>        eavg <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">abs</span>(p <span class="sc">-</span> cal.smooth))</span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(m) <span class="sc">|</span> <span class="sc">!</span><span class="fu">missing</span>(g) <span class="sc">|</span> <span class="sc">!</span><span class="fu">missing</span>(cuts)) {</span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(m))</span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>          q <span class="ot">&lt;-</span> <span class="fu">cut2</span>(p, <span class="at">m =</span> m, <span class="at">levels.mean =</span> T, <span class="at">digits =</span> <span class="dv">7</span>)</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(g))</span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>          q <span class="ot">&lt;-</span> <span class="fu">cut2</span>(p, <span class="at">g =</span> g, <span class="at">levels.mean =</span> T, <span class="at">digits =</span> <span class="dv">7</span>)</span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(cuts))</span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>          q <span class="ot">&lt;-</span> <span class="fu">cut2</span>(p, <span class="at">cuts =</span> cuts, <span class="at">levels.mean =</span> T, <span class="at">digits =</span> <span class="dv">7</span>)</span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>        means <span class="ot">&lt;-</span> <span class="fu">as.single</span>(<span class="fu">levels</span>(q))</span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>        prop <span class="ot">&lt;-</span> <span class="fu">tapply</span>(y, q, <span class="cf">function</span>(x)<span class="fu">mean</span>(x, <span class="at">na.rm =</span> T))</span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>        <span class="fu">points</span>(means, prop, <span class="at">pch =</span> <span class="dv">2</span>, <span class="at">cex=</span>cex)</span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>        <span class="co">#18.11.02: CI triangles         </span></span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>        ng  <span class="ot">&lt;-</span><span class="fu">tapply</span>(y, q, length)</span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a>        og  <span class="ot">&lt;-</span><span class="fu">tapply</span>(y, q, sum)</span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>        ob  <span class="ot">&lt;-</span>og<span class="sc">/</span>ng</span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>        se.ob   <span class="ot">&lt;-</span><span class="fu">sqrt</span>(ob<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>ob)<span class="sc">/</span>ng)</span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>        g       <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">as.single</span>(<span class="fu">levels</span>(q)))</span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>g) <span class="fu">lines</span>(<span class="fu">c</span>(means[i], means[i]), <span class="fu">c</span>(prop[i],<span class="fu">min</span>(<span class="dv">1</span>,prop[i]<span class="sc">+</span><span class="fl">1.96</span><span class="sc">*</span>se.ob[i])), <span class="at">type=</span><span class="st">"l"</span>)</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>g) <span class="fu">lines</span>(<span class="fu">c</span>(means[i], means[i]), <span class="fu">c</span>(prop[i],<span class="fu">max</span>(<span class="dv">0</span>,prop[i]<span class="sc">-</span><span class="fl">1.96</span><span class="sc">*</span>se.ob[i])), <span class="at">type=</span><span class="st">"l"</span>)</span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(connect.group) {</span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>          <span class="fu">lines</span>(means, prop)</span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>          lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">1</span>)</span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">0</span>)</span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">c</span>(leg, <span class="st">"Grouped patients"</span>)</span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>        marks <span class="ot">&lt;-</span> <span class="fu">c</span>(marks, <span class="dv">2</span>)</span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>    lr <span class="ot">&lt;-</span> stats[<span class="st">"Model L.R."</span>]</span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>    p.lr <span class="ot">&lt;-</span> stats[<span class="st">"P"</span>]</span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>    D <span class="ot">&lt;-</span> (lr <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">/</span>n</span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>    L01 <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span> <span class="fu">sum</span>(y <span class="sc">*</span> logit <span class="sc">-</span> <span class="fu">logb</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(logit)), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>    U.chisq <span class="ot">&lt;-</span> L01 <span class="sc">-</span> f<span class="sc">$</span>deviance[<span class="dv">2</span>]</span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>    p.U <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pchisq</span>(U.chisq, <span class="dv">2</span>)</span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>    U <span class="ot">&lt;-</span> (U.chisq <span class="sc">-</span> <span class="dv">2</span>)<span class="sc">/</span>n</span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">&lt;-</span> D <span class="sc">-</span> U</span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a>    Dxy <span class="ot">&lt;-</span> stats[<span class="st">"Dxy"</span>]</span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>    C <span class="ot">&lt;-</span> stats[<span class="st">"C"</span>]</span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>    R2 <span class="ot">&lt;-</span> stats[<span class="st">"R2"</span>]</span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a>    B <span class="ot">&lt;-</span> <span class="fu">sum</span>((p <span class="sc">-</span> y)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>n</span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ES 15dec08 add Brier scaled</span></span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>    Bmax  <span class="ot">&lt;-</span> <span class="fu">mean</span>(y) <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span><span class="fu">mean</span>(y))<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">-</span><span class="fu">mean</span>(y)) <span class="sc">*</span> <span class="fu">mean</span>(y)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a>    Bscaled <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> B<span class="sc">/</span>Bmax</span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a>    stats <span class="ot">&lt;-</span> <span class="fu">c</span>(Dxy, C, R2, D, lr, p.lr, U, U.chisq, p.U, Q, B, </span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a>               f2<span class="sc">$</span>coef[<span class="dv">1</span>], f<span class="sc">$</span>coef[<span class="dv">2</span>], emax, Bscaled)</span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(stats) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Dxy"</span>, <span class="st">"C (ROC)"</span>, <span class="st">"R2"</span>, <span class="st">"D"</span>, <span class="st">"D:Chi-sq"</span>, </span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"D:p"</span>, <span class="st">"U"</span>, <span class="st">"U:Chi-sq"</span>, <span class="st">"U:p"</span>, <span class="st">"Q"</span>, <span class="st">"Brier"</span>, <span class="st">"Intercept"</span>, </span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Slope"</span>, <span class="st">"Emax"</span>, <span class="st">"Brier scaled"</span>)</span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(smooth)</span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a>      stats <span class="ot">&lt;-</span> <span class="fu">c</span>(stats, <span class="fu">c</span>(<span class="at">Eavg =</span> eavg))</span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Cut off definition    </span></span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(cutoff)) {</span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a>      <span class="fu">arrows</span>(<span class="at">x0=</span>cutoff,<span class="at">y0=</span>.<span class="dv">1</span>,<span class="at">x1=</span>cutoff,<span class="at">y1=</span><span class="sc">-</span><span class="fl">0.025</span>,<span class="at">length=</span>.<span class="dv">15</span>)</span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>    }   </span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(pl) {</span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a>      logit <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">7</span>, <span class="dv">7</span>, <span class="at">length =</span> <span class="dv">200</span>)</span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a>      prob <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> logit))</span>
+<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a>      pred.prob <span class="ot">&lt;-</span> f<span class="sc">$</span>coef[<span class="dv">1</span>] <span class="sc">+</span> f<span class="sc">$</span>coef[<span class="dv">2</span>] <span class="sc">*</span> logit</span>
+<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a>      pred.prob <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> pred.prob))</span>
+<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(logistic.cal) <span class="fu">lines</span>(prob, pred.prob, <span class="at">lty =</span> <span class="dv">1</span>)  </span>
+<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a>      <span class="co"># pc &lt;- rep(" ", length(lt))</span></span>
+<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a>      <span class="co"># pc[lt==0] &lt;- "."</span></span>
+<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a>      lp <span class="ot">&lt;-</span> legendloc</span>
+<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.logical</span>(lp)) {</span>
+<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.list</span>(lp)) </span>
+<span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a>          lp <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">x =</span> lp[<span class="dv">1</span>], <span class="at">y =</span> lp[<span class="dv">2</span>])</span>
+<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a>        <span class="fu">legend</span>(lp, leg, <span class="at">lty =</span> lt, <span class="at">pch =</span> marks, <span class="at">cex =</span> cex, <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.logical</span>(statloc)) {</span>
+<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a>        dostats <span class="ot">&lt;-</span> dostats</span>
+<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">format</span>(<span class="fu">names</span>(stats)[dostats])    <span class="co">#constant length</span></span>
+<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">paste</span>(leg, <span class="st">":"</span>, <span class="fu">format</span>(stats[dostats], <span class="at">digits=</span>roundstats), <span class="at">sep =</span> </span>
+<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a>                       <span class="st">""</span>)</span>
+<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.list</span>(statloc))</span>
+<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a>          statloc <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">x =</span> statloc[<span class="dv">1</span>], <span class="at">y =</span> statloc[<span class="dv">2</span>])</span>
+<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text</span>(statloc, <span class="fu">paste</span>(<span class="fu">format</span>(<span class="fu">names</span>(stats[dostats])), </span>
+<span id="cb8-182"><a href="#cb8-182" aria-hidden="true" tabindex="-1"></a>                            <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>), <span class="at">adj =</span> <span class="dv">0</span>, <span class="at">cex =</span> cex)</span>
+<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text</span>(statloc<span class="sc">$</span>x <span class="sc">+</span> (xlim[<span class="dv">2</span>]<span class="sc">-</span>xlim[<span class="dv">1</span>])<span class="sc">/</span><span class="dv">3</span> , statloc<span class="sc">$</span>y, <span class="fu">paste</span>(</span>
+<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a>          <span class="fu">format</span>(<span class="fu">round</span>(stats[dostats], <span class="at">digits=</span>roundstats)), <span class="at">collapse =</span> </span>
+<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a>            <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>), <span class="at">adj =</span> <span class="dv">1</span>, <span class="at">cex =</span> cex)  </span>
+<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">is.character</span>(riskdist)) {</span>
+<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(riskdist <span class="sc">==</span> <span class="st">"calibrated"</span>) {</span>
+<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a>          x <span class="ot">&lt;-</span> f<span class="sc">$</span>coef[<span class="dv">1</span>] <span class="sc">+</span> f<span class="sc">$</span>coef[<span class="dv">2</span>] <span class="sc">*</span> <span class="fu">log</span>(p<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> p))</span>
+<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a>          x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> x))</span>
+<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a>          x[p <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a>          x[p <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> x <span class="ot">&lt;-</span> p</span>
+<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a>        bins <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">min</span>(<span class="dv">1</span>,<span class="fu">max</span>(xlim)), <span class="at">length =</span> <span class="dv">101</span>) </span>
+<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a>        x <span class="ot">&lt;-</span> x[x <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> x <span class="sc">&lt;=</span> <span class="dv">1</span>]</span>
+<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a>        <span class="co">#08.04.01,yvon: distribution of predicted prob according to outcome</span></span>
+<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a>        f0  <span class="ot">&lt;-</span><span class="fu">table</span>(<span class="fu">cut</span>(x[y<span class="sc">==</span><span class="dv">0</span>],bins))</span>
+<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a>        f1  <span class="ot">&lt;-</span><span class="fu">table</span>(<span class="fu">cut</span>(x[y<span class="sc">==</span><span class="dv">1</span>],bins))</span>
+<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a>        j0  <span class="ot">&lt;-</span>f0 <span class="sc">&gt;</span> <span class="dv">0</span></span>
+<span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a>        j1  <span class="ot">&lt;-</span>f1 <span class="sc">&gt;</span> <span class="dv">0</span></span>
+<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a>        bins0 <span class="ot">&lt;-</span>(bins[<span class="sc">-</span><span class="dv">101</span>])[j0]</span>
+<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a>        bins1 <span class="ot">&lt;-</span>(bins[<span class="sc">-</span><span class="dv">101</span>])[j1]</span>
+<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a>        f0  <span class="ot">&lt;-</span>f0[j0]</span>
+<span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a>        f1  <span class="ot">&lt;-</span>f1[j1]</span>
+<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a>        maxf <span class="ot">&lt;-</span><span class="fu">max</span>(f0,f1)</span>
+<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a>        f0  <span class="ot">&lt;-</span>(<span class="fl">0.1</span><span class="sc">*</span>f0)<span class="sc">/</span>maxf</span>
+<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a>        f1  <span class="ot">&lt;-</span>(<span class="fl">0.1</span><span class="sc">*</span>f1)<span class="sc">/</span>maxf</span>
+<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a>        <span class="fu">segments</span>(bins1,line.bins,bins1,length.seg<span class="sc">*</span>f1<span class="sc">+</span>line.bins)</span>
+<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a>        <span class="fu">segments</span>(bins0,line.bins,bins0,length.seg<span class="sc">*-</span>f0<span class="sc">+</span>line.bins)</span>
+<span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lines</span>(<span class="fu">c</span>(<span class="fu">min</span>(bins0,bins1)<span class="sc">-</span><span class="fl">0.01</span>,<span class="fu">max</span>(bins0,bins1)<span class="sc">+</span><span class="fl">0.01</span>),<span class="fu">c</span>(line.bins,line.bins))</span>
+<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text</span>(<span class="fu">max</span>(bins0,bins1)<span class="sc">+</span>dist.label,line.bins<span class="sc">+</span>dist.label2,d1lab,<span class="at">cex=</span>cex.d01)</span>
+<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text</span>(<span class="fu">max</span>(bins0,bins1)<span class="sc">+</span>dist.label,line.bins<span class="sc">-</span>dist.label2,d0lab,<span class="at">cex=</span>cex.d01)</span>
+<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb8-215"><a href="#cb8-215" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-216"><a href="#cb8-216" aria-hidden="true" tabindex="-1"></a>    stats</span>
+<span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-219"><a href="#cb8-219" aria-hidden="true" tabindex="-1"></a><span class="co"># calibration plot - with 95% CIs - using the validation dataset</span></span>
+<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a><span class="fu">val.prob.ci</span>(wcgs1.val<span class="sc">$</span>pred,wcgs1.val<span class="sc">$</span>chd69, <span class="at">pl=</span>T,<span class="at">smooth=</span>T,<span class="at">logistic.cal=</span>F,</span>
+<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a>            <span class="at">g=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-error">
+<pre><code>Error in lrm.fit(logit[i], y[i]): could not find function "lrm.fit"</code></pre>
+</div>
+</div>
+<p>Stata code (figures will be displayed when running the code)</p>
+<div class="cell" data-collectcode="true">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> wcgs.dta</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">drop</span> <span class="kw">if</span> chol &gt; 645 </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 1001</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> val = runiform()&lt;.5 </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">logistic</span> chd69 age chol sbp bmi smoke <span class="kw">if</span> val==0</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="kw">predict</span> proba, pr</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>** Use pmcalplot to produce a calibration plot <span class="kw">of</span> the apparent performance <span class="kw">of</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>** the <span class="kw">model</span> <span class="kw">in</span> the Training dataset</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>pmcalplot proba chd69 <span class="kw">if</span> val==0, <span class="kw">ci</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>** Now produce the calibration plot <span class="kw">for</span> the models performance <span class="kw">in</span> the</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>** validation dataset = the one we need</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>pmcalplot proba chd69 <span class="kw">if</span> val==1, <span class="kw">ci</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>** highest category poorly <span class="kw">fitted</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>** Now produce the calibration plot <span class="kw">for</span> the models performance <span class="kw">in</span> the</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>** validation cohort <span class="kw">using</span> risk thresholds <span class="kw">of</span> &lt;5%, 5-15%, 15-20% and &gt;20%.</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>** This is useful <span class="kw">if</span> the <span class="kw">model</span> has been proposed <span class="kw">for</span> decision making <span class="fu">at</span> these</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>** thresholds.  Use the <span class="kw">keep</span> option to <span class="fu">return</span> the groupings to your dataset</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>pmcalplot proba chd69 <span class="kw">if</span> val==1, <span class="fu">cut</span>(.05 0.10 .15 .20) <span class="kw">ci</span> <span class="kw">keep</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>## (12 observations deleted)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>## Logistic regression                                     Number <span class="kw">of</span> <span class="kw">obs</span> =  1,579</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>##                                                         LR <span class="fu">chi2</span>(5)    = 100.20</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>##                                                         Prob &gt; <span class="fu">chi2</span>   = 0.0000</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>## Log likelihood = -413.32347                             Pseudo R2     = 0.1081</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>##        chd69 | Odds <span class="kw">ratio</span>   Std. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>##          age |   1.065177   .0175377     3.83   0.000     1.031353    1.100111</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>##         chol |   1.012124   .0020439     5.97   0.000     1.008126    1.016138</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>##          sbp |   1.019312   .0064403     3.03   0.002     1.006767    1.032014</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>##          bmi |   1.047462   .0397636     1.22   0.222     .9723557     1.12837</span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>##        smoke |   2.443136   .4891536     4.46   0.000     1.650152     3.61719</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |   4.26e-06   5.96e-06    -8.83   0.000     2.74e-07    .0000663</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>## Note: <span class="dt">_cons</span> <span class="kw">estimates</span> baseline odds.</span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>## command pmcalplot is unrecognized</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(199);</span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(199);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The plot is reasonably close to the 45-degree line up to the highest risk category where the CHD risk tends to be overestimated but the 95% CI may just touch the 45-degree line. This plot is an internal calibration plot since only one dataset was used. We would proceed in a similar way for external calibration, were new data available, the difference being that we would use the whole WGSC dataset to fit the model and the new data to build the calibration plot. Constructing calibration plots is part of the validation process in general.</p>
+<p>Now the next logical question is: what do we do if the calibration plot is poor? This can occur, particularly when external calibration is conducted. This can be due to the baseline risk being higher in the new sample or the two populations. This is a difficult problem to solve for which there is no unique fix. Options include: 1) recalibrate the intercept or <em>recalibration in the large</em>; 2) recalibrate the intercept and the slopes; 3) change the model to get a better plot. More details are given in the Steyerberg and Vergouwe paper given as a reading that we encourage you to read carefully.\</p>
+<p>Optional reading: Those of you who want to know more can read the paper by Van Calster et al.&nbsp;(2020), Calibration: the Achilles heel of predictive analytics, BMC Medicine.\</p>
+<p>The title of this reading says it all; the paper talks about issues related to this complex problem. We mentioned this a a supplement but the examples and plots they give are particularly illustrative. The Appendix gives the fitted models but, unfortunately, they don’t give the R code.</p>
+</section>
+<section id="practice" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="practice">Practice</h3>
+<ol type="1">
+<li><p>We are still using the WCGS data. In week 10, we came up with a more complex model for <em>chd69</em> after deletion of the outlier (chol=645) - see Table 5.18 in Vittinghof et al.&nbsp;(2012). Use this model to build a calibration plot based on the split sample approach. Provide an interpretation. We use the split sample approachthe on the data at hand because we don’t have external data (which would typically be the way to go for calibration).</p></li>
+<li><p>Has the calibration plot improved compared with the simpler model? Keep the same seed here for a fair comparison.</p></li>
+<li><p>Repeat the procedure with 20 groups using more patients in the development/training dataset (2/3 is also used as indicated in Vittinghof et al.&nbsp;(2012) p.&nbsp;399).</p></li>
+</ol>
+</section>
+</section>
+<section id="recap-on-building-an-model-focusing-on-explanationinterpretation" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="recap-on-building-an-model-focusing-on-explanationinterpretation">Recap on building an model focusing on explanation/interpretation</h2>
+<p>We can distinguish the two cases when it comes to building a model focusing on interpretation: 1) evaluating a predictor of primary interest; 2) identifying important predictors. Generally speaking, recommendations developed in week 8 apply but, as discussed in the preamble, there is not absolute consensus on the best way to build a model. A few points are worth adding. You may also want to read the beginning of Chapter 10 (pp.&nbsp;395-402) of Vittinghof et al.&nbsp;(2012). Regarding 1), when the study is a randomised clinical trial and therefore the focus is on assessing the effect of treatment, it’s uncommon to adjust for baseline because the binary outcome is not often measured at baseline. The issue of what we should adjust for in a randomised clinical trial is controversial and our view is that you should adjust for a small number of predetermined factors listed in a statistical analysis plan. The adjusted OR is technically not the same once have adjusted for covariates. It’s more a conditional than a marginal OR but in most cases the difference is tiny. In case of a non-randomised comparison between two groups, adjustment or more sophisticated methods (e.g.&nbsp;propensity score) are preferable. Regarding 2), model building is complex and we do not generally recommend automated model selection techniques including the backward selection procedure that has the favour of Vittinghof et al.&nbsp;(2012). We nevertheless agree that it’s preferable to forward selection. In a long commentary paper published in 2020 on the <em>State of the art in selection of variables and functional forms in multivariable analysis</em>, the STRATOS group concluded:</p>
+<p><em>Our overview revealed that there is not yet enough evidence on which to base recommendations for the selection of variables and functional forms in multivariable analysis. Such evidence may come from comparisons between alternative methods</em>.</p>
+<p>They also listed seven important topics for the direction of further research. Given that this group includes eminent statisticians (whose names should be familiar to you by now since many readings in this course were written by the same researchers), we will not go further and let you make your own decisions. Elements of this commentary could be useful to you but it might be better to read such an article after having completed RM1 and RM2.</p>
+</section>
+<section id="summary_wk12" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="summary_wk12">Summary</h2>
+<p>The following are the key takeaway messages from this week:</p>
+<div id="box1" class="green-box">
+<ol type="1">
+<li><p>There is a fundamental difference between models built to predict and models used to explain</p></li>
+<li><p>Evaluation of the performance of a (risk) prediction model requires several steps including the assessment of its discriminative ability and calibration.</p></li>
+<li><p>Optimism bias exists but can be removed using appropriate techniques (e.g.&nbsp;crossvalidation or bootstrap).</p></li>
+<li><p>External validation is superior to internal validation but is not always possible.</p></li>
+<li><p>Calibration plots assess whether the prediction model predicts well over the whole range of predicted values.</p></li>
+<li><p>The general ideas developed for linear models built with interpretation as the main focus extend to binary logistic regression</p></li>
+</ol>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./011-logistic_regression_splines_validation.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

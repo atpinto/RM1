@@ -1,0 +1,502 @@
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+# Binary Covariates, Outliers, and Influential Observations {#binary_outliers}
+
+## Learning objectives {#learn_obj_wk03 .unnumbered}
+
+By the end of this week you should be able to:
+
+1.  Formulate, carry out and interpret a simple linear regression with a binary independent variable
+
+2.  Check for outliers and influential observations using measures and diagnostic plots
+
+3.  Understand the key principals of methods to deal with outliers and influential observations
+
+## Learning activities {#learn_act_wk03 .unnumbered}
+
+This week's learning activities include:
+
+| Learning Activity | Learning objectives |
+|-------------------|---------------------|
+| Video 1           | 1                   |
+| Notes&Readings    | 2, 3                |
+
+## Binary covariates {.unnumbered}
+
+So far we have limited our analysis to continuous independent variables (e.g. age). This week we are going to explore the situation where the independent variable (the $x$ variable) is binary.
+
+<iframe width="740" height="416" src="https://www.youtube.com/embed/BENjkcPL5uo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
+
+</iframe>
+
+## Outliers and influential observations {.unnumbered}
+
+An outlier is a point with a large residual. Sometimes an outlier can have a large impact on the estimates of the regression parameter. If you move some of the points in the scatter so they become outliers (far from other points), you can see this will affect the estimated regression line. However, not all outliers are the same. Try moving up and down one of the points at the beginning or the end of the X scale. The impact in the regression line is much stronger than if you do the same with a point in the mid range of X.
+
+```{=html}
+<script> window.onload=(function(){
+var n = 29;
+
+var points = [{
+     x: 39*9,
+     y: 144*2
+}, {
+     x: 45*9,
+     y: 138*2
+}, {
+     x: 47*9,
+     y: 145*2
+}, {
+     x: 65*9,
+     y: 162*2
+}, {
+     x: 46*9,
+     y: 142*2
+}, {
+     x: 67*9,
+     y: 170*2
+}, {
+     x: 42*9,
+     y: 124*2
+}, {
+     x: 67*9,
+     y: 158*2
+}, {
+     x: 56*9,
+     y: 154*2
+}, {
+     x: 64*9,
+     y: 162*2
+}, {
+     x: 56*9,
+     y: 150*2
+}, {
+     x: 59*9,
+     y: 140*2
+}, {
+     x: 34*9,
+     y: 110*2
+}, {
+     x: 42*9,
+     y: 128*2
+}, {
+     x: 48*9,
+     y: 130*2
+}, {
+     x: 45*9,
+     y: 135*2
+}, {
+     x: 17*9,
+     y: 114*2
+}, {
+     x: 20*9,
+     y: 116*2
+}, {
+     x: 19*9,
+     y: 124*2
+}, {
+     x: 36*9,
+     y: 136*2
+}, {
+     x: 50*9,
+     y: 142*2
+}, {
+     x: 39*9,
+     y:120*2
+}, {
+     x: 21*9,
+     y:120*2
+}, {
+     x: 44*9,
+     y:160*2
+}, {
+     x: 53*9,
+     y:158*2
+}, {
+     x: 63*9,
+     y:144*2
+}, {
+     x: 29*9,
+     y:130*2
+}, {
+     x: 25*9,
+     y:125*2
+}, {
+     x: 69*9,
+     y:175*2
+}]    
+    
+    
+
+var drag_point = -1;
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+//ctx.setTransform(1,0,0,-1,200,250); //INVERT THE SCALE
+
+canvas.onmousedown = function(e) {
+  var pos = getPosition(e);
+  drag_point = getPointAt(pos.x, pos.y);
+  if (drag_point == -1) {
+    points.push(pos);
+    n=n+1;
+    redraw();
+   //ctx.fillText(pos.x, pos.x, pos.y);
+
+  }
+};
+
+canvas.onmousemove = function(e) {
+  if (drag_point != -1) {
+    var pos = getPosition(e);
+    points[drag_point].x = pos.x;
+    points[drag_point].y = pos.y;
+    redraw(); 
+  }
+};
+
+canvas.onmouseup = function(e) {
+  drag_point = -1;
+};
+
+function getPosition(event) {
+  var rect = canvas.getBoundingClientRect();
+  var x = event.clientX - rect.left;
+  var y = event.clientY - rect.top;
+  return {x, y};
+}
+
+
+function getPointAt(x, y) {
+  for (var i = 0; i < points.length; i++) {
+    if (
+      Math.abs(points[i].x - x) < pointSize &&
+      Math.abs(points[i].y - y) < pointSize
+    )
+      return i;
+  }
+  return -1; 
+}
+
+function redraw() {
+  if (points.length > 0) {
+    ctx.clearRect(0, 0, 800, 400);
+    drawRegLine();
+    drawPoints();
+
+  }
+}
+
+function drawLines() {
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  ctx.strokeStyle = "blue";
+  ctx.lineWidth = 2;
+  points.forEach((p) => {
+    ctx.lineTo(p.x, p.y);
+  })
+  ctx.stroke();
+}
+
+function drawRegLine(){
+        var lr = {};
+        var sum_x = 0;
+        var sum_y = 0;
+        var sum_xy = 0;
+        var sum_xx = 0;
+        var sum_yy = 0;
+   
+
+        for (var i = 0; i < n; i++) {
+
+            sum_x += points[i].x;
+            sum_y += points[i].y;
+            sum_xy += (points[i].x*points[i].y);
+            sum_xx += (points[i].x*points[i].x);
+            sum_yy += (points[i].y*points[i].y);
+        } 
+
+        lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x);
+        lr['intercept'] = (sum_y - lr.slope * sum_x)/n;
+        lr['r2'] = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
+
+        var IntEquation = 400-lr.intercept;
+        var SlEquation = -100*lr.slope;
+
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'red';
+        ctx.beginPath();
+        ctx.moveTo(0, lr.intercept);
+        ctx.lineTo(800, lr.intercept + lr.slope*800);
+        ctx.stroke();
+        ctx.font = "bold 24px arial";
+        var sign = " + ";
+        if (SlEquation<0) {
+          sign = " ";
+        }
+      
+        ctx.fillText("Fitted line", 350, 60);
+        ctx.fillText("y = " + IntEquation.toFixed(1) + sign + SlEquation.toFixed(1) + "x", 350, 80);
+
+
+     return lr;
+}
+  
+
+function drawPoints() {
+  ctx.strokeStyle = "blue";
+  ctx.lineWidth = 10;
+  pointSize = 5;
+  points.forEach((p) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, pointSize, 0, Math.PI * 2, true);
+    ctx.stroke();
+  })
+}
+
+redraw()
+
+}); 
+</script>
+```
+<canvas id="canvas" width="640" height="400">
+
+</canvas>
+
+Conversely, a data point may not have a large residual but still have an important influence in the estimated regression line. Below, you can see that the data point in the left does not appear to have a large residual but it strongly affects the regression line.
+
+![](images/image-1341453037.png){fig-align="center" width="300"}
+
+There are several statistics to measure and explore outliers and influential points. We will discuss some here:
+
+**Leverage**: measure of how far away each value of the independent variable is from the others. Data points with high-leverage points, if any, are outliers with respect to the independent variables. The leverage is given by $\frac{1}{n} + \frac{(x_i-\bar{x})^2}{\sum{(x_i - \bar{x})^2}}$ and varies between 0 and 1.
+
+Consider the simple example below with 10 simulated data points. The 10th value for X was chosen to be far from the others.
+
+**R code**
+
+```{r, collapse = TRUE, include=TRUE}
+set.seed(1011)
+x<-rnorm(9)               #random 9 values
+x[10]<-5                  #value far from the others
+y<-rnorm(10,0.5+2*x,1)   #generate y
+
+#plot the data
+lmodel<-lm(y~x)           #fit the model
+plot(x,y)                 #plot the data
+abline(line(x,y))        # add the regression line
+```
+
+**Stata code**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+set seed 1011
+set obs 10
+
+generate x = rnormal()
+replace x = 5 in 10
+generate y = rnormal(0.5+2*x,1)
+
+graph twoway (lfit y x) (scatter y x)
+regress y x      
+```
+
+If we compute the leverage of each point, it is not surprising that x=5 has a high leverage.
+
+**R code**
+
+```{r, collapse = TRUE, include=TRUE}
+influence(lmodel)$hat     #leverage
+1/10 + (x-mean(x))^2/(var(x)*9)  #leverage manually computed 
+```
+
+**Stata code**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+set seed 1011
+*generate the data
+  set obs 10
+  generate x = rnormal()
+  replace x = 5 in 10
+  generate y = rnormal(0.5+2*x,1)
+
+  regress y x
+
+*leverage
+  predict lev, leverage
+*leverage computed manually
+  gen lev_manual =1/10 + (x- .9228745)^2/( 1.563043^2 *9)
+
+  list
+```
+
+**DFBETA**: We can also compute how the coefficients change if each observation is removed from the data. This will produce a vector for $\beta_0$ and $\beta_1$ corresponding to $n$ regressions fitted by deleting each observation at a time. The difference betweeen the full data estimates and the estimates by removing each data point is called *DFBETA*. In the example of the small simulated dataset set above, the dfbeta can also be obtained from the `influence()` function in r.
+
+**R code**
+
+```{r, ccollapse = TRUE, include=TRUE}
+influence(lmodel)$coefficients     #DFBETA
+#dfbeta(lmodel)                    #does the same thing
+
+#computing the DFBETA manually for the 10th observation
+coef(lm(y~x)) - coef(lm(y[-10]~x[-10]))
+```
+
+**Stata code**
+
+```{r, ccollapse = TRUE, include=TRUE}
+*I am not aware of a function in Stata to compute 
+*the unstandardised version of DFBETA
+*See below the code for the standardised DFBETA
+```
+
+Note that the *DFBETA* above are computed in the original scale of the data. Thus, the magnitude of the difference is dependent on this scale. An alternative is to standardise the *DFBETA* using the standard errors. This will give as deviance from the original estimate in standard errors. A common cut-off for a very strong influence in the results is the value $2$.
+
+```{r, ccollapse = TRUE, include=TRUE}
+ #computes the standardised dfbeta. 
+#note that there is also a 
+#dfbeta() function that computes the non-stantandardised dfbeta
+dfbetas(lmodel)                   
+```
+
+**Stata code**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+set seed 1011
+*generate the data
+  set obs 10
+  generate x = rnormal()
+  replace x = 5 in 10
+  generate y = rnormal(0.5+2*x,1)
+  
+  regress y x
+
+  dfbeta
+  list 
+
+```
+
+In the example above, the 10th observation seems to haves reasonable impact in the estimates.
+
+**Cook's distance** - This is another measure of influence that combines the leverage of the data point and its residual. It summarizes how much all the values in the regression model change when each observation is removed. It is computed as
+
+$D_j = \frac{\sum(\hat Y_i-\hat Y_{(-j)})^2}{2\sigma^2}$
+
+A general rule of thumb is that a point with a Cook's Distance above $4/n$ is considered to be an outlier.
+
+**R code**
+
+```{r, ccollapse = TRUE, include=TRUE}
+#the column cook.d is the Cook's distance
+#note that this function also computes some of the measures discussed above
+influence.measures(lmodel)                   
+```
+
+**Stata code**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+set seed 1011
+*generate the data
+  set obs 10
+  generate x = rnormal()
+  replace x = 5 in 10
+  generate y = rnormal(0.5+2*x,1)
+  
+  regress y x
+
+  predict cook_d, cook
+  list 
+
+```
+
+With the example using the simulated sample with 10 observations, the rule of thumb would be $4/10$. Again, the 10th observation is above this threshold and would requires some consideration.
+
+**Plots:** The above mesaures are commonly represented in a graphical way. There are many variations of these plots. Below are some examples of these plots but many other plots are available in different packages.
+
+**R code**
+
+```{r, ccollapse = TRUE, include=TRUE}
+#leverage vs residuals
+#A data point with high leverage and high residual may be problematic
+plot(lmodel,5)                   
+
+#Cook's distance
+plot(lmodel,4)                   
+
+#Leverage vs Cook's distance 
+plot(lmodel,6)                   
+```
+
+**Stata code**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+set seed 1011
+*generate the data
+  set obs 10
+  generate x = rnormal()
+  replace x = 5 in 10
+  generate y = rnormal(0.5+2*x,1)
+  
+  regress y x
+
+  lvr2plot
+
+```
+
+![](images/image-1783609938.png){width="400"}
+
+###Book Chapter 4. Outlying, High Leverage, and Influential Poitns 4.7.4 (pages 124-128).
+
+This reading supplements the notes above with emphasis in the DFBETA plots. Note that this subchapter appears in the book after the extension of simple linear regression to the use of multiple independent variables (covariates) in the regression model, which we did not yet cover. However, there are only a few references to the multiple linear regression case.
+
+## Exercises: {.unnumbered}
+
+The dataset [lowbwt.csv](https://www.dropbox.com/s/r06u1l1cjrvcpl1/lowbwt.csv?dl=1) was part of a study aiming to identify risk factors associated with giving birth to a low birth weight baby (weighing less than 2500 grams).
+
+1 - Fit a linear model for the variable *bwt* (birth weight) using the covariate *age* (mother's age), evaluate the assumptions and interpret the results.
+
+```{r, include=F, eval=F}
+lowbwt <- read.csv("https://www.dropbox.com/s/r06u1l1cjrvcpl1/lowbwt.csv?dl=1")   
+lm1 <- lm(bwt~age, data=lowbwt)
+```
+
+2 - Evaluate potential outliers and influential observations. How would the results change if you excluded this/these observation(s)?
+
+```{r, include=F, eval=F}
+plot(lm1, 4)
+plot(lm1, 5)
+plot(lm1, 6)
+inf <- influence.measures(lm1)
+boxplot(inf$infmat[,1],inf$infmat[,2])
+
+```
+
+## Summary {.unnumbered}
+
+This weeks key concepts are:
+
+::: {#box1 .green-box}
+1.  The key concepts around binary variables will be added here after you have had a chance to finish your independent investigation.
+
+2.  Outliers are observations with a very large absolute residual value. That is, we normally refer to outliers as observations with extreme values in the outcome variable $Y$. Outliers in the covariate $x$ are observations with high *leverage*. The precise formula for leverage is less important than understanding how high leverage observations can impact your regression.
+
+3.  A residual versus leverage plot is a very useful diagnostic to see which observations may be highly influential
+
+    -   Observations that are outliers (in the outcome) and that have low leverage, may influence the intercept of your regression model
+
+    -   Observations that are not outliers, but have high leverage might artificially inflate the precision of your regression model
+
+    -   Observations that are outliers AND have high leverage may influence the intercept and slope of your regression model
+
+4.  When potentially highly influential observations are detected, a sensitivity analysis where the results are compared with and without those observations is a useful tool for measuring influence.
+:::

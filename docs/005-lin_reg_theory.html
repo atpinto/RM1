@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Regression Modelling for Biostatistics 1 - 5&nbsp; Multiple linear regression theory</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./006-interaction_collinearity.html" rel="next">
+<link href="./004-multiple_linear_regression_application.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./005-lin_reg_theory.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Multiple linear regression theory</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./images/bca.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Regression Modelling for Biostatistics 1</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-simple_linear_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Simple Linear Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-checking_assumptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Checking Assumptions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-binary_covariates_and_outliers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Binary Covariates, Outliers, and Influential Observations</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-multiple_linear_regression_application.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Multiple Linear Regression - Application</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-lin_reg_theory.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Multiple linear regression theory</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-interaction_collinearity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Interaction and Collinearity</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-lin_reg_splines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Violations of assumptions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-model_building.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regression model building and variable selection</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-logistic_regression_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-logistic_regression_conf_inter.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-logistic_regression_splines_validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-logistic_regression_model_building.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">model building for binary outcomes</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learn_obj_wk05" id="toc-learn_obj_wk05" class="nav-link active" data-scroll-target="#learn_obj_wk05">Learning objectives</a></li>
+  <li><a href="#learn_act_wk05" id="toc-learn_act_wk05" class="nav-link" data-scroll-target="#learn_act_wk05">Learning activities</a></li>
+  <li><a href="#matrix-algebra-for-simple-linear-regression" id="toc-matrix-algebra-for-simple-linear-regression" class="nav-link" data-scroll-target="#matrix-algebra-for-simple-linear-regression">Matrix algebra for simple linear regression</a></li>
+  <li><a href="#notational-convention" id="toc-notational-convention" class="nav-link" data-scroll-target="#notational-convention">Notational convention</a>
+  <ul class="collapse">
+  <li><a href="#exercise-1" id="toc-exercise-1" class="nav-link" data-scroll-target="#exercise-1">Exercise 1</a></li>
+  </ul></li>
+  <li><a href="#least-squares-estimates-for-multiple-linear-regression" id="toc-least-squares-estimates-for-multiple-linear-regression" class="nav-link" data-scroll-target="#least-squares-estimates-for-multiple-linear-regression">Least squares estimates for multiple linear regression</a>
+  <ul class="collapse">
+  <li><a href="#exercise-2-adjusted-regression-of-glucose-on-exercise-in-non-diabetes-patients-table-4.2-in-vittinghof-et-al.-2012" id="toc-exercise-2-adjusted-regression-of-glucose-on-exercise-in-non-diabetes-patients-table-4.2-in-vittinghof-et-al.-2012" class="nav-link" data-scroll-target="#exercise-2-adjusted-regression-of-glucose-on-exercise-in-non-diabetes-patients-table-4.2-in-vittinghof-et-al.-2012">Exercise 2: Adjusted regression of glucose on exercise in non-diabetes patients, Table 4.2 in Vittinghof et al.&nbsp;(2012)</a></li>
+  </ul></li>
+  <li><a href="#predicted-values-and-residuals" id="toc-predicted-values-and-residuals" class="nav-link" data-scroll-target="#predicted-values-and-residuals">Predicted values and residuals</a></li>
+  <li><a href="#geometric-interpretation" id="toc-geometric-interpretation" class="nav-link" data-scroll-target="#geometric-interpretation">Geometric interpretation</a></li>
+  <li><a href="#standard-inference-in-multiple-linear-regression" id="toc-standard-inference-in-multiple-linear-regression" class="nav-link" data-scroll-target="#standard-inference-in-multiple-linear-regression">Standard inference in multiple linear regression</a></li>
+  <li><a href="#the-analysis-of-variance-for-multiple-linear-regression-sst-decomp" id="toc-the-analysis-of-variance-for-multiple-linear-regression-sst-decomp" class="nav-link" data-scroll-target="#the-analysis-of-variance-for-multiple-linear-regression-sst-decomp">The analysis of variance for multiple linear regression (SST decomp)</a></li>
+  <li><a href="#prediction-in-multiple-regression-95-ci-95-prediction-interval" id="toc-prediction-in-multiple-regression-95-ci-95-prediction-interval" class="nav-link" data-scroll-target="#prediction-in-multiple-regression-95-ci-95-prediction-interval">Prediction in multiple regression (95% CI + 95% prediction interval)</a>
+  <ul class="collapse">
+  <li><a href="#exercise-3-95-ci-for-glucose-in-non-diabetes-patients---optional" id="toc-exercise-3-95-ci-for-glucose-in-non-diabetes-patients---optional" class="nav-link" data-scroll-target="#exercise-3-95-ci-for-glucose-in-non-diabetes-patients---optional">Exercise 3: 95% CI for glucose in non-diabetes patients - Optional</a></li>
+  </ul></li>
+  <li><a href="#likelihood-based-inference-with-the-normal-error-model" id="toc-likelihood-based-inference-with-the-normal-error-model" class="nav-link" data-scroll-target="#likelihood-based-inference-with-the-normal-error-model">Likelihood-based inference with the normal error model</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="linreg_theory" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Multiple linear regression theory</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="learn_obj_wk05" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="learn_obj_wk05">Learning objectives</h2>
+<p>This week materials provide the theoretical basis for multiple linear regression that you have been using in the previous 4 weeks. It is somehow more technical but it is nevertheless important that you understand where these results come from.</p>
+<p>By the end of this week you should be able to:</p>
+<ol type="1">
+<li><p>Be familiar with the basic facts of matrix algebra and the way in which they are used in setting up and analysing regression models</p></li>
+<li><p>Understand the algebraic formulation of the LS estimator and its properties</p></li>
+<li><p>Discover the principal forms of statistical inference applied to the multiple regression model, and in particular how these relate to partitioning of the total sum of squares</p></li>
+<li><p>Learn how 95% confidence intervals and 95% prediction intervals are derived</p></li>
+<li><p>Discover how this is linked to likelihood-based inference</p></li>
+</ol>
+</section>
+<section id="learn_act_wk05" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="learn_act_wk05">Learning activities</h2>
+<p>This week’s learning activities include:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Learning Activity</th>
+<th>Learning objectives</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Lecture 1</td>
+<td>1, 2, 3</td>
+</tr>
+<tr class="even">
+<td>Lecture 2</td>
+<td>3, 4, 5</td>
+</tr>
+<tr class="odd">
+<td>Practice/Exercises</td>
+<td>1, 2, 4</td>
+</tr>
+<tr class="even">
+<td>Discussion</td>
+<td>All</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Lecture 1 in R</strong></p>
+<iframe width="740" height="416" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/50ded7bd-f88c-4931-8a47-750970694ff7" frameborder="0">
+</iframe>
+<p><a href="https://www.dropbox.com/s/cwfls3oq6usdfud/RM1_week5_lecture1_R.mp4?dl=1">Download video here</a></p>
+<p><strong>Lecture 1 in Stata</strong></p>
+<iframe width="740" height="416" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/ca1a7448-fc89-4213-8f38-d461beb8391c" frameborder="0">
+</iframe>
+<p><a href="https://www.dropbox.com/s/nfsxb3t2azsu115/RM1_week5_lecture1_Stata.mp4?dl=1">Download video here</a></p>
+</section>
+<section id="matrix-algebra-for-simple-linear-regression" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="matrix-algebra-for-simple-linear-regression">Matrix algebra for simple linear regression</h2>
+<!-- link to an example given in week 1 -->
+<!-- I don't think these references add much to the notes 
+
+This first section is based on readings from Weisberg 2005 or 2013. The two readings below are optional, but helpful if: you want a recap on matrix properties and algebra; or you want to see further details of the matrix derivations we show in the lecture and notes below.
+
+#### [@Weisberg_2013] Weisberg 2013, Appendix A.6, A.7 and A.8, pages 278-86 {#reading_wk05_A6_A8 .unnumbered}
+
+This reading provides an introduction to matrix algebra, definitions, terminology, random vectors/matrices and the concepts of mean and variance covariance matrices in the context of Least squares using matrices. Most of this material should, in principle, be known to you.
+
+##### [@Weisberg2005] Weisberg 2005, Section 3.2,3.3 and 3.4, pages 55-60 only {#reading_wk05_sections .unnumbered} 
+
+
+
+Reading 5.2. Weisberg 2005, Section 3.2,3.3 and 3.4, pages 55-60 only. This reading introduces the matrix form of multiple linear regression and the different types of linear regression that we will investigate in the coming weeks.
+
+-->
+</section>
+<section id="notational-convention" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="notational-convention">Notational convention</h2>
+<p>All vectors are assumed to be column vectors. So for example a vector of length <span class="math inline">\(n\)</span> with elements <span class="math inline">\(a_1,...,a_n\)</span> is defined as the <em>column vector</em></p>
+<p><span class="math display">\[a=\left[\begin{array}{c} a_1 \\ \vdots \\ a_n \end{array} \right],\]</span></p>
+<p>so its <em>transpose</em> is the <em>row vector</em> <span class="math inline">\(a'\)</span> (or <span class="math inline">\(a^T\)</span>) with <span class="math inline">\(a'=(a_1,\ldots,a_n)\)</span>.</p>
+<p>Generally, we will use capital letters for matrices, as commonly done (in many textbooks and other writings, is also common the have the names of vectors and matrices in boldface but we *do not 8follow this convention in these notes for simplicity and let the context decide).</p>
+<p>Consider the simple linear regression model:</p>
+<p><span class="math display">\[y_i = \beta_0 + \beta_1 x_i + \varepsilon_i\]</span></p>
+<p>We can write this in terms of vectors/matrices:</p>
+<p><span class="math display">\[\left[\begin{array}{c} y_1 \\ y_2 \\ \vdots \\ y_n \end{array}
+\right]=\left[\begin{array}{cc} 1 &amp; x_1 \\ 1 &amp; x_2 \\ \vdots &amp; \vdots \\ 1 &amp; x_n \end{array}
+\right]\left[\begin{array}{c} \beta_0 \\ \beta_1 \end{array} \right]+\left[\begin{array}{c}
+\varepsilon_1 \\ \varepsilon_2 \\ \vdots \\ \varepsilon_n \end{array} \right]\]</span></p>
+<p>And, more compactly, as <span class="math inline">\(Y=X\beta+\varepsilon\)</span>.</p>
+<p>Notice that the matrix <span class="math inline">\(X\)</span> consists of two columns (i.e.&nbsp;has dimension <span class="math inline">\(n\times 2\)</span>) - the column vector of 1’s and the column vector of covariate values (<span class="math inline">\(x_1, x_2,..., x_n\)</span>) corresponding to observations <span class="math inline">\(i,\dots,n\)</span></p>
+<section id="exercise-1" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="exercise-1">Exercise 1</h3>
+<p>To illustrate some of the important matrix operations we ask you to carry through “by hand” a regression analysis using just 10 pairs of (<span class="math inline">\(x, y\)</span>) values.</p>
+<p>Below the exercise is interactive so you are able to write the R code (sorry, only works for R, but see below the Stata code) and execute it.</p>
+<!--For instance, let $x=age$ and $y=glucose$ for 10 patients without diabetes chosen at random in the *hers* data, yielding:
+
+|              Age              |             Glucose              |
+|:-----------------------------:|:--------------------------------:|
+| 62 72 60 69 66 73 72 66 61 75 | 113 105 125 94 99 95 84 94 86 98 |
+
+A simple fit use R or Stata gives the following results:
+
+::: {.cell}
+
+```
+
+## 
+## Call:
+## lm(formula = glucose ~ age, data = hers.small)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -19.7843  -6.1351  -0.4333   7.6412  18.2332 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)  
+## (Intercept) 165.7149    49.4044   3.354    0.010 *
+## age          -0.9825     0.7287  -1.348    0.215  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 11.8 on 8 degrees of freedom
+## Multiple R-squared:  0.1851, Adjusted R-squared:  0.08327 
+## F-statistic: 1.818 on 1 and 8 DF,  p-value: 0.2145
+```
+:::
+
+-->
+<iframe width="740" height="840" allowfullscreen="true" allow="autoplay *" src="https://bca-biostats.shinyapps.io/regression/?_ga=2.28039038.339108429.1679454243-1994767059.1667449587">
+</iframe>
+<div id="note-text" class="note">
+<p>See below for the Stata code for Exercise 1</p>
+</div>
+<!--
+**R code and output**. I HAVE SUBSTITUTED THIS BY A LEARNR module. IT IS LOADED IN IFRAME ABOVE
+
+::: {.cell}
+
+```{.r .cell-code}
+# create user-defined vectors by hand
+x<-c(10, 20, 25, 18, 43, 13, 50)
+y<-c(100, 130, 125, 98, 149, 89, 149)
+# transforming a vector into a matrix and a column of 1's for the intercept
+Y<-as.matrix(y,ncol=1)
+X<-as.matrix(cbind(1,x),ncol=2)
+# by the same token you can transform part of an existing dataset as a matrix
+# check the dimension 
+dim(X)
+## [1] 7 2
+dim(Y)
+## [1] 7 1
+
+# To multiply two matrices in R Use: %*%
+# The addition is standard, use: + 
+# transpose of a matrix: t(X)
+# inverse of a (full rank) square matrix M: solve(M)
+
+# X'X is placed in a new object, a matrix called XTX
+XTX<-t(X) %*% X
+print("matrix X'X")
+## [1] "matrix X'X"
+XTX
+##          x
+##     7  179
+## x 179 5967
+# check the difference with X%*%t(X) 
+print("matrix XX'")
+## [1] "matrix XX'"
+X%*%t(X)
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]  101  201  251  181  431  131  501
+## [2,]  201  401  501  361  861  261 1001
+## [3,]  251  501  626  451 1076  326 1251
+## [4,]  181  361  451  325  775  235  901
+## [5,]  431  861 1076  775 1850  560 2151
+## [6,]  131  261  326  235  560  170  651
+## [7,]  501 1001 1251  901 2151  651 2501
+# inverse of XTX
+invXTX<-solve(XTX)
+## compute the LSE called b and print it
+b<-invXTX%*%t(X)%*%Y
+print("LSE")
+## [1] "LSE"
+b
+##        [,1]
+##   82.775802
+## x  1.455695
+## Extract the diagonal of the squared matrix (here invXTX) and list it
+D=diag(invXTX)
+print("Diagonal of (X'X)^{-1}")
+## [1] "Diagonal of (X'X)^{-1}"
+D
+##                         x 
+## 0.6133840461 0.0007195724
+## compute SEs and print them
+#variances=summary(out)$sigma^2*D
+#SE<-sqrt(variances)
+#SE
+## compare with output
+#summary(out)$coeff[,2]
+```
+:::
+
+-->
+<p><strong>Stata code and output</strong></p>
+<div class="cell" data-collectcode="true">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>## here we suppose that you have entered the following <span class="kw">data</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>## <span class="kw">by</span> hand <span class="kw">using</span> the Stata editor. The <span class="kw">data</span> has <span class="kw">two</span> <span class="kw">columns</span> xx and yy </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>## where: xx^T=(10, 20, 25, 18, 43, 13, 50) </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>## yy^T=(100, 130, 125, 98, 149, 89, 149)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> test_data.dta</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>## <span class="kw">generate</span> a column <span class="kw">of</span> ones (called cons)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> cons =1 </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>## Create a <span class="fu">matrix</span> consisting <span class="kw">of</span> the column <span class="kw">of</span> 1's and xx and <span class="kw">store</span> <span class="kw">this</span> <span class="kw">in</span> a <span class="fu">matrix</span> called X</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">mkmat</span> cons xx, <span class="fu">matrix</span>(X) </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>## Create a <span class="fu">matrix</span> with one column containing the yy's  and call it Y </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">mkmat</span> yy, <span class="fu">matrix</span>(Y) </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>## Create the <span class="fu">matrix</span> X’X (with the <span class="bn">name</span> XTX) </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">matrix</span> XTX = X’*X </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>## Create the inverse <span class="kw">of</span> XTX and call it XTX </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">matrix</span> invXTX = <span class="fu">inv</span>(XTX)  </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>## compute the LSE anc call it b </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">matrix</span> b=invXTX*X’*Y</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>## <span class="ot">list</span> b</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">matrix</span> <span class="ot">list</span> b</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>## Extract the diagonal <span class="kw">of</span> the squared <span class="fu">matrix</span> (here invXTX) and <span class="ot">list</span> it</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">matrix</span> D=<span class="fu">vecdiag</span>(invXTX)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">matrix</span> <span class="ot">list</span> D</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>## <span class="kw">more</span> information <span class="kw">on</span> <span class="fu">matrix</span> expressions <span class="kw">in</span> Stata can <span class="kw">be</span> found here: </span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>## https:<span class="co">//www.stata.com/manuals/u14.pdf</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>## Unknown #command</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>## Unknown #command</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>## Unknown #command</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>## Unknown #command</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>## Unknown #command</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>## Unknown #command</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>## Unknown #command</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>## Unknown #command</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>## X’ <span class="kw">not</span> found</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(111);</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(111);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="least-squares-estimates-for-multiple-linear-regression" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="least-squares-estimates-for-multiple-linear-regression">Least squares estimates for multiple linear regression</h2>
+<p>The formulation of the least squares (LS) principle in multiple regression model and the derivation of the LS estimation will now be briefly described. Suppose we have <span class="math inline">\(p\)</span> independent variables, the LS solution requires finding the values of the regression parameters <span class="math inline">\(\beta_0,\beta_1,\dots,\beta_p\)</span>, that minimise the sum of squares: <span class="math display">\[S=\sum_{i=1}^n[y_i-(\beta_0+\beta_1x_{i1}+ \dots +\beta_px_{pi})]^2.\]</span></p>
+<p>Using the matrix formulation of the model just as we did with simple linear regression but having this time <span class="math inline">\(p\)</span> covariates, <span class="math inline">\(Y=X\beta+\varepsilon\)</span> and we can write this sum as: <span class="math display">\[S=(Y-X\beta)^\prime( Y-X\beta)= Y^\prime Y-2 Y^\prime X\beta+\beta^\prime X'X \beta.\]</span> This is actually a scalar quantity (i.e.&nbsp;a single number), calculated from vectors and matrices, so to solve for the values of <span class="math inline">\(\beta_0,\beta_1,\dots,\beta_p\)</span> that minimise <span class="math inline">\(S\)</span>, we need to find the zero of its derivative with respect to the <span class="math inline">\(\beta\)</span> coefficients.</p>
+<p>Before we proceed,we need to understand how to differentiate a function of a vector quantity. Let <span class="math inline">\(g(\beta)=g(\beta_1,\dots,\beta_p)\)</span> be a function of <span class="math inline">\(\beta=(\beta_1,\dots,\beta_p)^\prime\)</span> that returns a scalar (single number) answer. An example of such a function <span class="math inline">\(g(.)\)</span> is a linear combination of <span class="math inline">\((\beta_1,\dots,\beta_p)\)</span>, say <span class="math inline">\(a'\beta= a_1\beta_1+\dots+a_p\beta_p\)</span>. Define <span class="math display">\[\frac{\partial g(\beta)}{\partial \beta}=\left[\begin{array}{c}
+\frac{ \partial g(\beta)}{ \partial \beta_1} \\ \vdots \\ \frac{ \partial g(\beta)}{\partial \beta_p} \end{array} \right],\]</span> where we have used the <span class="math inline">\(\partial\)</span> notation to indicate partial derivatives, i.e.&nbsp;the derivatives of <span class="math inline">\(g(\beta)\)</span> with respect to each component <span class="math inline">\(\beta_j\)</span> of <span class="math inline">\((\beta_1,\dots,\beta_p)\)</span>, holding all other components fixed. Then it is easy to see that <span class="math display">\[\frac{\partial( a'\beta)}{\partial \beta}=\left[\begin{array}{c}{ \frac{\partial
+a'\beta}{\partial \beta_1}} \\ \vdots \\{ \frac{\partial
+a'\beta}{\partial \beta_p}} \end{array} \right] =
+\left[\begin{array}{c} a_1 \\ \vdots \\ a_n \end{array} \right]= a,\]</span> and it is also true (although not quite as simple to show) that <span class="math display">\[\frac{\partial(\beta' A\beta)}{\partial\beta}=(A+A')\beta\]</span> and in the important special case when <span class="math inline">\(A\)</span> is symmetric <span class="math display">\[\frac{\partial(\beta'A\beta)}{\partial\beta}=2 A\beta\]</span></p>
+<p>We may now apply these results where <span class="math inline">\(g(\beta)\)</span> is the sum <span class="math inline">\(S\)</span> above, to produce the matrix formula for the LS estimates. Differentiating with respect to <span class="math inline">\(\beta\)</span> we get: <span class="math display">\[\frac{\partial S}{\partial \beta}=0-2 X'Y+2 X'X\beta=-2 X'Y+2 X'X\beta\]</span> Solving <span class="math inline">\(\frac{\partial S}{\partial \beta}=0\)</span> yields <span class="math inline">\(X'X\beta=X'Y\)</span>, and so the solution is <span class="math display">\[\hat\beta=\left[\begin{array}{c} \hat\beta_0 \\ \vdots \\ \hat\beta_p \end{array} \right]=(X'X)^{-1}X'Y\]</span>. Estimates can be computed without matrix calculation but the general formula given above applies to all cases including <span class="math inline">\(p=1\)</span>.</p>
+<section id="exercise-2-adjusted-regression-of-glucose-on-exercise-in-non-diabetes-patients-table-4.2-in-vittinghof-et-al.-2012" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="exercise-2-adjusted-regression-of-glucose-on-exercise-in-non-diabetes-patients-table-4.2-in-vittinghof-et-al.-2012">Exercise 2: Adjusted regression of glucose on exercise in non-diabetes patients, Table 4.2 in Vittinghof et al.&nbsp;(2012)</h3>
+<ol type="1">
+<li><p>Reproduce the adjusted analysis of glucose carried out in p.&nbsp;72. Make sure that you exclude diabetes patients</p></li>
+<li><p>Use matrix operations in Stata or R to create the <span class="math inline">\(X\)</span>, <span class="math inline">\(Y\)</span>, <span class="math inline">\(X^\prime X\)</span> and <span class="math inline">\(X^\prime Y\)</span> matrices and use these to obtain the LS estimates. [Caution: there are missing values in some of these covariates so delete first all observations with missing values before any matrix manipulation]</p></li>
+<li><p>Optional: Use an explicit matrix calculation in Stata/R to obtain the variance-covariance matrix for <span class="math inline">\(b\)</span> in the regression of glucose on the previous covariates. Calculate the standard errors and confirm your results by comparing with the regression output.</p></li>
+</ol>
+<div class="note">
+<p>To help you with this exercise, you may want check the code given in the lectures (R or Stata depending on your favourite software). Also, for Stata users, some key commands will be reminded at the beginning of the solutions. You may have to increase the memory before creating matrices by typing: <em>set matsize 2500</em>. It turns out that the memory for matrices is pretty limited by default. We expect you to try on your own before looking at the solutions.</p>
+</div>
+<p>It is worth noting that the normal equations <span class="math inline">\(X'X\beta=X'Y\)</span> are <em>not</em> solved by using methods that involve the direct calculation of the inverse matrix <span class="math inline">\((X'X)^{-1}\)</span>. Computer programs use numerical algorithms that are both quicker and more numerically stable than working out the full inverse and then multiplying it with <span class="math inline">\(X'Y\)</span> to obtain <span class="math inline">\(\hat\beta\)</span>.</p>
+<!-- One of these methods is called ``QR'' decomposition where a symmetric matrix is rewritten as the product of an orthogonal matrix $Q$ and upper triangular matrix $R$. Inversion then follows easily in two separate steps. see here for details: https://rstudio-pubs-static.s3.amazonaws.com/251311_c8970d1f1a8541aaa5884d86b1487ea6.html-->
+</section>
+</section>
+<section id="predicted-values-and-residuals" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="predicted-values-and-residuals">Predicted values and residuals</h2>
+<p>It is now simple to write the vector of predicted values (at the observed covariate values) using the matrix notation: <span class="math display">\[\widehat{Y}=\left[\begin{array}{c} \widehat{Y}_1 \\ \widehat{Y}_2 \\ \vdots \\ \widehat{Y}_n \end{array} \right]=\left[\begin{array}{cccc} 1 &amp; x_{11} &amp; \ldots &amp; x_{p1} \\ 1 &amp; x_{12} &amp; \ldots &amp; x_{p2} \\ \vdots &amp; \vdots &amp; \ldots &amp; \vdots \\ 1 &amp; x_{1n} &amp; \ldots &amp; x_{pn} \end{array} \right] \left[\begin{array}{c} \hat\beta_0 \\ \hat\beta_1 \\ \vdots \\ \hat\beta_p \end{array} \right]= X\hat\beta=X(X'X)^{-1}X'Y\]</span> Letting <span class="math inline">\(H=X(X'X)^{-1}X'\)</span>, we then have <span class="math inline">\(\widehat{Y}= HY\)</span>.</p>
+<p>The matrix <span class="math inline">\(H\)</span> is often called the “hat” matrix, as it “puts the hat on <span class="math inline">\(Y\)</span>”, that is, it transforms <span class="math inline">\(Y\)</span> into <span class="math inline">\(\widehat{Y}\)</span>. In the previous weeks, we introduced the diagonal elements of <span class="math inline">\(H\)</span> in the form of <span class="math inline">\(h_{ii}\)</span> and termed the values <em>leverages</em>. This explains technically how leverage is computed and, again, some simpler formulas can be derived for the simple regresssion case. In general, this <span class="math inline">\(H\)</span> matrix as an important role since many additional regression results can be expressed simply in terms of the matrix <span class="math inline">\(H\)</span>.</p>
+<p>The matrix <span class="math inline">\(H\)</span> has some important properties. We can see easily that:\ (i) <span class="math inline">\(H\)</span> is symmetric \ (ii) <span class="math inline">\(H^2\)</span>=<span class="math inline">\(H\)</span> [and so <span class="math inline">\(H\)</span> is <em>idempotent</em> in mathematical terms]</p>
+<p>An important property of idempotent matrices is that their trace (sum of diagonal elements) is equal to the rank of the matrix. It then follows that since <span class="math inline">\(H\)</span> is idempotent its rank is equal to the sum of its diagonal elements (i.e., <span class="math inline">\(\sum_{i=1}^n h_{ii}\)</span>), which is the number of columns in <span class="math inline">\(X\)</span> (or equivalently the number of parameters in the regression model - assuming <span class="math inline">\(X\)</span> is of full rank). So, for example, for simple linear regression the rank of <span class="math inline">\(H\)</span> is 2.</p>
+<p>Using the matrix <span class="math inline">\(H\)</span>, we can express residuals in the simple form <span class="math inline">\(e=Y-\widehat{Y}=(I-H)Y\)</span> and immediately deduct that their expectation is 0. Note that the sum of residuals is also zero for all models with an intercept. Deriving their variance-covariance is slightly more complicated but a bit of algebra and the properties of the <span class="math inline">\(H\)</span> matrix yield <span class="math inline">\(var (e)=(I-H)\sigma^2\)</span>. This is used to compute standardised residuals in all statistical packages. Note that the variance is different from <span class="math inline">\(\sigma^2 I\)</span> which is variance of the (true) error vector <span class="math inline">\(\varepsilon\)</span>.</p>
+</section>
+<section id="geometric-interpretation" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="geometric-interpretation">Geometric interpretation</h2>
+<p>It is possible to interpret LS estimation as a projection onto the linear space spanned by the regressors. Watch this short video to understand why:</p>
+<p><a href="https://www.youtube.com/watch?v=XfgohvQmKPU">Watch video here</a></p>
+</section>
+<section id="standard-inference-in-multiple-linear-regression" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="standard-inference-in-multiple-linear-regression">Standard inference in multiple linear regression</h2>
+<!-- ### Means and variance-covariance matrix of least squares estimates -->
+<p>The first level of inference for a multiple regression model does not require specific distributional assumptions about the random errors, which we can now represent as the vector <span class="math inline">\(\varepsilon\)</span>. By this we refer to the fact that the expected value (and therefore unbiasedness) of regression coefficients and the variances of estimates - and covariances between estimates - all follow from the assumption that <span class="math inline">\(\varepsilon \sim (0,\sigma^2 I_n)\)</span>, i.e.&nbsp;that the elements of <span class="math inline">\(\varepsilon\)</span> are independently distributed with common variance <span class="math inline">\(\sigma^2\)</span>. The additional standard assumption that the errors follow a <em>normal distribution</em> is important in providing the formal basis for the calculation of confidence intervals and tests based on the <span class="math inline">\(t\)</span> distribution.</p>
+<p>A simple calculation using matrix algebra for random vector to shows that <span class="math inline">\(\hat\beta\)</span> is an unbiased estimate of <span class="math inline">\(\beta\)</span>. The The variance-covariance matrix of <span class="math inline">\(\hat\beta\)</span>, assuming the errors <span class="math inline">\(\varepsilon \sim (0,\sigma^2 I_n)\)</span>, is: <span class="math display">\[var( \hat\beta)=var[(X'X)^{-1} X'Y]= (X'X)^{-1}X'var(Y)X(X'X)^{-1}=\sigma^2(X'X)^{-1}\]</span> (using the general result that <span class="math inline">\(var(CY) = C\times var(Y)\times C'\)</span> for any matrix <span class="math inline">\(C\)</span>). For simple linear regression this is a <span class="math inline">\(2 \times 2\)</span> matrix, and the (2,2) element is <span class="math inline">\(var(\hat\beta_1)=\sigma^2 / \sum_{i=1}^n(X_i-\bar{X})^2\)</span>.</p>
+<p>To use the formula for the variance of <span class="math inline">\(\hat\beta\)</span> we need to replace <span class="math inline">\(\sigma^2\)</span> in the formula with an estimated value, and the natural (unbiased) estimate is the Mean Square for Error from the analysis of variance table, <span class="math inline">\(MSE\)</span> (more on this below). For multiple regression, the <em>estimated</em> variance-covariance matrix of <span class="math inline">\(\hat\beta\)</span> is thus <span class="math inline">\(\widehat{var}(\hat\beta)=MSE\times(X'X)^{-1}\)</span>. The diagonal elements of this matrix are generally the ones of interest, since they provide the squared standard error for each coefficient estimate. However, the covariance terms can also be important, as these reflect the extent to which inferences about each coefficient are independent of each other. In fact you have already seen an important application of this idea in Week 4 where you had to test whether the difference of two coefficients was equal to 0. Specifically, you were asked to compute the mean SBP difference between the much less active group and the much more active group (called <span class="math inline">\(\beta_4 - \beta_5\)</span>) after adjusting for age, BMI and alcohol consumption. A subset of <em>hers</em> data was used for this analysis. To obtain the corresponding <span class="math inline">\(SE\)</span> we need to compute first the following variance: <span class="math display">\[\widehat{var}(\hat\beta_4-\hat\beta_5)=\widehat{var}(\hat\beta_4)+\widehat{var}(\hat\beta_5)-2\widehat{cov}(\hat\beta_4,\hat\beta_5)\]</span> SE is the squared root conveniently provided to us using the “lincom” command in Stata and “glht” in R. We can check the results by asking the package to output the variance-covariance matrix for the vector <span class="math inline">\(\hat\beta\)</span> after fitting the model, extract the terms we need, and finally derive <span class="math inline">\(\widehat{var}(\hat\beta_4+\hat\beta_5)\)</span> using the formula given above. The corresponding SE is simply the square root. Then, we can proceed with the <span class="math inline">\(t\)</span>-test (or <span class="math inline">\(z\)</span>-test for large samples) as commonly done.</p>
+<p>We don’t provide here the detail of this calculation, only the logic that illustrates the importance of the whole variance-covariance matrix.</p>
+<!-- say something on the variance of the residuals here; better placed than above (not sure?) -->
+<!-- 2nd video illustrates the ANOVA decomposition, the inferential aspects of LS theory and
+the link with the MLE -->
+<p><strong>Lecture 2 in R</strong> <iframe width="560px" height="320px" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/8b1db15b-4c2d-4160-8606-2f5249cf4534" frameborder="0"> </iframe> <a href="https://www.dropbox.com/s/hrp4wv1wmvqkm8b/RM1_week5_lecture2_R.mp4?dl=1">Download video here</a></p>
+<p><strong>Lecture 2 in Stata</strong> <iframe width="560px" height="320px" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/0c4e181b-c9c7-4080-8b01-8dca9fe6d7ad" frameborder="0"></iframe> <a href="https://www.dropbox.com/s/kr1a8ut54c126dl/RM1_week5_lecture2_Stata.mp4?dl=1">Download video here</a></p>
+</section>
+<section id="the-analysis-of-variance-for-multiple-linear-regression-sst-decomp" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="the-analysis-of-variance-for-multiple-linear-regression-sst-decomp">The analysis of variance for multiple linear regression (SST decomp)</h2>
+<p>The output of a fitted model in linear regression is typically displayed as an ANOVA table. The fundamental idea is that the total Sum of Squares (denoted <span class="math inline">\(SST\)</span> is decomposed into two components, the Regression Sum of Squares (<span class="math inline">\(SSR\)</span>) and the Error (or Residual) Sum of Squares (<span class="math inline">\(SSE\)</span>): <span class="math inline">\(SST = SSR + SSE\)</span>.</p>
+<p>The Total Sum of Squares measures the total variation of the <span class="math inline">\(Y\)</span> values around the sample mean <span class="math inline">\(\bar{Y}\)</span>, and the ANOVA decomposition displays the two components and what fraction of the total variation can be “explained” by the regression model. The fraction <span class="math inline">\(SSR/SST\)</span> is the <span class="math inline">\(R^2\)</span> (`<span class="math inline">\(R\)</span>-squared”), sometimes called the <em>coefficient of determination</em>. <span class="math inline">\(R^2\)</span> (and its squared root <span class="math inline">\(R\)</span>) are essentially descriptive quantities that provide a measure of the strength of association between <span class="math inline">\(X\)</span> representing several covariates considered jointly and the outcome <span class="math inline">\(Y\)</span>. In simple regression, <span class="math inline">\(R^2\)</span> is equal to the square of the correlation coefficent between the outcome and lone covariate.</p>
+
+<!--Add an optional text to clic on explaining the algebra behing the ANOVA table - see box in original LMR (not essential) -->
+<p>An important point to note is that all three sums of squares are quadratic forms, meaning that they can be expressed as <span class="math inline">\(YAY\)</span> for some symmetric matrix <span class="math inline">\(A\)</span>. This is important in deriving the sampling properties of the sums of squares and related standard errors and test statistics, which we now review without giving full details or derivations. The fundamental fact about quadratic forms is that under a normal error model and with appropriate scaling they have chi-squared distributions.</p>
+<p>The ANOVA table for a (multiple) regression model <span class="math inline">\(E(y_i)=\beta_0+\beta_1x_{1i}+\beta_2x_{2i}+\dots+\beta_px_{pi}\)</span> is as follows (in Stata):</p>
+<table class="table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 42%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Source of variation</th>
+<th style="text-align: center;"><span class="math inline">\(SS\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(df\)</span></th>
+<th style="text-align: center;"><pre><code>     MS</code></pre></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Regression Error</td>
+<td style="text-align: center;">SSR SSE</td>
+<td style="text-align: center;">p n-(p+1)</td>
+<td style="text-align: center;"><span class="math inline">\(MSR=SSR / p\)</span> <span class="math inline">\(MSE = SSE /[n-(p+1)]\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Total</td>
+<td style="text-align: center;">SST</td>
+<td style="text-align: center;">n-1</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<p>The final column, of Mean Squares, is obtained by dividing each <span class="math inline">\(SS\)</span> by its degrees of freedom (<span class="math inline">\(df\)</span>). Note that the <span class="math inline">\(df\)</span> for <span class="math inline">\(SSR\)</span> is now <span class="math inline">\(p\)</span>, representing the number of independent covariates fitted in the regression model (not counting the constant), while the <span class="math inline">\(df\)</span> for <span class="math inline">\(SSE\)</span> is reduced accordingly, to <span class="math inline">\(n-(p+1)\)</span>. The Mean Square for Error (<span class="math inline">\(MSE\)</span>) is especially important because dividing by <span class="math inline">\(df\)</span> gives a quantity that has expected value <span class="math inline">\(\sigma^2\)</span>, making it a natural estimate for <span class="math inline">\(\sigma^2\)</span>. Furthermore, <span class="math inline">\(SSE/\sigma^2 \sim \chi^2\)</span> with <span class="math inline">\(n-(p+1)\)</span> degrees of freedom. This is the reason that for the normal error regression model we can use the standard inferences for each estimated regression coefficient, based on <span class="math inline">\(SE(\hat\beta_j)^2 = j^{th}\)</span> diagonal element of the estimated variance-covariance matrix <span class="math inline">\(\widehat{var}(\hat\beta)=MSE\times( X'X)^{-1}\)</span>. In particular, confidence intervals and tests are constructed in the familiar way using this estimated standard error and the <span class="math inline">\(t\)</span> distribution with <span class="math inline">\(n-(p+1)\)</span> degrees of freedom.</p>
+<p>Some additional output is also provided, e.g.&nbsp;the overall test of the (global) null hypothesis that <span class="math inline">\(\beta_1 =\beta_2 =...=\beta_p = 0\)</span>. We are effectively testing whether the model under investigation is better than a model with only the intercept. This is carried out by forming the <span class="math inline">\(F\)</span>-ratio: <span class="math inline">\(F^* = MSR / MSE\)</span>. Under the null hypothesis, <span class="math inline">\(MSR\)</span> is proportional to a chi-squared random variable and has expected value <span class="math inline">\(\sigma^2\)</span>, so <span class="math inline">\(F^*\)</span> has an <span class="math inline">\(F\)</span> distribution with degrees of freedom <span class="math inline">\(p, n-(p+1)\)</span>.</p>
+<p>Stata code and output</p>
+<div class="cell" data-collectcode="true">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> hersdata, <span class="kw">clear</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">regress</span> glucose exercise age drinkany BMI <span class="kw">if</span> diabetes == 0</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =     2,028</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(4, 2023)      =     39.22</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>##        Model |  13828.8486         4  3457.21214   Prob &gt; <span class="fu">F</span>        =    0.0000</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>##     Residual |  178319.973     2,023  88.1463042   R-squared       =    0.0720</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.0701</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>##        Total |  192148.822     2,027  94.7946828   Root MSE        =    9.3886</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>##      glucose | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>##     exercise |   -.950441     .42873    -2.22   0.027    -1.791239   -.1096426</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>##          age |   .0635495   .0313911     2.02   0.043     .0019872    .1251118</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>##     drinkany |   .6802641   .4219569     1.61   0.107    -.1472514     1.50778</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>##          BMI |    .489242   .0415528    11.77   0.000     .4077512    .5707328</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |   78.96239   2.592844    30.45   0.000     73.87747    84.04732</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>In the example of the previous section that we reproduce here, we see that <span class="math inline">\(F^*=30.22\)</span>, which is an extremely high value for an <span class="math inline">\(F\)</span> distribution with degrees of freedom <span class="math inline">\((4,2023)\)</span>, leading to <span class="math inline">\(P &lt; .001\)</span>, and the unsurprising conclusion that the data are highly inconsistent with the null hypothesis.</p>
+<p>Note that this anova table is not provided in R where a simpler output is displayed. It is possible to obtain something close to this using the <em>anova</em> command <em>after</em> a fit of the same linear model provided by <em>ols</em> from the <em>rms</em> library (developed by F Harrell).</p>
+<p>R code and output using <em>ols</em></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rms)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># library(haven)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># hers&lt;-read_dta("hersdata.dta") </span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>hers <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"hers.csv"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>hers.nondiab<span class="ot">&lt;-</span>hers[hers<span class="sc">$</span>diabetes <span class="sc">==</span><span class="dv">0</span>,]</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">ols</span>(glucose <span class="sc">~</span> exercise <span class="sc">+</span> age <span class="sc">+</span> drinkany <span class="sc">+</span> BMI, <span class="at">data =</span> hers.nondiab)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="prediction-in-multiple-regression-95-ci-95-prediction-interval" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="prediction-in-multiple-regression-95-ci-95-prediction-interval">Prediction in multiple regression (95% CI + 95% prediction interval)</h2>
+<p>The idea of using a fitted model to create predictions of either the expected (mean) value of the outcome variable or the value to be expected for a new individual response at a given covariate value was explored in week 1. It naturally carries over to the multiple regression case. The matrix notation makes it easy to justify how this is done. Assume that we are interested in getting a predicted value of <span class="math inline">\(y^*\)</span> the expected outcome when <span class="math inline">\(x=x^*\)</span> that may or may not be a vector of covariates from the sample. Here <span class="math inline">\(x^*\)</span> is now a <span class="math inline">\((p+1) \times 1\)</span> vector containing 1 and the values of the <span class="math inline">\(p\)</span> covariates). A prediction for <span class="math inline">\(y*\)</span> is <span class="math inline">\(\hat y*=x^{*\prime}\hat\beta\)</span> i.e.&nbsp;we just plug-in the LS estimate in the linear combination for a patient with that profile. For inference concerning this quantity, the relevant standard error is given by: <span class="math display">\[SE(\hat y^*)=\hat\sigma\times\sqrt{x^{*\prime}( X'X)^{-1} x^*},\]</span> where <span class="math inline">\(\hat\sigma\)</span> is the root-MSE. For inference concerning the predicted value for a new individual <span class="math inline">\(y\)</span> at <span class="math inline">\(x = x^*\)</span> the relevant standard error is given by: <span class="math display">\[SE(\hat y^*+\epsilon)=\hat\sigma\times\sqrt{1+ x^{*\prime} (X'X)^{-1} x^*}.\]</span> The notation used on the left-hand side here is a reminder that the uncertainty involved in making a prediction for a new individual involves not only the uncertainty in the estimated parameters, but also the contribution due to the random error term <span class="math inline">\(\epsilon\)</span>.</p>
+<p>The corresponding 95% CI or 95% prediction interval follows by using the usual formula (e.g.&nbsp;<span class="math inline">\(\hat y \pm 1.96SE(\hat y^*)\)</span> for the 95% CI in large samples). When the sample is not so large the .975 quantile from the <span class="math inline">\(t\)</span>-distribution with <span class="math inline">\(n-(p+1)\)</span> degrees of freedom should be used instead of 1.96.</p>
+<p>Computational note: In Stata and R, as in most packages, the regression command comes equipped with a facility for generating predicted values with appropriate standard errors. The command <em>predict</em> command works just the same for multiple regression as for simple regression.</p>
+<section id="exercise-3-95-ci-for-glucose-in-non-diabetes-patients---optional" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="exercise-3-95-ci-for-glucose-in-non-diabetes-patients---optional">Exercise 3: 95% CI for glucose in non-diabetes patients - Optional</h3>
+<p>We will use the same model as in Exercise 5.2 (and Table 4.2 p.&nbsp;72).</p>
+<ol type="1">
+<li><p>Using your favourite software compute the 95% CI for the mean glucose of a patient aged 65, who does not drink nor exercise and has BMI=29.</p></li>
+<li><p>Can you reproduce this result using matrix manipulations and the formula given above?</p></li>
+</ol>
+<div class="note">
+<p>You are on your own for this exercise. By now you should be more familiar with matrix manipulation and be able to reproduce in 2) the 95% CI for the mean glucose obtained using your favourite software.</p>
+</div>
+</section>
+</section>
+<section id="likelihood-based-inference-with-the-normal-error-model" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="likelihood-based-inference-with-the-normal-error-model">Likelihood-based inference with the normal error model</h2>
+<p>The OL estimator is the same as the maximum likehood estimator (MLE) under the assuption of normality <span class="math inline">\(N(0,\sigma^2)\)</span> for the error term. To see this, we can just write the log-likelihood of the data under normal linear model, yielding:</p>
+<p><span class="math display">\[LL(\beta)=-\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-(\beta_0+\beta_1x_{1i}+\dots+\beta_px_{pi}))^2\]</span> The log-likelihood <span class="math inline">\(LL(\beta)\)</span> is proportional to the negative of <span class="math inline">\(S=S(\beta)\)</span> used earlier up to a constant that only depends on <span class="math inline">\(\sigma\)</span>. Therefore, minimising <span class="math inline">\(S(\beta)\)</span> is equivalent to maximising <span class="math inline">\(LL(\beta)\)</span>, the multiplicative constant <span class="math inline">\(1/(2\sigma^2)\)</span> playing no role in this problem since it does not depend on the regression parameter. You can also derive separately the MLE of <span class="math inline">\(\sigma^2\)</span>. StraightforWard calculation leads to: <span class="math display">\[\hat{\sigma}_{ML}^2=\frac{( Y-X\hat\beta)'( Y-X\hat\beta)}{n}=
+\frac{SSE}{n}=\frac{(n-(p+1))}{n}MSE.\]</span> This shows that the MLE of <span class="math inline">\(\sigma^2\)</span> is slightly biased in small samples, the bias becoming negligible for large <span class="math inline">\(n\)</span>’s. All statistical packages use the unbiased estimate to deal with all possible situations.</p>
+<p>Finally, we note without giving further detail that the standard <span class="math inline">\(F\)</span>-tests of multiple linear regression are also <em>likelihood ratio tests</em>. The <span class="math inline">\(F\)</span> distribution provides an exact sampling distribution for these test statistics. For large sample sizes (as the estimate of <span class="math inline">\(\sigma^2\)</span> becomes better, i.e.&nbsp;the denominator of <span class="math inline">\(MSE\)</span> can be regarded as effectively fixed) this approaches the chi-squared distribution that applies for large <span class="math inline">\(n\)</span> to all likelihood ratio tests.</p>
+<p>It is important to establish this connection given that the ML theory will be used in generalised linear models that extend linear regression. This includes logistic regression for binary data that will be studied in weeks 9-12 of this unit.</p>
+</section>
+<section id="summary" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="summary">Summary</h2>
+<div id="box1" class="green-box">
+<p>The following are the key takeaway messages from this week:</p>
+<ol type="1">
+<li><p>LS estimates and their variance can be derived from linear algebra</p></li>
+<li><p>The properties of the LS estimator have been justified theoretically</p></li>
+<li><p>95% confidence intervals and 95% prediction intervals can also be expressed using matrix formulation.</p></li>
+<li><p>The LS estimate is the maximum likelihood estimator under the assumption of a Gaussian error term.</p></li>
+</ol>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./004-multiple_linear_regression_application.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Multiple Linear Regression - Application</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./006-interaction_collinearity.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Interaction and Collinearity</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

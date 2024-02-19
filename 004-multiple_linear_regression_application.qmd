@@ -1,0 +1,195 @@
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+# Multiple Linear Regression - Application {#mlr_application}
+
+## Learning objectives {.unnumbered}
+
+By the end of this week you should be able to:
+
+1.  Understand and explain the effects of uncontrolled confounding, and the concept of its control by holding extraneous factors constant
+
+2.  Formulate a multiple linear regression model and interpret it's parameters
+
+3.  Formulate and test hypothesis based on linear combinations of regression parameters
+
+4.  Use residuals to test multiple linear regression assumptions
+
+## Learning activities {.unnumbered}
+
+This week's learning activities include:
+
+| Learning Activity     | Learning objectives |
+|-----------------------|---------------------|
+| Lecture 1             | 1                   |
+| Lecture 2             | 2                   |
+| Reading               | 1, 2                |
+| Lecture 3             | 3                   |
+| Independent exercises | 4                   |
+
+## Introduction to confounding {.unnumbered}
+
+Until this week we have focussed on regression between an outcome and a single covariate and called this *simple linear regression*. This week we introduce the concept of *multiple linear regression* where the outcome is regressed on more than one covariate. The motivating reason for multiple linear regression we will present here is for the adjustment of confounding by other factors. However as we will discover in subsequent weeks multiple covariates is a powerful tool that allows regression analysis to be much more adaptable, and have greater predictive power.
+
+This week begins with a brief recap on confounding in the lecture below.
+
+<iframe width="740" height="416" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/cb97015d-c2ca-4cb1-a646-a2ffc9a5e485" frameborder="0">
+
+</iframe>
+
+[Download video](https://www.dropbox.com/s/eysvkbkbvp5mm9c/RM1_Week_4_video_1.mp4?dl=1)
+
+## Introduction to multiple linear regression {.unnumbered}
+
+In this video we introduce the multiple linear regression model, where multiple covariates are included. We also look at an example of this implemented in Stata and R and interpret the multiple linear regression output
+
+**Stata instructions**
+
+<iframe width="740" height="416" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/23c852e9-6f9c-4402-8a10-97a47b69dbc8" frameborder="0">
+
+</iframe>
+
+[Download video](https://www.dropbox.com/s/tysysdd5960dgjr/RM1_Week_4_video_2_Stata.mp4?dl=1)
+
+**R instructions**
+
+<iframe width="740" height="416" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/c5e9e31a-9cad-47cc-8d3c-c69f2993ae15" frameborder="0">
+
+</iframe>
+
+[Download video](https://www.dropbox.com/s/9gzpybo8betqrvb/RM1_Week_4_video_2_R.mp4?dl=1)
+
+### Chapter 4. Linear regression to 4.2.1.1 (pages 69-73). {.unnumbered}
+
+This reading supplements the above two lectures by providing some examples of confounding, and how this adjusted for in multiple linear regression
+
+### Chapter 4. 4.2.2 to 4.2.3 (pages 73-75). {.unnumbered}
+
+This reading reinforces the content from lecture 2 on important output generated from multiple linear regressions including: the variance of regression coefficients, confidence intervals, and measures of goodness of fit with R squared.
+
+### Chapter 4. 4.3 to 4.3.2 (pages 76-81). {.unnumbered}
+
+This reading supplements the lecture video by describing how categorical variables are included in multiple linear regression - particularrly when those categorical variables have more than 2 categories.
+
+## Linear combinations of regression coefficients {.unnumbered}
+
+Particularly with categorical variables of more than one category, we frequently wish to make inferences on linear combinations of regression coefficients. For example, with categorical variables, the regression coefficients represent the mean difference between one of the groups and the reference category. In this section we learn how to make different comparisons - any comparison that is a linear combination of the regression coefficients. Let us return to the regression for the recorded video earlier, using the `hers_subset` data from the Heart and Estrogen/progestin study (HERS). In the video we looked at a regression on systolic blood pressure (sbp) against age, BMI, alcohol consumption (drinkany), and physical activity (physact). With the following regression results:
+
+**Stata code**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use hersdata, clear
+set seed 90896
+sample 10
+  
+reg SBP age BMI i.drink i.physact
+```
+
+**R code**
+
+```{r, echo=TRUE, collapse=TRUE}
+hers_subset <- read.csv("hers_subset.csv")
+lm.multiple <- lm(SBP ~ age + BMI + drinkany + physact, data = hers_subset)
+summary(lm.multiple)
+confint(lm.multiple)
+```
+
+Now suppose we wish to make some specific pairwise comparisons that are not captured by the comparison between the reference category. For example, perhaps we wish to compare the difference between the means of the "much less" category, and the "much more" category. Let's think about what this comparison would be from the regression coefficients of this regression equation using the following acroynms:
+
+-   MLA - Much less active
+
+-   MMA - Much more active
+
+-   SLA - Somewhat less active
+
+-   SMA - Somewhat more active
+
+$$ SBP = \beta_0 + \beta_1 \text{age} + \beta_2 \text{BMI} + \beta_3 \text{drinkany} + \beta_4 \text{MLA} + \beta_5 \text{MMA} + \beta_6 \text{SLA} + \beta_7 \text{SMA}$$
+
+Given that
+
+$$\beta_4 = \text{mean of MLA} - \text{mean of reference category}$$
+
+and
+
+$$\beta_5 = \text{mean of MMA} - \text{mean of reference category}$$
+
+then it follows that
+
+$$\beta_4 - \beta_5 = \text{mean of MLA} - \text{mean of MMA}$$
+
+Therefore a calculation of $\beta_4 - \beta_5$ will give us the desired mean difference between the much less active group and the much more active group - after adjusting for age, bmi and alcohol consumption. We can of course do this manually from the regression output, however we save a lot of time if we do this in Stata or R, as those packages will also automatically calulate P-values and confidence intervals for the associated comparison.
+
+In Stata, we do this with the "lincom" command, and specify the levels of the physical activity category with a numeral followed by a ".". i.e. for the comparison above the much less active group is level 2 of the physical activity variable, and the much more active group is level 3. So the Stata code and output would be
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use hersdata, clear
+set seed 90896
+sample 10
+  
+reg SBP age BMI i.drink i.physact
+lincom 2.physact - 3.physact
+
+```
+
+In R, we do this calculation by first specifying a matrix which designates the comparison we would like to make. The matrix here must have the same number of columns as the number of regression coefficients in our regression equation - in this example 8 ($\beta_0$ to $\beta_7$). We would like to make a subtraction between the $\beta_4$ and $\beta_5$ corresponding to the fifth and sixth regression coefficients. So our matrix comparison is defined as `comparison <- matrix(c(0,0,0,0,1,-1,0,0), nrow=1)`. We then use the `glht` command from the `multcomp` library to calculate this linear combination, and use the `summary` and `confint` commands to output the P-value and confidence intervals.
+
+```{r, echo=FALSE, include=FALSE}
+
+library(multcomp) #for the glht() function
+
+hers_subset <- read.csv("https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1")
+lm.multiple <- lm(SBP ~ age + BMI + drinkany + physact, data = hers_subset)
+comparison <- matrix(c(0,0,0,0,1,-1,0,0), nrow=1)
+lincom <- glht(lm.multiple, linfct = comparison)
+summary(lincom)
+confint(lincom)
+```
+
+In both Stata and R, we observe that the much more group has a lower SBP mean of 2.39mmHG compared with the much less active group (95% CI 8.59mmHG greater to 13.37mmHG lower) - corresponding to no evidence for a difference (P = 0.67).
+
+## Model checking for multiple linear regression {.unnumbered}
+
+In week 2 we investigated how residuals can be used to check assumptions 1-3 of linear regression. These tests are already fit for purpose for multiple linear regression as described below
+
+1.  Linearity. A residual versus fitted plot is still an excellent tool for assessing linearity in multiple linear regression. If there are concerns with this plot, the assumption can be further investigated with a residual versus predictor plot for each covariate in the regression. Remember, this is only useful for continuous covariates and does not need checking for categorical covariates
+
+2.  Homoscedasticity (constant variance). A residual versus fitted plot is still an excellent tool for assessing homoscedasticity in multiple linear regression. If there are concerns with this plot, the assumption can be further investigated with a residual versus predictor plot for each covariate in the regression. For continuous covariates, this is best shown with a scatter plot. For categorical variables, a boxplot is best for comparing the variance across categories.
+
+3.  Normality. A normal quantile plot of the residuals, or a histogram of the residuals is still an excellent tool for assessing the normality of the residuals
+
+## Independent exercise {.unnumbered}
+
+Continuing on with the `hers_subset` example. Write down the regression equation for a regression with an outcome of body mass index, and with age and physical activity (physact) as covariates. Interpret each parameter in this equation.
+
+Carry out this regression and report on the key findings.
+
+Finally, express the following comparisons in terms of the regression coefficients of your equation above, and calculate these using Stata or R
+
+-   The mean difference between much more active, and much less active
+
+-   The mean difference between much more active, and somewhat more active
+
+-   \[Challenge question\] The mean difference between the more active groups (somewhat and much more active combined), and the less active groups (somewhat and less active combined).
+
+## Summary {.unnumbered}
+
+This weeks key concepts are:
+
+::: {#box1 .green-box}
+1.  Multiple linear regression is the natural extension to simple linear regression where more than one covariate is included as an independent variable. The formula for a multiple linear regression is $$Y_i = \beta_0 + \beta_1 x_{1,i} + \beta_2 x_{2,i} + \beta_3 x_{3,i} + \dots \epsilon_i$$
+
+-   $\beta_0$ still represents the *intercept*, the estimated mean outcome when all covariates ($x$'s) equal zero.
+-   $\beta_i$ still represents the mean change in the outcome for a one unit increase in $x_i$. For categorical variables, this represents the mean change from group $x_i$ to the reference category
+
+2.  The statistical evidence (P-value) for a group of regression coefficients can be calculated with an F test or likelihood ratio test. This is important for categorical variables of more than 2 categories as it provides a single P-value for that categorical variable that does not depend on the reference category
+
+3.  Linear combinations of regression coefficients can be calculated with the *lincom* command in Stata and the *glht* command from the *multcomp* package in R.
+
+4.  Checking model assumptions can be done in largely the same was for multiple linear regresssion as for simple linear regression. Residual versus predictor plots are an additional plot you can use to investigate deviations to linearity or homoscedasticity.
+:::

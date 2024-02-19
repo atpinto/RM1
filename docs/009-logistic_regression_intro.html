@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Regression Modelling for Biostatistics 1 - 9&nbsp; Logistic Regression</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./010-logistic_regression_conf_inter.html" rel="next">
+<link href="./008-model_building.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./009-logistic_regression_intro.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Logistic Regression</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./images/bca.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Regression Modelling for Biostatistics 1</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./001-simple_linear_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Simple Linear Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./002-checking_assumptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Checking Assumptions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./003-binary_covariates_and_outliers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Binary Covariates, Outliers, and Influential Observations</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./004-multiple_linear_regression_application.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Multiple Linear Regression - Application</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./005-lin_reg_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Multiple linear regression theory</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./006-interaction_collinearity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Interaction and Collinearity</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./007-lin_reg_splines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Violations of assumptions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./008-model_building.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regression model building and variable selection</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./009-logistic_regression_intro.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./010-logistic_regression_conf_inter.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./011-logistic_regression_splines_validation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./012-logistic_regression_model_building.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">model building for binary outcomes</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learn_obj_wk09" id="toc-learn_obj_wk09" class="nav-link active" data-scroll-target="#learn_obj_wk09">Learning objectives</a></li>
+  <li><a href="#learn_act_wk09" id="toc-learn_act_wk09" class="nav-link" data-scroll-target="#learn_act_wk09">Learning activities</a></li>
+  <li><a href="#introduction-to-logistic-regression" id="toc-introduction-to-logistic-regression" class="nav-link" data-scroll-target="#introduction-to-logistic-regression">Introduction to logistic regression</a></li>
+  <li><a href="#interpretation-of-regression-coefficients" id="toc-interpretation-of-regression-coefficients" class="nav-link" data-scroll-target="#interpretation-of-regression-coefficients">Interpretation of regression coefficients</a>
+  <ul class="collapse">
+  <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a></li>
+  </ul></li>
+  <li><a href="#multiple-logistic-regression" id="toc-multiple-logistic-regression" class="nav-link" data-scroll-target="#multiple-logistic-regression">Multiple logistic regression</a></li>
+  <li><a href="#likelihood-ratio-tests" id="toc-likelihood-ratio-tests" class="nav-link" data-scroll-target="#likelihood-ratio-tests">Likelihood ratio tests</a>
+  <ul class="collapse">
+  <li><a href="#investigation---group-variables" id="toc-investigation---group-variables" class="nav-link" data-scroll-target="#investigation---group-variables">Investigation - group variables</a></li>
+  </ul></li>
+  <li><a href="#confounding" id="toc-confounding" class="nav-link" data-scroll-target="#confounding">Confounding</a></li>
+  <li><a href="#summary_wk09" id="toc-summary_wk09" class="nav-link" data-scroll-target="#summary_wk09">Summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="logreg" class="quarto-section-identifier"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="learn_obj_wk09" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="learn_obj_wk09">Learning objectives</h2>
+<p>By the end of this week you should be able to:</p>
+<ol type="1">
+<li><p>Understand the motivation for logistic regression modelling</p></li>
+<li><p>Realise how logistic regression extends linear regression for binary outcomes</p></li>
+<li><p>Understand the link between odd-ratios derived from a frequency table and logistic regression</p></li>
+<li><p>Interpret statistical output for a multiple logistic regression model with or without confounding</p></li>
+<li><p>Understand the likelihood ratio test and how to use it in this setting</p></li>
+<li><p>Interpret a logistic regression model with grouped data/categorical covariates</p></li>
+</ol>
+</section>
+<section id="learn_act_wk09" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="learn_act_wk09">Learning activities</h2>
+<p>This week’s learning activities include:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Learning Activity</th>
+<th>Learning objectives</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Lecture 1</td>
+<td>1, 2, 3</td>
+</tr>
+<tr class="even">
+<td>Readings</td>
+<td>1, 2, 3, 4, 5</td>
+</tr>
+<tr class="odd">
+<td>Lecture 2</td>
+<td>4, 5, 6</td>
+</tr>
+<tr class="even">
+<td>Pratice/Investigation</td>
+<td>3, 4, 6</td>
+</tr>
+<tr class="odd">
+<td>Discussions</td>
+<td>3, 4, 5, 6</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="introduction-to-logistic-regression" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="introduction-to-logistic-regression">Introduction to logistic regression</h2>
+<!-- comment for now = {#video_wk09_intro} -->
+<p>In simple linear regression, the expectation of a continous variable <span class="math inline">\(y\)</span> is modelled as a linear function of a covariate <span class="math inline">\(x\)</span> i.e. <span class="math display">\[E(y)=\beta_0 + \beta_1 x\]</span> It’s therefore natural to wonder whether a similar idea could not be used for a binary endpoint <span class="math inline">\(y\)</span> taking only 0 or 1 values. Such outcomes are frequent in biostatistics because investigators are typically interested in events affecting a patient’s life like complete response at 3 months, resolution of a targeted tumour at 6 months or 28 day mortality. Using directly the linear model would lead to wrong conclusions because the response is clearly not normally distributed and linearity on this case is very unlikely. Here <span class="math inline">\(E(y |x)=P(y=1 |x)=p(x)\)</span> because <span class="math inline">\(y\)</span> can only be 0 or 1 with 1 representing the occurence of the event and 0 its absence. What we need is a proper way to model this probability <span class="math inline">\(p\)</span> and inevitably the question of an appropriate scale arises. It turns out that a convenient way to model <span class="math inline">\(p\)</span> is to use the logistic function <span class="math inline">\(g\)</span> where <span class="math inline">\(g(p)=\log (p/(1-p))\)</span>. Then the natural counterpart to simple linear regression is the simple logistic regression model expressed as:</p>
+<p><span class="math display">\[\log \frac{p(x)}{(1-p(x))}=\beta_0 + \beta_1 x\]</span> yielding that linearity arises on the logistic scale. Read p.&nbsp;139 - 143 of the book for more motivation on this choice of the scale. Assuming that the model is correct for <span class="math inline">\(n\)</span> independent observations from a sample we can write the log-likehood of this sample and derive the maximum likehood estimates (MLE) of the parameters <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1)\)</span>. As before, we will note them <span class="math inline">\(\hat\beta_0\)</span> and <span class="math inline">\(\hat\beta_1\)</span> (or <span class="math inline">\(b_0\)</span> and <span class="math inline">\(b_1\)</span>). The MLE in logistic regression and its corresponding standard error are routinely provided in all statistical packages.</p>
+<!-- properties of the MLE in 2-3 sentences perhaps -->
+<p><strong>Lecture 1 in R</strong></p>
+<iframe width="740" height="416" src="https://www.youtube.com/embed/oLHoGYNgaJY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+</iframe>
+<p><a href="https://www.dropbox.com/s/dqhs6wap5ui5t3q/RM1_week9_lecture1_R.mp4?dl=1">Download video here</a></p>
+<p><strong>Lecture 1 in Stata</strong></p>
+<iframe width="740" height="416" src="https://www.youtube.com/embed/_EPOoxmacOU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+</iframe>
+<p><a href="https://www.dropbox.com/s/gjtpdw5yrtuas3g/RM1_Week9_lecture1_Stata.mp4?dl=1">Download video here</a></p>
+</section>
+<section id="interpretation-of-regression-coefficients" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="interpretation-of-regression-coefficients">Interpretation of regression coefficients</h2>
+<p>To illustrate the use of logistic regression, we consider data from the Western Collaborative Group Study (WCGS), a large epidemiological study designed to investigate the relationship between coronary heart disease (CHD) and various potential predictors including behavioural patterns. The dataset is called <em>wcgs.csv</em> and the outcome is <em>chd69</em> (0/1) with 1 indicating the occurence of a coronary event over the course of the study. An association of interest to the original investigators was the relationship between CHD risk and the presence/absence of corneal arcus senilis (<em>arcus</em>) among participants upon entry into the study. Arcus senilis is is a whitish annular deposit around the iris that occurs in a small percentage of older adults and is a legitimate predictor since it is thought to be related to serum cholesterol level. An exploratory analysis indicates that patients arcus senilis are more likely to develop CHD compared with the others (11% vs 7%) and a standard Chi2 test returns a significant result (p=0.000). A simple logistic regression analysis of the same data is given below.</p>
+<p><strong>R code and output</strong></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>wcgs <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"wcgs.csv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>wcgs<span class="ot">&lt;-</span><span class="fu">data.frame</span>(wcgs)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>model0<span class="ot">&lt;-</span><span class="fu">glm</span>(chd69 <span class="sc">~</span> arcus,  <span class="at">family=</span>binomial, <span class="at">data=</span>wcgs)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model0)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Call:</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="do">## glm(formula = chd69 ~ arcus, family = binomial, data = wcgs)</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Coefficients:</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="do">##             Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept)  -2.5991     0.0838 -31.016  &lt; 2e-16 ***</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="do">## arcus         0.4918     0.1342   3.664 0.000248 ***</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="do">## ---</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="do">## (Dispersion parameter for binomial family taken to be 1)</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="do">##     Null deviance: 1771.2  on 3151  degrees of freedom</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="do">## Residual deviance: 1758.2  on 3150  degrees of freedom</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="do">##   (2 observations deleted due to missingness)</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="do">## AIC: 1762.2</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="do">## Number of Fisher Scoring iterations: 5</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(model0<span class="sc">$</span>coefficients)[<span class="dv">2</span>] </span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="do">##   arcus </span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="do">## 1.63528</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">confint</span>(model0))[<span class="dv">2</span>,]</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="do">##    2.5 %   97.5 % </span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="do">## 1.254294 2.124062</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><strong>Stata code and output</strong></p>
+<div class="cell" data-collectcode="true">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> wcgs.dta</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>** <span class="kw">fitted</span> <span class="kw">model</span> with coefficients</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">logistic</span> chd69 arcus, coef</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>** <span class="kw">fitted</span> <span class="kw">model</span> with OR (<span class="kw">default</span> <span class="kw">in</span> Stata)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">logistic</span> chd69 arcus</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>** arcus is coded 0/1 so i.arcus is <span class="kw">not</span> needed</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>## Logistic regression                                     Number <span class="kw">of</span> <span class="kw">obs</span> =  3,152</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>##                                                         LR <span class="fu">chi2</span>(1)    =  12.98</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>##                                                         Prob &gt; <span class="fu">chi2</span>   = 0.0003</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>## Log likelihood = -879.10783                             Pseudo R2     = 0.0073</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>##        chd69 | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>##        arcus |   .4918144   .1342299     3.66   0.000     .2287286    .7549002</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |  -2.599052   .0837965   -31.02   0.000     -2.76329   -2.434814</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>## Logistic regression                                     Number <span class="kw">of</span> <span class="kw">obs</span> =  3,152</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>##                                                         LR <span class="fu">chi2</span>(1)    =  12.98</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>##                                                         Prob &gt; <span class="fu">chi2</span>   = 0.0003</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>## Log likelihood = -879.10783                             Pseudo R2     = 0.0073</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>##        chd69 | Odds <span class="kw">ratio</span>   Std. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>##        arcus |   1.635281   .2195036     3.66   0.000     1.257001    2.127399</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |    .074344   .0062298   -31.02   0.000     .0630839    .0876141</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>## Note: <span class="dt">_cons</span> <span class="kw">estimates</span> baseline odds.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The coefficient label (Intercept) or <span class="math inline">\(\_\)</span>cont in Stata is the intercept (<span class="math inline">\(\hat\beta_0\)</span>) in the model and the coefficient for arcus is <span class="math inline">\(\hat\beta_1\)</span> representing the effect of this condition on CHD in the analysis. To interpret the coefficient, we go back to the general formula above and notice that linearity is specified on the log-odd scale. Applying this to our example reveals that the log-odds of CHD is <span class="math inline">\(\hat\beta_0=-2.599\)</span> in patients <em>without</em> arcus and <span class="math inline">\(\hat\beta_0+\hat\beta_1=-2.107\)</span> in patients <em>with</em> arcus. The difference in CHD risk due to arcus is then <span class="math inline">\(\hat\beta_1=.492\)</span> on the <em>log-odds scale</em>, i.e.&nbsp;the corresponding odds-ratio (OR) is <span class="math inline">\(\exp(.492)=1.64\)</span>. By the same token we can compute the 95% CI for this odds-ratio leading to (1.25 ; 2.12) and the effect is statistically significant (<span class="math inline">\(p&lt; 0.000\)</span>).</p>
+<section id="exercise" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="exercise">Exercise</h3>
+<p>You can certainly remember that we can derive an OR from a 2x2 table. Using the same WCGS data, carry out the following analysis:</p>
+<ol type="a">
+<li><p>Reproduce the exploratory analysis with the <span class="math inline">\(\chi^2\)</span>-test</p></li>
+<li><p>Compute the OR and check that is exactly the same result as the one obtained via simple logistic regression</p></li>
+<li><p>A large sample formula for the standard error of the log-OR estimate in a 2x2 table is given by: <span class="math inline">\(SE(log(\hat{OR}))=\sqrt{1/a+1/b+1/c+1/d)}\)</span> where <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span>, <span class="math inline">\(c\)</span> and <span class="math inline">\(d\)</span> are the frequencies in the 2x2 table. Compute the 95% CI for the estimate you have just computed. How does it compare with the 95% obtained from logistic regression. Hint: start by computing a 95% CI for the log-OR.</p></li>
+</ol>
+<section id="reading_wk09_coeff_cont" class="level5 unnumbered">
+<h5 class="unnumbered anchored" data-anchor-id="reading_wk09_coeff_cont"><span class="citation" data-cites="vittinghoff2012">[@vittinghoff2012]</span> Chapter 5. Logistic regression (Section 5.1.1) but read also all pages 139 - 146 for the introduction).</h5>
+<p>This reading explains how the same logic can be used to interpret the coefficient of a continuous predictor in a logistic regression model. The example is age that is thought to be associated with CHD as well.</p>
+<!-- Give a link to the data and the R code somewhere here (preferably) or at the bottom -->
+</section>
+</section>
+</section>
+<section id="multiple-logistic-regression" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="multiple-logistic-regression">Multiple logistic regression</h2>
+<p>Like in linear regression the simple logistic regression model can be extendend to include multiple predictors <span class="math inline">\(x_1,\dots,x_p\)</span> . We can follow the same logic and model <span class="math inline">\(E(Y |x_1,\dots,x_p)=P(Y=1 |x_1,\dots,x_p)=p(x_1,\dots,x_p)\)</span> on the logistic scale yielding: <span class="math display">\[\log \frac{p(x_1,\dots,x_p)}{(1-p(x_1,\dots,x_p))}=\beta_0 + \beta_1 x_1+\dots+\beta_p x_p\]</span>. This can be seen as an extension of multiple linear regression using similar arguments to the simple case. the interpretation of the coefficients in terms of log log-OR also holds with the difference that the analysis is now adjusted for the other covariates.</p>
+<section id="reading_wk09_multiple_logreg" class="level5 unnumbered">
+<h5 class="unnumbered anchored" data-anchor-id="reading_wk09_multiple_logreg"><span class="citation" data-cites="vittinghoff2012">[@vittinghoff2012]</span> Chapter 5. Logistic regression (Section 5.2) p.&nbsp;150-54).</h5>
+<p>This reading shows how potential predictors like age, cholesterol, sytolic blood pressure (SBP), body max index (BMI) and smoking can be included in a logistic regression model for CHD. It also illustrates the interpretation of the coefficients and how rescaling of the covariates affects the coefficients but leads to a similar interpretation.</p>
+<p><strong>Lecture 2 in R</strong></p>
+<iframe width="740" height="416" src="https://www.youtube.com/embed/RlCbF0Mr8pQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+</iframe>
+<p><a href="https://www.dropbox.com/s/fb0tv0uz4egl6ee/RM1_week9_Lecture2_R.mp4?dl=1">Download video here</a></p>
+<p><strong>Lecture 2 in Stata</strong></p>
+<iframe width="740" height="416" src="https://www.youtube.com/embed/ZmpAaCZE5dU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+</iframe>
+<p><a href="https://www.dropbox.com/s/qwu18y4afkrljqq/RM1_week9_Lecture2_Stata.mp4?dl=1">Download video here</a></p>
+</section>
+</section>
+<section id="likelihood-ratio-tests" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="likelihood-ratio-tests">Likelihood ratio tests</h2>
+<p>The likelihood ratio tests (LRT) has been introduced in PSI, it has an important role to play in (logistic) regression analysis since it allows us to compare two nested models. The word <em>nested</em> means that a model is bigger than the other in the sense that it contains all the covariates of the smaller model.</p>
+<p>They are particular useful when investigating the contribution of more than one covariate or predictors with multiple levels. Say we want to assess the impact of self-reported behaviour called <em>behpat</em> representing different behaviours (type (A or B)) subdivided into two further levels leading to 4 categories <span class="math inline">\(A_1\)</span>, <span class="math inline">\(A_2\)</span>, <span class="math inline">\(B_3\)</span> and <span class="math inline">\(B_4\)</span> (coded 1-4 respectively). The null hypothesis corresponding to this question is <span class="math inline">\(H_0\)</span>: <span class="math inline">\(\beta_6=\beta_7=\beta_8=0\)</span> since the coefficients corresponding to all <em>behpat</em> except the reference <span class="math inline">\(A_1\)</span> are <span class="math inline">\(beta_6\)</span>, <span class="math inline">\(\beta_7\)</span>, and <span class="math inline">\(\beta_8\)</span>. The LRT can be used to test thus (multiple) null hypothesis <span class="math inline">\(H_0\)</span> by computing the difference in twice the log-likelihood (logLL) between the two models. We often used the term <em>full model</em> for the larger model (all previous covariates and <em>behpat</em>) and <em>reduced model</em> for the smaller one (only the previous covariates). The term <em>reduced</em> stems from the restrictions to the full model by imposing that all the coefficients for the <em>behpat</em> categories except the reference are zero. We know that, under the absence of effect of <em>behpat</em>, the LRT statistic follow a Chi2 distribution with 3 degrees of freedom (i.e.&nbsp;the number of parameters tested in the model, that is the number of categories minus 1).</p>
+<p><span class="math display">\[LRT=2\times logLL(full) - 2\times logLL(reduced)=2\times(-784.81-(-807.19)=24.76\]</span></p>
+<p>The corresponding <span class="math inline">\(p\)</span>-value is derived from a Chi2 distribution with 3 degrees of freedom yielding <span class="math inline">\(p=1.7e-05 &lt; 0.0001\)</span>. A neat effect of the self-reported behavious is observed overall.</p>
+<p><strong>R code and output</strong></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>myvars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"id"</span>,<span class="st">"chd69"</span>, <span class="st">"age"</span>, <span class="st">"bmi"</span>, <span class="st">"chol"</span>, <span class="st">"sbp"</span>, <span class="st">"smoke"</span>, <span class="st">"dibpat"</span>, <span class="st">"behpat_type"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>wcgs1 <span class="ot">&lt;-</span> wcgs[myvars]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>wcgs1<span class="ot">=</span>wcgs1[wcgs1<span class="sc">$</span>chol <span class="sc">&lt;</span><span class="dv">645</span>,]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>wcgs1cc<span class="ot">=</span><span class="fu">na.omit</span>(wcgs1)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># remove missing values - complete case (cc) analysis</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>wcgs1cc<span class="ot">&lt;-</span><span class="fu">na.omit</span>(wcgs1)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># rescale variables</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>wcgs1cc<span class="sc">$</span>age_10<span class="ot">&lt;-</span>wcgs1cc<span class="sc">$</span>age<span class="sc">/</span><span class="dv">10</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>wcgs1cc<span class="sc">$</span>bmi_10<span class="ot">&lt;-</span>wcgs1cc<span class="sc">$</span>bmi<span class="sc">/</span><span class="dv">10</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>wcgs1cc<span class="sc">$</span>chol_50<span class="ot">&lt;-</span>wcgs1cc<span class="sc">$</span>chol<span class="sc">/</span><span class="dv">50</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>wcgs1cc<span class="sc">$</span>sbp_50<span class="ot">&lt;-</span>wcgs1cc<span class="sc">$</span>sbp<span class="sc">/</span><span class="dv">50</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># define factor variable</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>wcgs1cc<span class="sc">$</span>behpat<span class="ot">&lt;-</span><span class="fu">factor</span>(wcgs1cc<span class="sc">$</span>behpat_type)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>reduced<span class="ot">&lt;-</span><span class="fu">glm</span>(chd69 <span class="sc">~</span> age_10<span class="sc">+</span>chol_50<span class="sc">+</span>bmi_10<span class="sc">+</span>sbp_50<span class="sc">+</span>smoke, <span class="at">family=</span>binomial, <span class="at">data=</span>wcgs1cc)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(reduced)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="do">## Call:</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="do">## glm(formula = chd69 ~ age_10 + chol_50 + bmi_10 + sbp_50 + smoke, </span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="do">##     family = binomial, data = wcgs1cc)</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="do">## Coefficients:</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="do">##              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept) -12.31099    0.97726 -12.598  &lt; 2e-16 ***</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="do">## age_10        0.64448    0.11907   5.412 6.22e-08 ***</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="do">## chol_50       0.53706    0.07586   7.079 1.45e-12 ***</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="do">## bmi_10        0.57436    0.26355   2.179   0.0293 *  </span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="do">## sbp_50        0.96469    0.20454   4.716 2.40e-06 ***</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="do">## smoke         0.63448    0.14018   4.526 6.01e-06 ***</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="do">## ---</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="do">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="do">## (Dispersion parameter for binomial family taken to be 1)</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="do">##     Null deviance: 1774.2  on 3140  degrees of freedom</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="do">## Residual deviance: 1614.4  on 3135  degrees of freedom</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="do">## AIC: 1626.4</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="do">## Number of Fisher Scoring iterations: 6</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>full<span class="ot">&lt;-</span><span class="fu">glm</span>(chd69 <span class="sc">~</span> age_10<span class="sc">+</span>chol_50<span class="sc">+</span>bmi_10<span class="sc">+</span>sbp_50<span class="sc">+</span>smoke<span class="sc">+</span><span class="fu">factor</span>(behpat), <span class="at">family=</span>binomial, <span class="at">data=</span>wcgs1cc)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(full)</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="do">## Call:</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="do">## glm(formula = chd69 ~ age_10 + chol_50 + bmi_10 + sbp_50 + smoke + </span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="do">##     factor(behpat), family = binomial, data = wcgs1cc)</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="do">## Coefficients:</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="do">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept)      -11.64889    1.01421 -11.486  &lt; 2e-16 ***</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="do">## age_10             0.60636    0.11990   5.057 4.25e-07 ***</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="do">## chol_50            0.53304    0.07637   6.980 2.96e-12 ***</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="do">## bmi_10             0.55355    0.26563   2.084  0.03717 *  </span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="do">## sbp_50             0.90158    0.20647   4.367 1.26e-05 ***</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="do">## smoke              0.60468    0.14110   4.285 1.82e-05 ***</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="do">## factor(behpat)A2   0.06603    0.22123   0.298  0.76535    </span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="do">## factor(behpat)B3  -0.66522    0.24226  -2.746  0.00603 ** </span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="do">## factor(behpat)B4  -0.55849    0.31921  -1.750  0.08019 .  </span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="do">## ---</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="do">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="do">## (Dispersion parameter for binomial family taken to be 1)</span></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="do">##     Null deviance: 1774.2  on 3140  degrees of freedom</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="do">## Residual deviance: 1589.6  on 3132  degrees of freedom</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="do">## AIC: 1607.6</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a><span class="do">## Number of Fisher Scoring iterations: 6</span></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>LRT<span class="ot">=</span><span class="dv">2</span><span class="sc">*</span>(<span class="fu">logLik</span>(full)<span class="sc">-</span><span class="fu">logLik</span>(reduced))</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a><span class="co"># LRT and p-value</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>LRT  </span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a><span class="do">## 'log Lik.' 24.76497 (df=9)</span></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>pval<span class="ot">=</span><span class="dv">1</span><span class="sc">-</span><span class="fu">pchisq</span>(LRT,<span class="dv">3</span>)</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>pval</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a><span class="do">## 'log Lik.' 1.728999e-05 (df=9)</span></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="co"># another way using anova (possibly quicker)</span></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>out<span class="ot">&lt;-</span><span class="fu">anova</span>(reduced,full)</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>out</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a><span class="do">## Analysis of Deviance Table</span></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a><span class="do">## Model 1: chd69 ~ age_10 + chol_50 + bmi_10 + sbp_50 + smoke</span></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a><span class="do">## Model 2: chd69 ~ age_10 + chol_50 + bmi_10 + sbp_50 + smoke + factor(behpat)</span></span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a><span class="do">##   Resid. Df Resid. Dev Df Deviance</span></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a><span class="do">## 1      3135     1614.4            </span></span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a><span class="do">## 2      3132     1589.6  3   24.765</span></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span><span class="fu">pchisq</span>(<span class="fu">as.vector</span>(out<span class="sc">$</span>Deviance)[<span class="dv">2</span>],<span class="dv">3</span>)</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1.728999e-05</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><strong>Stata code and output</strong></p>
+<div class="cell" data-collectcode="true">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> wcgs.dta</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> age_10=age/10</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> chol_50=chol/50</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> bmi_10=bmi/10</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> sbp_50=sbp/50</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>** <span class="kw">fit</span> reduced and full <span class="kw">model</span> without outlier (chol=645)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">logistic</span> chd69 age_10 chol_50 bmi_10 sbp_50 i.smoke <span class="kw">if</span> chol&lt;645</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">estimates</span> <span class="kw">store</span> mod1</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">logistic</span> chd69 age_10 chol_50 sbp_50 bmi_10 i.smoke i.behpat <span class="kw">if</span> chol&lt;645  </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">lrtest</span> mod1</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>** the command <span class="kw">estimates</span> is needed to <span class="kw">store</span> the 1st <span class="kw">fit</span> and computes the LRT</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>**</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>** NB: <span class="kw">if</span> you <span class="kw">use</span> the csv dataset you have to <span class="kw">use</span> behpat_type and <span class="kw">recode</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>**     i. does <span class="kw">not</span> work with <span class="fu">string</span>, Then <span class="kw">use</span> the same commands</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>** <span class="kw">gen</span> behpat=1 <span class="kw">if</span> behpat_type==<span class="st">"A1"</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>** <span class="kw">replace</span> behpat=2 <span class="kw">if</span> behpat_type==<span class="st">"A2"</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>** <span class="kw">replace</span> behpat=3 <span class="kw">if</span> behpat_type==<span class="st">"B3"</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>** <span class="kw">replace</span> behpat=4 <span class="kw">if</span> behpat_type==<span class="st">"B4"</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>** <span class="kw">drop</span> behpat_type</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>**</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>## (12 <span class="fu">missing</span> <span class="kw">values</span> generated)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>## Logistic regression                                     Number <span class="kw">of</span> <span class="kw">obs</span> =  3,141</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>##                                                         LR <span class="fu">chi2</span>(5)    = 159.80</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>##                                                         Prob &gt; <span class="fu">chi2</span>   = 0.0000</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>## Log likelihood = -807.19249                             Pseudo R2     = 0.0901</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>##        chd69 | Odds <span class="kw">ratio</span>   Std. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>##       age_10 |   1.904989   .2268333     5.41   0.000     1.508471    2.405735</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>##      chol_50 |   1.710974   .1297977     7.08   0.000     1.474584    1.985259</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>##       bmi_10 |   1.775995   .4680613     2.18   0.029     1.059518    2.976973</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>##       sbp_50 |   2.623972   .5367142     4.72   0.000     1.757326    3.918016</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>##      1.smoke |   1.886037   .2643914     4.53   0.000     1.432933    2.482417</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |   4.50e-06   4.40e-06   -12.60   0.000     6.63e-07    .0000306</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>## Note: <span class="dt">_cons</span> <span class="kw">estimates</span> baseline odds.</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>## Logistic regression                                     Number <span class="kw">of</span> <span class="kw">obs</span> =  3,141</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>##                                                         LR <span class="fu">chi2</span>(8)    = 184.57</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>##                                                         Prob &gt; <span class="fu">chi2</span>   = 0.0000</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>## Log likelihood = -794.81                                Pseudo R2     = 0.1040</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>##        chd69 | Odds <span class="kw">ratio</span>   Std. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>##       age_10 |    1.83375   .2198681     5.06   0.000     1.449707    2.319529</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>##      chol_50 |   1.704097   .1301391     6.98   0.000     1.467201    1.979243</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>##       sbp_50 |   2.463504   .5086518     4.37   0.000     1.643621    3.692369</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>##       bmi_10 |   1.739415   .4620341     2.08   0.037     1.033479    2.927551</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>##      1.smoke |   1.830672   .2583097     4.29   0.000      1.38837    2.413882</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>##              |</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>##       behpat |</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>##           2  |   1.068257   .2363271     0.30   0.765     .6924157    1.648103</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>##           3  |   .5141593   .1245593    -2.75   0.006     .3198064    .8266243</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>##           4  |    .572071   .1826117    -1.75   0.080     .3060107    1.069457</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>##              |</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |   8.73e-06   8.85e-06   -11.49   0.000     1.20e-06    .0000637</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>## Note: <span class="dt">_cons</span> <span class="kw">estimates</span> baseline odds.</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>## Likelihood-<span class="kw">ratio</span> <span class="kw">test</span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>## Assumption: mod1 nested within .</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>##  LR <span class="fu">chi2</span>(3) =  24.76</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>## Prob &gt; <span class="fu">chi2</span> = 0.0000</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="reading_wk09_multiple_logreg" class="level5 unnumbered">
+<h5 class="unnumbered anchored" data-anchor-id="reading_wk09_multiple_logreg"><span class="citation" data-cites="vittinghoff2012">[@vittinghoff2012]</span> Chapter 5. Logistic regression (Section 5.2.1) p.&nbsp;154-56).</h5>
+<p>This reading gives you the two fitted models, the calculation of the LRT in Stata and some explanation of why this test is important.</p>
+<p>We woud like to end this paragraph by stressing out that it is important to have no missing values in the dat, at least in the covariates involved in the computation of the LRT. Many statistical packages will always provide log-likelihood values irrespective of the presence of missing data. The calculation of the LRT will be wrong since you are basically computing the log-likelihood from <em>different</em> samples. They are different because the packages delete the missing data before fitting the model. As a result, you may end up having a different number of observations in the full and reduced models, which makes the whole calculation meanningless.</p>
+</section>
+<section id="investigation---group-variables" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="investigation---group-variables">Investigation - group variables</h3>
+<p>In this activity, you are asked to investigate the impact of a risk factor with multiple levels that are possibly ordered. Age has been divided in 5 age group categories given by <em>agec</em>. Draw a <span class="math inline">\(2\times 5\)</span> table investigating the association between <em>chd69</em> and <em>agec</em> and compute the corresponding ORs. Can you get similar results using logistic regression, how? Can you test the global effect of <em>agec</em> on <em>chd69</em>. How would you go about it? [Hint: it may help to look at p.&nbsp;146-148] This analysis is unadjusted, what do you suggest we do next?</p>
+</section>
+</section>
+<section id="confounding" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="confounding">Confounding</h2>
+<!-- comment for now = {#video_wk10_more} -->
+<p>Confounding can occur in logistic regression for the same reasons as in linear regression. The same criteria can be applied here, i.e.&nbsp;a variable <span class="math inline">\(c\)</span> is a confounder of a relationship <span class="math inline">\(x \rightarrow y\)</span> where <span class="math inline">\(y\)</span> is a binary endpoint if 1) <span class="math inline">\(c\)</span> associated with <span class="math inline">\(y\)</span>; 2) <span class="math inline">\(c\)</span> associated with <span class="math inline">\(c\)</span>; <span class="math inline">\(c\)</span> is not on the causal pathway <span class="math inline">\(x \rightarrow y\)</span>. Several predictors can also act as potential confounders in practice. To briefly illustrate the concept in this setting, consider the association between CHD and a behaviour pattern considered previously, the only difference being that for simplicity, we only consider type <span class="math inline">\(A\)</span> or <span class="math inline">\(B\)</span>. The resulting binary covariate is <em>dibpat</em> coded 0/1 with 0 for <span class="math inline">\(B\)</span> or 1 for <span class="math inline">\(A\)</span>. A simple logistic regression analysis returns a ``crude” OR=2.36, 95%CI=(1.80 ; 3.12) after deletion of an outlier (a case with a cholesterol reading of 645 mg/dl = 16.68 mmol/l at the beginning of the study). The word crude (or raw) OR is used to indicate that the analyis is unadjusted. Potential confounders include age, BMI, cholesterol, SBP and smoking but, to facilate the reading and comparison with the textbook, we use rescaled versions of these predictors. For example, the authors were interested to produce OR for ten-year increase in age, so they use <em>age_10=age/10</em> with the subscript indicating the scaling factor. It is easy to see that all the predictors are independently associated with <em>chd69</em> - criterion 1). They are also linked to <em>dibpat</em> - criterion 2) - with the exception of BMI and we let you check this as an exercise. Criterion 3) is always harder to assess and come mainly from the knowledge of the field; in this case, it is unlikely to be met for either of these factors. All predictors but BMI can confound the association of interest so it is legitimate to wonder what impact they have collectively. An adjusted analysis is then conducted yielding:</p>
+<p><strong>R code and output</strong></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#   chd69, smoke and dibpat are assumed to be coded 0/1</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># wcgs &lt;- read.csv("wcgs.csv")</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>myvars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"id"</span>,<span class="st">"chd69"</span>, <span class="st">"age"</span>, <span class="st">"bmi"</span>, <span class="st">"chol"</span>, <span class="st">"sbp"</span>, <span class="st">"smoke"</span>, <span class="st">"dibpat"</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>wcgs1 <span class="ot">&lt;-</span> wcgs[myvars]</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>wcgs1<span class="ot">=</span>wcgs1[wcgs1<span class="sc">$</span>chol <span class="sc">&lt;</span><span class="dv">645</span>,]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>wcgs1cc<span class="ot">=</span><span class="fu">na.omit</span>(wcgs1)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># remove missing values - complete case (cc) analysis</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>wcgs1cc<span class="ot">&lt;-</span><span class="fu">na.omit</span>(wcgs1)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># rescale variables</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>wcgs1cc<span class="sc">$</span>age_10<span class="ot">&lt;-</span>wcgs1cc<span class="sc">$</span>age<span class="sc">/</span><span class="dv">10</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>wcgs1cc<span class="sc">$</span>bmi_10<span class="ot">&lt;-</span>wcgs1cc<span class="sc">$</span>bmi<span class="sc">/</span><span class="dv">10</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>wcgs1cc<span class="sc">$</span>chol_50<span class="ot">&lt;-</span>wcgs1cc<span class="sc">$</span>chol<span class="sc">/</span><span class="dv">50</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>wcgs1cc<span class="sc">$</span>sbp_50<span class="ot">&lt;-</span>wcgs1cc<span class="sc">$</span>sbp<span class="sc">/</span><span class="dv">50</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># adjusted</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>out1<span class="ot">&lt;-</span><span class="fu">glm</span>(chd69 <span class="sc">~</span> age_10<span class="sc">+</span>chol_50<span class="sc">+</span>bmi_10<span class="sc">+</span>sbp_50<span class="sc">+</span>smoke <span class="sc">+</span> dibpat, <span class="at">family=</span>binomial, <span class="at">data=</span>wcgs1cc)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(out1)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="do">## Call:</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="do">## glm(formula = chd69 ~ age_10 + chol_50 + bmi_10 + sbp_50 + smoke + </span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="do">##     dibpat, family = binomial, data = wcgs1cc)</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="do">## Coefficients:</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="do">##              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="do">## (Intercept) -12.27086    0.98211 -12.494  &lt; 2e-16 ***</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="do">## age_10        0.60445    0.11969   5.050 4.41e-07 ***</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="do">## chol_50       0.53204    0.07634   6.970 3.18e-12 ***</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="do">## bmi_10        0.54948    0.26531   2.071   0.0384 *  </span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="do">## sbp_50        0.90338    0.20602   4.385 1.16e-05 ***</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="do">## smoke         0.60386    0.14109   4.280 1.87e-05 ***</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="do">## dibpat        0.69657    0.14437   4.825 1.40e-06 ***</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="do">## ---</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="do">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="do">## (Dispersion parameter for binomial family taken to be 1)</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="do">##     Null deviance: 1774.2  on 3140  degrees of freedom</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="do">## Residual deviance: 1589.9  on 3134  degrees of freedom</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="do">## AIC: 1603.9</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="do">## Number of Fisher Scoring iterations: 6</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="co"># ORs and 95% CIs</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="do">## adjusted</span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(out1<span class="sc">$</span>coefficients)[<span class="dv">2</span><span class="sc">:</span><span class="dv">7</span>] </span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="do">##   age_10  chol_50   bmi_10   sbp_50    smoke   dibpat </span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="do">## 1.830251 1.702406 1.732348 2.467919 1.829162 2.006855</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">confint</span>(out1))[<span class="dv">2</span><span class="sc">:</span><span class="dv">7</span>,]</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="do">##            2.5 %   97.5 %</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="do">## age_10  1.447496 2.314909</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="do">## chol_50 1.465976 1.977767</span></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="do">## bmi_10  1.027046 2.906856</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="do">## sbp_50  1.640586 3.682099</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="do">## smoke   1.390013 2.418030</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="do">## dibpat  1.517449 2.674349</span></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a><span class="co"># unadjusted</span></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>out1<span class="ot">&lt;-</span><span class="fu">glm</span>(chd69 <span class="sc">~</span>  dibpat, <span class="at">family=</span>binomial, <span class="at">data=</span>wcgs1cc)</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(out1<span class="sc">$</span>coefficients)[<span class="dv">2</span>] </span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a><span class="do">##   dibpat </span></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="do">## 2.356834</span></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">confint</span>(out1))[<span class="dv">2</span>,]</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a><span class="do">##    2.5 %   97.5 % </span></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="do">## 1.796912 3.117231</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><strong>Stata code and output</strong></p>
+<div class="cell" data-collectcode="true">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> wcgs.dta</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> age_10=age/10</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> chol_50=chol/50</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> bmi_10=bmi/10</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> sbp_50=sbp/50</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>** <span class="kw">delete</span> <span class="fu">missing</span> and outliers <span class="kw">permanently</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="kw">drop</span> <span class="kw">if</span> <span class="fu">missing</span>(chd69) | <span class="fu">missing</span>(bmi) | <span class="fu">missing</span>(age) | <span class="fu">missing</span>(sbp) | <span class="fu">missing</span>(smoke) | <span class="fu">missing</span>(chol) | <span class="fu">missing</span>(dibpat)  </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">drop</span> <span class="kw">if</span> chol ==645 </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>**</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>** turns out to <span class="kw">be</span> equivalent to: <span class="kw">drop</span> <span class="kw">if</span> chol &gt;=645 </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>** This is because the <span class="fu">missing</span> are <span class="kw">in</span> cholesterol and </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>** <span class="fu">missing</span> <span class="kw">values</span> are eliminated <span class="kw">by</span> the condition</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>**</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>** adjusted ORs</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="kw">logistic</span> chd69 bmi age sbp smoke chol dibpat</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>**  smoke and dibpat are coded 0/1 so it is equivalent to <span class="kw">using</span> i.smoke and i.dibpat</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>** unadjusted ORs</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="kw">logistic</span> chd69 dibpat</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>## (12 <span class="fu">missing</span> <span class="kw">values</span> generated)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>## (12 observations deleted)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>## (1 observation deleted)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>## Logistic regression                                     Number <span class="kw">of</span> <span class="kw">obs</span> =  3,141</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>##                                                         LR <span class="fu">chi2</span>(6)    = 184.34</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>##                                                         Prob &gt; <span class="fu">chi2</span>   = 0.0000</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>## Log likelihood = -794.92603                             Pseudo R2     = 0.1039</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>##        chd69 | Odds <span class="kw">ratio</span>   Std. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>##          bmi |   1.056485   .0280297     2.07   0.038     1.002952    1.112876</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>##          age |    1.06231   .0127148     5.05   0.000     1.037679    1.087525</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>##          sbp |   1.018232   .0041955     4.38   0.000     1.010042    1.026488</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>##        smoke |   1.829162   .2580698     4.28   0.000     1.387265    2.411822</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>##         chol |   1.010698   .0015431     6.97   0.000     1.007678    1.013727</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>##       dibpat |   2.006855   .2897341     4.82   0.000     1.512259    2.663212</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |   4.69e-06   4.60e-06   -12.49   0.000     6.84e-07    .0000321</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>## Note: <span class="dt">_cons</span> <span class="kw">estimates</span> baseline odds.</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>## Logistic regression                                     Number <span class="kw">of</span> <span class="kw">obs</span> =  3,141</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>##                                                         LR <span class="fu">chi2</span>(1)    =  40.14</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>##                                                         Prob &gt; <span class="fu">chi2</span>   = 0.0000</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>## Log likelihood = -867.02525                             Pseudo R2     = 0.0226</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>##        chd69 | Odds <span class="kw">ratio</span>   Std. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>##       dibpat |   2.356834   .3307581     6.11   0.000     1.790076    3.103035</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |   .0534145    .006168   -25.37   0.000     .0425958    .0669809</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>## Note: <span class="dt">_cons</span> <span class="kw">estimates</span> baseline odds.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The adjusted OR for <em>dibpat</em> (type A) is smaller OR=2.01 95%CI =(1.52 ; 2.67) than the unadjusted OR=2.36 95%CI=(1.80 ; 3.12), so some degree of confounding indeed occurs. This example illustrates what researchers typically do in practice, i.e.&nbsp;they compare the unadjusted analysis with the adjusted analysis with all potential confounders added to the model, irrespective of whether they are indeed confounders or not, and sometimes without looking at significance. This is somehow a looser interpretation of the criteria listed above but can also be understood in a global context where, for instance, a factor like BMI may not appear to confound the association between <em>chd69</em> and <em>dibpat</em> in this dataset but might have been in other similar epidemiological studies.</p>
+<p>You can also read Section 5.2.2. p.&nbsp;156-58 of the book for a slightly more elaborate discussion of this example - optional reading.</p>
+<!-- Do we need a tutorial or a discussion here to recap what we learned I am not sure. It makes sense only if we discuss the group variable case -->
+</section>
+<section id="summary_wk09" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="summary_wk09">Summary</h2>
+<p>The following are the key takeaway messages from this week:</p>
+<ol type="1">
+<li><p>Logistic regression is the natural way to extend the notion of odds-ratio by modelling the log-odds of an event as linear combination of covariates.</p></li>
+<li><p>Binary logistic regression models the expected response (i.e.&nbsp;the probability of an event occurence) on the log-odds scale and inference relies on maximum likelihood theory; it is therefore an extension of linear regression for binary outcomes.</p></li>
+<li><p>Likelihood ratio tests are very useful in this context. They can allow us to test a null hypothesis involving several regression parameters.</p></li>
+<li><p>General concepts like adjustment and interaction are similar to the ones described for linear regression.</p></li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./008-model_building.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regression model building and variable selection</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./010-logistic_regression_conf_inter.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
