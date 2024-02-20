@@ -155,7 +155,7 @@ reg LDL i.HT i.statins  i.HT#i.statins
 **R code and output**
 
 ```{r, collapse = TRUE}
-hers <- read.csv("https://www.dropbox.com/s/7f5lnv19drg6655/hersdata.csv?dl=1")
+hers <- read.csv("https://raw.githubusercontent.com/atpinto/RM1/main/Data/hersdata.csv")
 lm.hers <- lm(LDL ~ HT + statins + HT:statins, data = hers)
 summary(lm.hers)
 confint(lm.hers)
@@ -178,7 +178,7 @@ regress LDL i.statins##c.BMIc age nonwhite smoking drinkany
 **R code and output**
 
 ```{r, collapse = TRUE}
-hers <- read.csv("https://www.dropbox.com/s/7f5lnv19drg6655/hersdata.csv?dl=1")
+hers <- read.csv("https://raw.githubusercontent.com/atpinto/RM1/main/Data/hersdata.csv")
 hers$BMIc <- hers$BMI - 28.57925
 lm.hers <- lm(LDL ~ statins*BMIc + age + nonwhite + smoking + drinkany, data = hers)
 summary(lm.hers)
