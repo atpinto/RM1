@@ -65,9 +65,9 @@ We have seen how to use residuals to identify non-linearities, this week we will
 
 To motivate, we consider data on 892 females under 50 years collected in three villages in West Africa. Investigators are interested in exploring the relationship between age  and triceps skinfold thickness, a crude measure of body fat. The dataset is called *triceps* and include *age*, *thick* and *logthick*, for respectively age in years, triceps skinfold thickness in mm and its logarithm. The figure below displays the the relationship between *age* and *logthick* and it is immediately clear that  this relationship in nonlinear on such a wide age span. A nonparametric smoother (LOWESS) can be applied to the data  and returns the blue fitted line confirming the visual impression. 
 
-```{r, echo=FALSE, message=FALSE}
+```{r, echo=FALSE, message=FALSE, collapse = TRUE}
 # add path here
-triceps<-read.csv("https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1")
+triceps<-read.csv("https://raw.githubusercontent.com/atpinto/RM1/main/Data/triceps.csv")
 triceps<-data.frame(triceps)
 #colnames(triceps)<-c("age","logthick","thick")
 plot(logthick~age,xlab="Age",ylab="Skinfold thickness (log)",data=triceps)
@@ -78,7 +78,7 @@ A simple regression model of the form $logthick_i=\beta_0+\beta_1 age_i+\epsilon
 
 The following fit is now obtained and there is clearly some improvement over a linear fit but we may be left with the visual impression that fitting a cubic polynomial is not quite enough to capture the structure of the data, especially around year 10 where the fit does not seem so good.
 
-```{r, echo=FALSE, message=FALSE}
+```{r, echo=FALSE, message=FALSE, collapse = TRUE}
 triceps <- triceps[order(triceps$age),] # order data by age
 plot(logthick~age,xlab="Age",ylab="Skinfold thickness (log)",data=triceps)
 fit.poly <- lm(logthick ~ poly(age,3),data=triceps) #cubic polynomial (orthogonal)
@@ -93,9 +93,9 @@ The R code for this section and a slightly simpler version for Stata are given b
 
 R Code 
 
-```{r, echo=FALSE, message=FALSE}
+```{r, collapse = TRUE}
 # scatter plot and lowess fit
-triceps<-read.csv("https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1")
+triceps<-read.csv("https://raw.githubusercontent.com/atpinto/RM1/main/Data/triceps.csv")
 triceps<-data.frame(triceps)
 #colnames(triceps)<-c("age","logthick","thick")
 plot(logthick~age,xlab="Age",ylab="Skinfold thickness (log)",data=triceps)
@@ -114,7 +114,7 @@ lines(triceps$age, predict(fit.poly, data.frame(age=triceps$age)), col="red", lw
 Stata code and output
 
 ```{stata, collectcode=TRUE, collapse=TRUE }
-import delimited "https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1"
+import delimited "https://raw.githubusercontent.com/atpinto/RM1/main/Data/triceps.csv"
 gen age2 = age^2
 gen age3 = age^3
 regress logthick age age2 age3
@@ -179,7 +179,7 @@ The Stata syntax still uses the usual *regress* command but it's preceeded by a 
 
 Stata code and output
 ```{stata, collectcode=TRUE, collapse=TRUE }
-import delimited "https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1"
+import delimited "https://raw.githubusercontent.com/atpinto/RM1/main/Data/triceps.csv"
 mkspline age_spl = age, cubic nknots(4)
 regress logthick  age_spl* 
 ```
@@ -286,7 +286,7 @@ Indications on how to produce a simpler figure in R were also provided. We don't
 
 ```{stata, collectcode=TRUE, collapse=TRUE }
 ## Figure 7.2, default knots, and fit
-import delimited "https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1"
+import delimited "https://raw.githubusercontent.com/atpinto/RM1/main/Data/triceps.csv"
 mkspline age_spl = age, cubic nknots(4) displayknots
 regress logthick  age_spl*
 predict pred
@@ -325,7 +325,7 @@ OPTIONAL: Regarding this calculation, Stata users have the edge since the softwa
 **Stata code**
 
 ```{stata, collectcode=TRUE, collapse=TRUE }
-import delimited "https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1"
+import delimited "https://raw.githubusercontent.com/atpinto/RM1/main/Data/triceps.csv"
 mkspline2 age_spl = age, cubic nknots(4)
 regress logthick  age_spl*
 mfxrcspline, gen(delta lower upper)
@@ -357,7 +357,7 @@ Lecture 1b in R [OPTIONAL - help with an interpretation that is not directly pro
 **R code**
 
 ```{r, collapse = TRUE}
-triceps<-read.csv("https://www.dropbox.com/s/5yk6u248adycvq1/triceps.csv?dl=1")
+triceps<-read.csv("https://raw.githubusercontent.com/atpinto/RM1/main/Data/triceps.csv")
 triceps<-data.frame(triceps)
 triceps <- triceps[order(triceps$age),] 
 

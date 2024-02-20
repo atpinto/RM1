@@ -489,49 +489,50 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(cvAUC)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Loading required package: cvAUC</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning in library(package, lib.loc = lib.loc, character.only = TRUE,</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="do">## logical.return = TRUE, : there is no package called 'cvAUC'</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="do">## function required to run CV</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>cv_eval <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">V=</span><span class="dv">10</span>){</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  f.cvFolds <span class="ot">&lt;-</span> <span class="cf">function</span>(Y, V){ <span class="co">#Create CV folds (stratify by outcome)</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    Y0 <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">sample</span>(<span class="fu">which</span>(Y<span class="sc">==</span><span class="dv">0</span>)), <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>V, <span class="at">length=</span><span class="fu">length</span>(<span class="fu">which</span>(Y<span class="sc">==</span><span class="dv">0</span>))))</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    Y1 <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">sample</span>(<span class="fu">which</span>(Y<span class="sc">==</span><span class="dv">1</span>)), <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>V, <span class="at">length=</span><span class="fu">length</span>(<span class="fu">which</span>(Y<span class="sc">==</span><span class="dv">1</span>))))</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    folds <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length=</span>V)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (v <span class="cf">in</span> <span class="fu">seq</span>(V)) {folds[[v]] <span class="ot">&lt;-</span> <span class="fu">c</span>(Y0[[v]], Y1[[v]])}</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(folds)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  f.doFit <span class="ot">&lt;-</span> <span class="cf">function</span>(v, folds, data){ <span class="co">#Train/test glm for each fold</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y<span class="sc">~</span>., <span class="at">data=</span>data[<span class="sc">-</span>folds[[v]],], <span class="at">family=</span>binomial)</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, <span class="at">newdata=</span>data[folds[[v]],], <span class="at">type=</span><span class="st">"response"</span>)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(pred)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  folds <span class="ot">&lt;-</span> <span class="fu">f.cvFolds</span>(<span class="at">Y=</span>data<span class="sc">$</span>Y, <span class="at">V=</span>V) <span class="co">#Create folds</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  predictions <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">sapply</span>(<span class="fu">seq</span>(V), f.doFit, <span class="at">folds=</span>folds, <span class="at">data=</span>data)) <span class="co">#CV train/predict</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  predictions[<span class="fu">unlist</span>(folds)] <span class="ot">&lt;-</span> predictions <span class="co">#Re-order pred values</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  ci.pooled.cvAUC</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get CV AUC and confidence interval</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">ci.cvAUC</span>(<span class="at">predictions=</span>predictions, <span class="at">labels=</span>data<span class="sc">$</span>Y, <span class="at">folds=</span>folds, <span class="at">confidence=</span><span class="fl">0.95</span>)</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(out)</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co"># this fonction requires to have a dataset with only the covariates </span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co"># and the endpoint recoded Y as columns, </span><span class="al">NOTE</span><span class="co"> that the outcome (last</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co"># column) is now named Y)</span></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>wcgs1<span class="ot">=</span>wcgs1[,<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(wcgs1)<span class="ot">=</span><span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"chol"</span>, <span class="st">"sbp"</span>, <span class="st">"bmi"</span>, <span class="st">"smoke"</span>,<span class="st">"Y"</span>)</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">&lt;-</span><span class="fu">glm</span>(Y <span class="sc">~</span> age<span class="sc">+</span>chol<span class="sc">+</span>sbp<span class="sc">+</span>bmi<span class="sc">+</span>smoke, <span class="at">family=</span>binomial, <span class="at">data=</span>wcgs1)</span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1001</span>)</span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cv_eval</span>(<span class="at">data=</span>wcgs1, <span class="at">V=</span><span class="dv">10</span>)</span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in cv_eval(data = wcgs1, V = 10): object 'ci.pooled.cvAUC' not found</span></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>out</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="do">## Call:</span></span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="do">## roc.default(response = wcgs1.val$chd69, predictor = wcgs1.val$pred,     ci = TRUE, plot = TRUE)</span></span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="do">## Data: wcgs1.val$pred in 1415 controls (wcgs1.val$chd69 0) &lt; 130 cases (wcgs1.val$chd69 1).</span></span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="do">## Area under the curve: 0.7127</span></span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="do">## 95% CI: 0.6694-0.756 (DeLong)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="do">## function required to run CV</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>cv_eval <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">V=</span><span class="dv">10</span>){</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  f.cvFolds <span class="ot">&lt;-</span> <span class="cf">function</span>(Y, V){ <span class="co">#Create CV folds (stratify by outcome)</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    Y0 <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">sample</span>(<span class="fu">which</span>(Y<span class="sc">==</span><span class="dv">0</span>)), <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>V, <span class="at">length=</span><span class="fu">length</span>(<span class="fu">which</span>(Y<span class="sc">==</span><span class="dv">0</span>))))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    Y1 <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">sample</span>(<span class="fu">which</span>(Y<span class="sc">==</span><span class="dv">1</span>)), <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>V, <span class="at">length=</span><span class="fu">length</span>(<span class="fu">which</span>(Y<span class="sc">==</span><span class="dv">1</span>))))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    folds <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length=</span>V)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (v <span class="cf">in</span> <span class="fu">seq</span>(V)) {folds[[v]] <span class="ot">&lt;-</span> <span class="fu">c</span>(Y0[[v]], Y1[[v]])}</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(folds)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  f.doFit <span class="ot">&lt;-</span> <span class="cf">function</span>(v, folds, data){ <span class="co">#Train/test glm for each fold</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(Y<span class="sc">~</span>., <span class="at">data=</span>data[<span class="sc">-</span>folds[[v]],], <span class="at">family=</span>binomial)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, <span class="at">newdata=</span>data[folds[[v]],], <span class="at">type=</span><span class="st">"response"</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(pred)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  folds <span class="ot">&lt;-</span> <span class="fu">f.cvFolds</span>(<span class="at">Y=</span>data<span class="sc">$</span>Y, <span class="at">V=</span>V) <span class="co">#Create folds</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  predictions <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">sapply</span>(<span class="fu">seq</span>(V), f.doFit, <span class="at">folds=</span>folds, <span class="at">data=</span>data)) <span class="co">#CV train/predict</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  predictions[<span class="fu">unlist</span>(folds)] <span class="ot">&lt;-</span> predictions <span class="co">#Re-order pred values</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  ci.pooled.cvAUC</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get CV AUC and confidence interval</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">ci.cvAUC</span>(<span class="at">predictions=</span>predictions, <span class="at">labels=</span>data<span class="sc">$</span>Y, <span class="at">folds=</span>folds, <span class="at">confidence=</span><span class="fl">0.95</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(out)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co"># this fonction requires to have a dataset with only the covariates </span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co"># and the endpoint recoded Y as columns, </span><span class="al">NOTE</span><span class="co"> that the outcome (last</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co"># column) is now named Y)</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>wcgs1<span class="ot">=</span>wcgs1[,<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(wcgs1)<span class="ot">=</span><span class="fu">c</span>(<span class="st">"age"</span>, <span class="st">"chol"</span>, <span class="st">"sbp"</span>, <span class="st">"bmi"</span>, <span class="st">"smoke"</span>,<span class="st">"Y"</span>)</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>fit<span class="ot">&lt;-</span><span class="fu">glm</span>(Y <span class="sc">~</span> age<span class="sc">+</span>chol<span class="sc">+</span>sbp<span class="sc">+</span>bmi<span class="sc">+</span>smoke, <span class="at">family=</span>binomial, <span class="at">data=</span>wcgs1)</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1001</span>)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cv_eval</span>(<span class="at">data=</span>wcgs1, <span class="at">V=</span><span class="dv">10</span>)</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>out</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="do">## $cvAUC</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0.7269148</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="do">## $se</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0.01518409</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="do">## $ci</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0.6971545 0.7566751</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="do">## $confidence</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0.95</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>As expected the naive AUC estimate is slightly bigger than its cross-validated counterpart. This illustrates a small optimism bias discussed above. The fact that the difference is small suggests that the model used to predict <em>chd69</em> is not badly overfitted. Once again, the result depends on the seed and may differ (slighytly) across packages. In this instance, we get a cross-validated AUC=0.727, 95% CI=(0.696 ; 0.758) in Stata with the same seed. The code below shows how to do this.</p>
@@ -609,296 +610,299 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(rms)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(rms)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># val.prob(wcgs1.val$pred, wcgs1.val$chd69, m=150, cex=.5) # without CIs</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calibration function to get the 95% CI</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>val.prob.ci<span class="ot">&lt;-</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(p, y, logit, group, <span class="at">weights =</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(y)), <span class="at">normwt =</span> F, <span class="at">pl =</span> T, </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">smooth =</span> T, <span class="at">logistic.cal =</span> F, <span class="at">xlab =</span> <span class="st">"Predicted probability"</span>, <span class="at">ylab =</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Observed frequency"</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.02</span>, <span class="dv">1</span>),<span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.15</span>,<span class="dv">1</span>), m, g, cuts, <span class="at">emax.lim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">legendloc =</span>  <span class="fu">c</span>(<span class="fl">0.55</span> , <span class="fl">0.27</span>), <span class="at">statloc =</span> <span class="fu">c</span>(<span class="dv">0</span>,.<span class="dv">85</span>),<span class="at">dostats=</span><span class="fu">c</span>(<span class="dv">12</span>,<span class="dv">13</span>,<span class="dv">2</span>,<span class="dv">15</span>,<span class="dv">3</span>),<span class="at">roundstats=</span><span class="dv">2</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">riskdist =</span> <span class="st">"predicted"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>, <span class="at">mkh =</span> <span class="fl">0.02</span>, <span class="at">connect.group =</span> </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>             F, <span class="at">connect.smooth =</span> T, <span class="at">g.group =</span> <span class="dv">4</span>, <span class="at">evaluate =</span> <span class="dv">100</span>, <span class="at">nmin =</span> <span class="dv">0</span>, <span class="at">d0lab=</span><span class="st">"0"</span>, <span class="at">d1lab=</span><span class="st">"1"</span>, <span class="at">cex.d01=</span><span class="fl">0.7</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">dist.label=</span><span class="fl">0.04</span>, <span class="at">line.bins=</span><span class="sc">-</span>.<span class="dv">05</span>, <span class="at">dist.label2=</span>.<span class="dv">03</span>, cutoff, <span class="at">cex.lab=</span><span class="dv">1</span>, <span class="at">las=</span><span class="dv">1</span>, <span class="at">length.seg=</span><span class="dv">1</span>)  {</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">missing</span>(p))</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      p <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> logit))</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> logit <span class="ot">&lt;-</span> <span class="fu">log</span>(p<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> p))</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(p) <span class="sc">!=</span> <span class="fu">length</span>(y))</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">"lengths of p or logit and y do not agree"</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(p) <span class="ot">&lt;-</span> <span class="fu">names</span>(y) <span class="ot">&lt;-</span> <span class="fu">names</span>(logit) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(group)) {</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">length</span>(group) <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;&amp;</span> <span class="fu">is.logical</span>(group) <span class="sc">&amp;&amp;</span> group)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        group <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="st">""</span>, <span class="fu">length</span>(y))</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.factor</span>(group))</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        group <span class="ot">&lt;-</span> <span class="cf">if</span>(<span class="fu">is.logical</span>(group) <span class="sc">||</span> <span class="fu">is.character</span>(group)) </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>          <span class="fu">as.factor</span>(group) <span class="cf">else</span> <span class="fu">cut2</span>(group, <span class="at">g =</span> </span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>                                       g.group)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">names</span>(group) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>      nma <span class="ot">&lt;-</span> <span class="sc">!</span>(<span class="fu">is.na</span>(p <span class="sc">+</span> y <span class="sc">+</span> weights) <span class="sc">|</span> <span class="fu">is.na</span>(group))</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>      ng <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">levels</span>(group))</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>      nma <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">is.na</span>(p <span class="sc">+</span> y <span class="sc">+</span> weights)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>      ng <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    logit <span class="ot">&lt;-</span> logit[nma]</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> y[nma]</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> p[nma]</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(ng <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>      group <span class="ot">&lt;-</span> group[nma]</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>      weights <span class="ot">&lt;-</span> weights[nma]</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">val.probg</span>(p, y, group, evaluate, weights, normwt, nmin)</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(<span class="fu">unique</span>(p)) <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>      <span class="co">#22Sep94</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>      P <span class="ot">&lt;-</span> <span class="fu">mean</span>(y)</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>      Intc <span class="ot">&lt;-</span> <span class="fu">log</span>(P<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> P))</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>      n <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>      D <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span>n</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>      L01 <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span> <span class="fu">sum</span>(y <span class="sc">*</span> logit <span class="sc">-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(logit)), <span class="at">na.rm =</span> T)</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>      L.cal <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span> <span class="fu">sum</span>(y <span class="sc">*</span> Intc <span class="sc">-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(Intc)), <span class="at">na.rm =</span> T)</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>      U.chisq <span class="ot">&lt;-</span> L01 <span class="sc">-</span> L.cal</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>      U.p <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pchisq</span>(U.chisq, <span class="dv">1</span>)</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>      U <span class="ot">&lt;-</span> (U.chisq <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">/</span>n</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>      Q <span class="ot">&lt;-</span> D <span class="sc">-</span> U</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>      stats <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, D, <span class="dv">0</span>, <span class="dv">1</span>, U, U.chisq, U.p, Q, <span class="fu">mean</span>((y <span class="sc">-</span> p[</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span>])<span class="sc">^</span><span class="dv">2</span>), Intc, <span class="dv">0</span>, <span class="fu">rep</span>(<span class="fu">abs</span>(p[<span class="dv">1</span>] <span class="sc">-</span> P), <span class="dv">2</span>))</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>      <span class="fu">names</span>(stats) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Dxy"</span>, <span class="st">"C (ROC)"</span>, <span class="st">"R2"</span>, <span class="st">"D"</span>, <span class="st">"D:Chi-sq"</span>, </span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"D:p"</span>, <span class="st">"U"</span>, <span class="st">"U:Chi-sq"</span>, <span class="st">"U:p"</span>, <span class="st">"Q"</span>, <span class="st">"Brier"</span>, </span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"Intercept"</span>, <span class="st">"Slope"</span>, <span class="st">"Emax"</span>, <span class="st">"Eavg"</span>)</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(stats)</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">is.infinite</span>(logit)</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>    nm <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="sc">!</span>i)</span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(nm <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>      <span class="fu">warning</span>(<span class="fu">paste</span>(nm, </span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"observations deleted from logistic calibration due to probs. of 0 or 1"</span></span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>      ))</span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    f <span class="ot">&lt;-</span> <span class="fu">lrm.fit</span>(logit[i], y[i])</span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>    f2<span class="ot">&lt;-</span>    <span class="fu">lrm.fit</span>(<span class="at">offset=</span>logit[i], <span class="at">y=</span>y[i])</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>    stats <span class="ot">&lt;-</span> f<span class="sc">$</span>stats</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>    n <span class="ot">&lt;-</span> stats[<span class="st">"Obs"</span>]</span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>    predprob <span class="ot">&lt;-</span> <span class="fu">seq</span>(emax.lim[<span class="dv">1</span>], emax.lim[<span class="dv">2</span>], <span class="at">by =</span> <span class="fl">0.0005</span>)</span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>    lt <span class="ot">&lt;-</span> f<span class="sc">$</span>coef[<span class="dv">1</span>] <span class="sc">+</span> f<span class="sc">$</span>coef[<span class="dv">2</span>] <span class="sc">*</span> <span class="fu">log</span>(predprob<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> predprob))</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>    calp <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> lt))</span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>    emax <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="fu">abs</span>(predprob <span class="sc">-</span> calp))</span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (pl) {</span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>      <span class="fu">plot</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="at">xlim =</span> xlim, <span class="at">ylim =</span> ylim, <span class="at">type =</span> <span class="st">"n"</span>, <span class="at">xlab =</span> xlab, </span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>           <span class="at">ylab =</span> ylab, <span class="at">las=</span>las)</span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>      <span class="fu">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>      lt <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>      leg <span class="ot">&lt;-</span> <span class="st">"Ideal"</span></span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>      marks <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (logistic.cal) {</span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>        lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">1</span>)</span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">c</span>(leg, <span class="st">"Logistic calibration"</span>)</span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>        marks <span class="ot">&lt;-</span> <span class="fu">c</span>(marks, <span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (smooth) {</span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>        Sm <span class="ot">&lt;-</span> <span class="fu">lowess</span>(p, y, <span class="at">iter =</span> <span class="dv">0</span>)</span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (connect.smooth) {</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a>          <span class="fu">lines</span>(Sm, <span class="at">lty =</span> <span class="dv">3</span>)</span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>          lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">3</span>)</span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a>          marks <span class="ot">&lt;-</span> <span class="fu">c</span>(marks, <span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> {</span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a>          <span class="fu">points</span>(Sm)</span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a>          lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">0</span>)</span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>          marks <span class="ot">&lt;-</span> <span class="fu">c</span>(marks, <span class="dv">1</span>)</span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">c</span>(leg, <span class="st">"Nonparametric"</span>)</span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a>        cal.smooth <span class="ot">&lt;-</span> <span class="fu">approx</span>(Sm, <span class="at">xout =</span> p)<span class="sc">$</span>y</span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a>        eavg <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">abs</span>(p <span class="sc">-</span> cal.smooth))</span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(m) <span class="sc">|</span> <span class="sc">!</span><span class="fu">missing</span>(g) <span class="sc">|</span> <span class="sc">!</span><span class="fu">missing</span>(cuts)) {</span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(m))</span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>          q <span class="ot">&lt;-</span> <span class="fu">cut2</span>(p, <span class="at">m =</span> m, <span class="at">levels.mean =</span> T, <span class="at">digits =</span> <span class="dv">7</span>)</span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(g))</span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>          q <span class="ot">&lt;-</span> <span class="fu">cut2</span>(p, <span class="at">g =</span> g, <span class="at">levels.mean =</span> T, <span class="at">digits =</span> <span class="dv">7</span>)</span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(cuts))</span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>          q <span class="ot">&lt;-</span> <span class="fu">cut2</span>(p, <span class="at">cuts =</span> cuts, <span class="at">levels.mean =</span> T, <span class="at">digits =</span> <span class="dv">7</span>)</span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>        means <span class="ot">&lt;-</span> <span class="fu">as.single</span>(<span class="fu">levels</span>(q))</span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>        prop <span class="ot">&lt;-</span> <span class="fu">tapply</span>(y, q, <span class="cf">function</span>(x)<span class="fu">mean</span>(x, <span class="at">na.rm =</span> T))</span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>        <span class="fu">points</span>(means, prop, <span class="at">pch =</span> <span class="dv">2</span>, <span class="at">cex=</span>cex)</span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>        <span class="co">#18.11.02: CI triangles         </span></span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>        ng  <span class="ot">&lt;-</span><span class="fu">tapply</span>(y, q, length)</span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>        og  <span class="ot">&lt;-</span><span class="fu">tapply</span>(y, q, sum)</span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a>        ob  <span class="ot">&lt;-</span>og<span class="sc">/</span>ng</span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a>        se.ob   <span class="ot">&lt;-</span><span class="fu">sqrt</span>(ob<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>ob)<span class="sc">/</span>ng)</span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a>        g       <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">as.single</span>(<span class="fu">levels</span>(q)))</span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>g) <span class="fu">lines</span>(<span class="fu">c</span>(means[i], means[i]), <span class="fu">c</span>(prop[i],<span class="fu">min</span>(<span class="dv">1</span>,prop[i]<span class="sc">+</span><span class="fl">1.96</span><span class="sc">*</span>se.ob[i])), <span class="at">type=</span><span class="st">"l"</span>)</span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>g) <span class="fu">lines</span>(<span class="fu">c</span>(means[i], means[i]), <span class="fu">c</span>(prop[i],<span class="fu">max</span>(<span class="dv">0</span>,prop[i]<span class="sc">-</span><span class="fl">1.96</span><span class="sc">*</span>se.ob[i])), <span class="at">type=</span><span class="st">"l"</span>)</span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(connect.group) {</span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a>          <span class="fu">lines</span>(means, prop)</span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a>          lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">1</span>)</span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">0</span>)</span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">c</span>(leg, <span class="st">"Grouped patients"</span>)</span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a>        marks <span class="ot">&lt;-</span> <span class="fu">c</span>(marks, <span class="dv">2</span>)</span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a>    lr <span class="ot">&lt;-</span> stats[<span class="st">"Model L.R."</span>]</span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a>    p.lr <span class="ot">&lt;-</span> stats[<span class="st">"P"</span>]</span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a>    D <span class="ot">&lt;-</span> (lr <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">/</span>n</span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>    L01 <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span> <span class="fu">sum</span>(y <span class="sc">*</span> logit <span class="sc">-</span> <span class="fu">logb</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(logit)), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a>    U.chisq <span class="ot">&lt;-</span> L01 <span class="sc">-</span> f<span class="sc">$</span>deviance[<span class="dv">2</span>]</span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a>    p.U <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pchisq</span>(U.chisq, <span class="dv">2</span>)</span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a>    U <span class="ot">&lt;-</span> (U.chisq <span class="sc">-</span> <span class="dv">2</span>)<span class="sc">/</span>n</span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">&lt;-</span> D <span class="sc">-</span> U</span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a>    Dxy <span class="ot">&lt;-</span> stats[<span class="st">"Dxy"</span>]</span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a>    C <span class="ot">&lt;-</span> stats[<span class="st">"C"</span>]</span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a>    R2 <span class="ot">&lt;-</span> stats[<span class="st">"R2"</span>]</span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a>    B <span class="ot">&lt;-</span> <span class="fu">sum</span>((p <span class="sc">-</span> y)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>n</span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ES 15dec08 add Brier scaled</span></span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a>    Bmax  <span class="ot">&lt;-</span> <span class="fu">mean</span>(y) <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span><span class="fu">mean</span>(y))<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">-</span><span class="fu">mean</span>(y)) <span class="sc">*</span> <span class="fu">mean</span>(y)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a>    Bscaled <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> B<span class="sc">/</span>Bmax</span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a>    stats <span class="ot">&lt;-</span> <span class="fu">c</span>(Dxy, C, R2, D, lr, p.lr, U, U.chisq, p.U, Q, B, </span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>               f2<span class="sc">$</span>coef[<span class="dv">1</span>], f<span class="sc">$</span>coef[<span class="dv">2</span>], emax, Bscaled)</span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(stats) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Dxy"</span>, <span class="st">"C (ROC)"</span>, <span class="st">"R2"</span>, <span class="st">"D"</span>, <span class="st">"D:Chi-sq"</span>, </span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"D:p"</span>, <span class="st">"U"</span>, <span class="st">"U:Chi-sq"</span>, <span class="st">"U:p"</span>, <span class="st">"Q"</span>, <span class="st">"Brier"</span>, <span class="st">"Intercept"</span>, </span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Slope"</span>, <span class="st">"Emax"</span>, <span class="st">"Brier scaled"</span>)</span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(smooth)</span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a>      stats <span class="ot">&lt;-</span> <span class="fu">c</span>(stats, <span class="fu">c</span>(<span class="at">Eavg =</span> eavg))</span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Cut off definition    </span></span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(cutoff)) {</span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a>      <span class="fu">arrows</span>(<span class="at">x0=</span>cutoff,<span class="at">y0=</span>.<span class="dv">1</span>,<span class="at">x1=</span>cutoff,<span class="at">y1=</span><span class="sc">-</span><span class="fl">0.025</span>,<span class="at">length=</span>.<span class="dv">15</span>)</span>
+<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a>    }   </span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(pl) {</span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a>      logit <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">7</span>, <span class="dv">7</span>, <span class="at">length =</span> <span class="dv">200</span>)</span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a>      prob <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> logit))</span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a>      pred.prob <span class="ot">&lt;-</span> f<span class="sc">$</span>coef[<span class="dv">1</span>] <span class="sc">+</span> f<span class="sc">$</span>coef[<span class="dv">2</span>] <span class="sc">*</span> logit</span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>      pred.prob <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> pred.prob))</span>
+<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(logistic.cal) <span class="fu">lines</span>(prob, pred.prob, <span class="at">lty =</span> <span class="dv">1</span>)  </span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a>      <span class="co"># pc &lt;- rep(" ", length(lt))</span></span>
+<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a>      <span class="co"># pc[lt==0] &lt;- "."</span></span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a>      lp <span class="ot">&lt;-</span> legendloc</span>
+<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.logical</span>(lp)) {</span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.list</span>(lp)) </span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a>          lp <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">x =</span> lp[<span class="dv">1</span>], <span class="at">y =</span> lp[<span class="dv">2</span>])</span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a>        <span class="fu">legend</span>(lp, leg, <span class="at">lty =</span> lt, <span class="at">pch =</span> marks, <span class="at">cex =</span> cex, <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.logical</span>(statloc)) {</span>
+<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a>        dostats <span class="ot">&lt;-</span> dostats</span>
+<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">format</span>(<span class="fu">names</span>(stats)[dostats])    <span class="co">#constant length</span></span>
+<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">paste</span>(leg, <span class="st">":"</span>, <span class="fu">format</span>(stats[dostats], <span class="at">digits=</span>roundstats), <span class="at">sep =</span> </span>
+<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a>                       <span class="st">""</span>)</span>
+<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.list</span>(statloc))</span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a>          statloc <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">x =</span> statloc[<span class="dv">1</span>], <span class="at">y =</span> statloc[<span class="dv">2</span>])</span>
+<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text</span>(statloc, <span class="fu">paste</span>(<span class="fu">format</span>(<span class="fu">names</span>(stats[dostats])), </span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a>                            <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>), <span class="at">adj =</span> <span class="dv">0</span>, <span class="at">cex =</span> cex)</span>
+<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text</span>(statloc<span class="sc">$</span>x <span class="sc">+</span> (xlim[<span class="dv">2</span>]<span class="sc">-</span>xlim[<span class="dv">1</span>])<span class="sc">/</span><span class="dv">3</span> , statloc<span class="sc">$</span>y, <span class="fu">paste</span>(</span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>          <span class="fu">format</span>(<span class="fu">round</span>(stats[dostats], <span class="at">digits=</span>roundstats)), <span class="at">collapse =</span> </span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a>            <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>), <span class="at">adj =</span> <span class="dv">1</span>, <span class="at">cex =</span> cex)  </span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">is.character</span>(riskdist)) {</span>
+<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(riskdist <span class="sc">==</span> <span class="st">"calibrated"</span>) {</span>
+<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a>          x <span class="ot">&lt;-</span> f<span class="sc">$</span>coef[<span class="dv">1</span>] <span class="sc">+</span> f<span class="sc">$</span>coef[<span class="dv">2</span>] <span class="sc">*</span> <span class="fu">log</span>(p<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> p))</span>
+<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a>          x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> x))</span>
+<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a>          x[p <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a>          x[p <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> x <span class="ot">&lt;-</span> p</span>
+<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a>        bins <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">min</span>(<span class="dv">1</span>,<span class="fu">max</span>(xlim)), <span class="at">length =</span> <span class="dv">101</span>) </span>
+<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a>        x <span class="ot">&lt;-</span> x[x <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> x <span class="sc">&lt;=</span> <span class="dv">1</span>]</span>
+<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a>        <span class="co">#08.04.01,yvon: distribution of predicted prob according to outcome</span></span>
+<span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a>        f0  <span class="ot">&lt;-</span><span class="fu">table</span>(<span class="fu">cut</span>(x[y<span class="sc">==</span><span class="dv">0</span>],bins))</span>
+<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a>        f1  <span class="ot">&lt;-</span><span class="fu">table</span>(<span class="fu">cut</span>(x[y<span class="sc">==</span><span class="dv">1</span>],bins))</span>
+<span id="cb6-201"><a href="#cb6-201" aria-hidden="true" tabindex="-1"></a>        j0  <span class="ot">&lt;-</span>f0 <span class="sc">&gt;</span> <span class="dv">0</span></span>
+<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a>        j1  <span class="ot">&lt;-</span>f1 <span class="sc">&gt;</span> <span class="dv">0</span></span>
+<span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a>        bins0 <span class="ot">&lt;-</span>(bins[<span class="sc">-</span><span class="dv">101</span>])[j0]</span>
+<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a>        bins1 <span class="ot">&lt;-</span>(bins[<span class="sc">-</span><span class="dv">101</span>])[j1]</span>
+<span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a>        f0  <span class="ot">&lt;-</span>f0[j0]</span>
+<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a>        f1  <span class="ot">&lt;-</span>f1[j1]</span>
+<span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a>        maxf <span class="ot">&lt;-</span><span class="fu">max</span>(f0,f1)</span>
+<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a>        f0  <span class="ot">&lt;-</span>(<span class="fl">0.1</span><span class="sc">*</span>f0)<span class="sc">/</span>maxf</span>
+<span id="cb6-209"><a href="#cb6-209" aria-hidden="true" tabindex="-1"></a>        f1  <span class="ot">&lt;-</span>(<span class="fl">0.1</span><span class="sc">*</span>f1)<span class="sc">/</span>maxf</span>
+<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a>        <span class="fu">segments</span>(bins1,line.bins,bins1,length.seg<span class="sc">*</span>f1<span class="sc">+</span>line.bins)</span>
+<span id="cb6-211"><a href="#cb6-211" aria-hidden="true" tabindex="-1"></a>        <span class="fu">segments</span>(bins0,line.bins,bins0,length.seg<span class="sc">*-</span>f0<span class="sc">+</span>line.bins)</span>
+<span id="cb6-212"><a href="#cb6-212" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lines</span>(<span class="fu">c</span>(<span class="fu">min</span>(bins0,bins1)<span class="sc">-</span><span class="fl">0.01</span>,<span class="fu">max</span>(bins0,bins1)<span class="sc">+</span><span class="fl">0.01</span>),<span class="fu">c</span>(line.bins,line.bins))</span>
+<span id="cb6-213"><a href="#cb6-213" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text</span>(<span class="fu">max</span>(bins0,bins1)<span class="sc">+</span>dist.label,line.bins<span class="sc">+</span>dist.label2,d1lab,<span class="at">cex=</span>cex.d01)</span>
+<span id="cb6-214"><a href="#cb6-214" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text</span>(<span class="fu">max</span>(bins0,bins1)<span class="sc">+</span>dist.label,line.bins<span class="sc">-</span>dist.label2,d0lab,<span class="at">cex=</span>cex.d01)</span>
+<span id="cb6-215"><a href="#cb6-215" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-216"><a href="#cb6-216" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-217"><a href="#cb6-217" aria-hidden="true" tabindex="-1"></a>    stats</span>
+<span id="cb6-218"><a href="#cb6-218" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-219"><a href="#cb6-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-220"><a href="#cb6-220" aria-hidden="true" tabindex="-1"></a><span class="co"># calibration plot - with 95% CIs - using the validation dataset</span></span>
+<span id="cb6-221"><a href="#cb6-221" aria-hidden="true" tabindex="-1"></a><span class="fu">val.prob.ci</span>(wcgs1.val<span class="sc">$</span>pred,wcgs1.val<span class="sc">$</span>chd69, <span class="at">pl=</span>T,<span class="at">smooth=</span>T,<span class="at">logistic.cal=</span>F,</span>
+<span id="cb6-222"><a href="#cb6-222" aria-hidden="true" tabindex="-1"></a>            <span class="at">g=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in library(package, lib.loc = lib.loc, character.only = TRUE,
-logical.return = TRUE, : there is no package called 'rms'</code></pre>
+<div class="cell-output-display">
+<p><img src="012-logistic_regression_model_building_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># val.prob(wcgs1.val$pred, wcgs1.val$chd69, m=150, cex=.5) # without CIs</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># calibration function to get the 95% CI</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>val.prob.ci<span class="ot">&lt;-</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(p, y, logit, group, <span class="at">weights =</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(y)), <span class="at">normwt =</span> F, <span class="at">pl =</span> T, </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">smooth =</span> T, <span class="at">logistic.cal =</span> F, <span class="at">xlab =</span> <span class="st">"Predicted probability"</span>, <span class="at">ylab =</span> </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Observed frequency"</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.02</span>, <span class="dv">1</span>),<span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.15</span>,<span class="dv">1</span>), m, g, cuts, <span class="at">emax.lim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), </span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">legendloc =</span>  <span class="fu">c</span>(<span class="fl">0.55</span> , <span class="fl">0.27</span>), <span class="at">statloc =</span> <span class="fu">c</span>(<span class="dv">0</span>,.<span class="dv">85</span>),<span class="at">dostats=</span><span class="fu">c</span>(<span class="dv">12</span>,<span class="dv">13</span>,<span class="dv">2</span>,<span class="dv">15</span>,<span class="dv">3</span>),<span class="at">roundstats=</span><span class="dv">2</span>,</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">riskdist =</span> <span class="st">"predicted"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>, <span class="at">mkh =</span> <span class="fl">0.02</span>, <span class="at">connect.group =</span> </span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>             F, <span class="at">connect.smooth =</span> T, <span class="at">g.group =</span> <span class="dv">4</span>, <span class="at">evaluate =</span> <span class="dv">100</span>, <span class="at">nmin =</span> <span class="dv">0</span>, <span class="at">d0lab=</span><span class="st">"0"</span>, <span class="at">d1lab=</span><span class="st">"1"</span>, <span class="at">cex.d01=</span><span class="fl">0.7</span>,</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">dist.label=</span><span class="fl">0.04</span>, <span class="at">line.bins=</span><span class="sc">-</span>.<span class="dv">05</span>, <span class="at">dist.label2=</span>.<span class="dv">03</span>, cutoff, <span class="at">cex.lab=</span><span class="dv">1</span>, <span class="at">las=</span><span class="dv">1</span>, <span class="at">length.seg=</span><span class="dv">1</span>)  {</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">missing</span>(p))</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>      p <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> logit))</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> logit <span class="ot">&lt;-</span> <span class="fu">log</span>(p<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> p))</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(p) <span class="sc">!=</span> <span class="fu">length</span>(y))</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">"lengths of p or logit and y do not agree"</span>)</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(p) <span class="ot">&lt;-</span> <span class="fu">names</span>(y) <span class="ot">&lt;-</span> <span class="fu">names</span>(logit) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(group)) {</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">length</span>(group) <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;&amp;</span> <span class="fu">is.logical</span>(group) <span class="sc">&amp;&amp;</span> group)</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        group <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="st">""</span>, <span class="fu">length</span>(y))</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.factor</span>(group))</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        group <span class="ot">&lt;-</span> <span class="cf">if</span>(<span class="fu">is.logical</span>(group) <span class="sc">||</span> <span class="fu">is.character</span>(group)) </span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>          <span class="fu">as.factor</span>(group) <span class="cf">else</span> <span class="fu">cut2</span>(group, <span class="at">g =</span> </span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>                                       g.group)</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">names</span>(group) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>      nma <span class="ot">&lt;-</span> <span class="sc">!</span>(<span class="fu">is.na</span>(p <span class="sc">+</span> y <span class="sc">+</span> weights) <span class="sc">|</span> <span class="fu">is.na</span>(group))</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>      ng <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">levels</span>(group))</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>      nma <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">is.na</span>(p <span class="sc">+</span> y <span class="sc">+</span> weights)</span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>      ng <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    logit <span class="ot">&lt;-</span> logit[nma]</span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> y[nma]</span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> p[nma]</span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(ng <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>      group <span class="ot">&lt;-</span> group[nma]</span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>      weights <span class="ot">&lt;-</span> weights[nma]</span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">val.probg</span>(p, y, group, evaluate, weights, normwt, nmin)</span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">length</span>(<span class="fu">unique</span>(p)) <span class="sc">==</span> <span class="dv">1</span>) {</span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>      <span class="co">#22Sep94</span></span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>      P <span class="ot">&lt;-</span> <span class="fu">mean</span>(y)</span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>      Intc <span class="ot">&lt;-</span> <span class="fu">log</span>(P<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> P))</span>
-<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>      n <span class="ot">&lt;-</span> <span class="fu">length</span>(y)</span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>      D <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span><span class="sc">/</span>n</span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>      L01 <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span> <span class="fu">sum</span>(y <span class="sc">*</span> logit <span class="sc">-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(logit)), <span class="at">na.rm =</span> T)</span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>      L.cal <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span> <span class="fu">sum</span>(y <span class="sc">*</span> Intc <span class="sc">-</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(Intc)), <span class="at">na.rm =</span> T)</span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>      U.chisq <span class="ot">&lt;-</span> L01 <span class="sc">-</span> L.cal</span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>      U.p <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pchisq</span>(U.chisq, <span class="dv">1</span>)</span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>      U <span class="ot">&lt;-</span> (U.chisq <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">/</span>n</span>
-<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>      Q <span class="ot">&lt;-</span> D <span class="sc">-</span> U</span>
-<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>      stats <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, D, <span class="dv">0</span>, <span class="dv">1</span>, U, U.chisq, U.p, Q, <span class="fu">mean</span>((y <span class="sc">-</span> p[</span>
-<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span>])<span class="sc">^</span><span class="dv">2</span>), Intc, <span class="dv">0</span>, <span class="fu">rep</span>(<span class="fu">abs</span>(p[<span class="dv">1</span>] <span class="sc">-</span> P), <span class="dv">2</span>))</span>
-<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>      <span class="fu">names</span>(stats) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Dxy"</span>, <span class="st">"C (ROC)"</span>, <span class="st">"R2"</span>, <span class="st">"D"</span>, <span class="st">"D:Chi-sq"</span>, </span>
-<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"D:p"</span>, <span class="st">"U"</span>, <span class="st">"U:Chi-sq"</span>, <span class="st">"U:p"</span>, <span class="st">"Q"</span>, <span class="st">"Brier"</span>, </span>
-<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"Intercept"</span>, <span class="st">"Slope"</span>, <span class="st">"Emax"</span>, <span class="st">"Eavg"</span>)</span>
-<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(stats)</span>
-<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">is.infinite</span>(logit)</span>
-<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>    nm <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="sc">!</span>i)</span>
-<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(nm <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>      <span class="fu">warning</span>(<span class="fu">paste</span>(nm, </span>
-<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"observations deleted from logistic calibration due to probs. of 0 or 1"</span></span>
-<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>      ))</span>
-<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>    f <span class="ot">&lt;-</span> <span class="fu">lrm.fit</span>(logit[i], y[i])</span>
-<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>    f2<span class="ot">&lt;-</span>    <span class="fu">lrm.fit</span>(<span class="at">offset=</span>logit[i], <span class="at">y=</span>y[i])</span>
-<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>    stats <span class="ot">&lt;-</span> f<span class="sc">$</span>stats</span>
-<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>    n <span class="ot">&lt;-</span> stats[<span class="st">"Obs"</span>]</span>
-<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>    predprob <span class="ot">&lt;-</span> <span class="fu">seq</span>(emax.lim[<span class="dv">1</span>], emax.lim[<span class="dv">2</span>], <span class="at">by =</span> <span class="fl">0.0005</span>)</span>
-<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>    lt <span class="ot">&lt;-</span> f<span class="sc">$</span>coef[<span class="dv">1</span>] <span class="sc">+</span> f<span class="sc">$</span>coef[<span class="dv">2</span>] <span class="sc">*</span> <span class="fu">log</span>(predprob<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> predprob))</span>
-<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>    calp <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> lt))</span>
-<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>    emax <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="fu">abs</span>(predprob <span class="sc">-</span> calp))</span>
-<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (pl) {</span>
-<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>      <span class="fu">plot</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="at">xlim =</span> xlim, <span class="at">ylim =</span> ylim, <span class="at">type =</span> <span class="st">"n"</span>, <span class="at">xlab =</span> xlab, </span>
-<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>           <span class="at">ylab =</span> ylab, <span class="at">las=</span>las)</span>
-<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>      <span class="fu">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
-<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>      lt <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>      leg <span class="ot">&lt;-</span> <span class="st">"Ideal"</span></span>
-<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>      marks <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (logistic.cal) {</span>
-<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a>        lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">1</span>)</span>
-<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">c</span>(leg, <span class="st">"Logistic calibration"</span>)</span>
-<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>        marks <span class="ot">&lt;-</span> <span class="fu">c</span>(marks, <span class="sc">-</span><span class="dv">1</span>)</span>
-<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (smooth) {</span>
-<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a>        Sm <span class="ot">&lt;-</span> <span class="fu">lowess</span>(p, y, <span class="at">iter =</span> <span class="dv">0</span>)</span>
-<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (connect.smooth) {</span>
-<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a>          <span class="fu">lines</span>(Sm, <span class="at">lty =</span> <span class="dv">3</span>)</span>
-<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>          lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">3</span>)</span>
-<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>          marks <span class="ot">&lt;-</span> <span class="fu">c</span>(marks, <span class="sc">-</span><span class="dv">1</span>)</span>
-<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> {</span>
-<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>          <span class="fu">points</span>(Sm)</span>
-<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>          lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">0</span>)</span>
-<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>          marks <span class="ot">&lt;-</span> <span class="fu">c</span>(marks, <span class="dv">1</span>)</span>
-<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">c</span>(leg, <span class="st">"Nonparametric"</span>)</span>
-<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>        cal.smooth <span class="ot">&lt;-</span> <span class="fu">approx</span>(Sm, <span class="at">xout =</span> p)<span class="sc">$</span>y</span>
-<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a>        eavg <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">abs</span>(p <span class="sc">-</span> cal.smooth))</span>
-<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(m) <span class="sc">|</span> <span class="sc">!</span><span class="fu">missing</span>(g) <span class="sc">|</span> <span class="sc">!</span><span class="fu">missing</span>(cuts)) {</span>
-<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(m))</span>
-<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>          q <span class="ot">&lt;-</span> <span class="fu">cut2</span>(p, <span class="at">m =</span> m, <span class="at">levels.mean =</span> T, <span class="at">digits =</span> <span class="dv">7</span>)</span>
-<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(g))</span>
-<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>          q <span class="ot">&lt;-</span> <span class="fu">cut2</span>(p, <span class="at">g =</span> g, <span class="at">levels.mean =</span> T, <span class="at">digits =</span> <span class="dv">7</span>)</span>
-<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(cuts))</span>
-<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>          q <span class="ot">&lt;-</span> <span class="fu">cut2</span>(p, <span class="at">cuts =</span> cuts, <span class="at">levels.mean =</span> T, <span class="at">digits =</span> <span class="dv">7</span>)</span>
-<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>        means <span class="ot">&lt;-</span> <span class="fu">as.single</span>(<span class="fu">levels</span>(q))</span>
-<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>        prop <span class="ot">&lt;-</span> <span class="fu">tapply</span>(y, q, <span class="cf">function</span>(x)<span class="fu">mean</span>(x, <span class="at">na.rm =</span> T))</span>
-<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>        <span class="fu">points</span>(means, prop, <span class="at">pch =</span> <span class="dv">2</span>, <span class="at">cex=</span>cex)</span>
-<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>        <span class="co">#18.11.02: CI triangles         </span></span>
-<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>        ng  <span class="ot">&lt;-</span><span class="fu">tapply</span>(y, q, length)</span>
-<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a>        og  <span class="ot">&lt;-</span><span class="fu">tapply</span>(y, q, sum)</span>
-<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>        ob  <span class="ot">&lt;-</span>og<span class="sc">/</span>ng</span>
-<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>        se.ob   <span class="ot">&lt;-</span><span class="fu">sqrt</span>(ob<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>ob)<span class="sc">/</span>ng)</span>
-<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>        g       <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">as.single</span>(<span class="fu">levels</span>(q)))</span>
-<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>g) <span class="fu">lines</span>(<span class="fu">c</span>(means[i], means[i]), <span class="fu">c</span>(prop[i],<span class="fu">min</span>(<span class="dv">1</span>,prop[i]<span class="sc">+</span><span class="fl">1.96</span><span class="sc">*</span>se.ob[i])), <span class="at">type=</span><span class="st">"l"</span>)</span>
-<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>g) <span class="fu">lines</span>(<span class="fu">c</span>(means[i], means[i]), <span class="fu">c</span>(prop[i],<span class="fu">max</span>(<span class="dv">0</span>,prop[i]<span class="sc">-</span><span class="fl">1.96</span><span class="sc">*</span>se.ob[i])), <span class="at">type=</span><span class="st">"l"</span>)</span>
-<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(connect.group) {</span>
-<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>          <span class="fu">lines</span>(means, prop)</span>
-<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>          lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">1</span>)</span>
-<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> lt <span class="ot">&lt;-</span> <span class="fu">c</span>(lt, <span class="dv">0</span>)</span>
-<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">c</span>(leg, <span class="st">"Grouped patients"</span>)</span>
-<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>        marks <span class="ot">&lt;-</span> <span class="fu">c</span>(marks, <span class="dv">2</span>)</span>
-<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>    lr <span class="ot">&lt;-</span> stats[<span class="st">"Model L.R."</span>]</span>
-<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>    p.lr <span class="ot">&lt;-</span> stats[<span class="st">"P"</span>]</span>
-<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>    D <span class="ot">&lt;-</span> (lr <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">/</span>n</span>
-<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>    L01 <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span> <span class="fu">sum</span>(y <span class="sc">*</span> logit <span class="sc">-</span> <span class="fu">logb</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(logit)), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>    U.chisq <span class="ot">&lt;-</span> L01 <span class="sc">-</span> f<span class="sc">$</span>deviance[<span class="dv">2</span>]</span>
-<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>    p.U <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pchisq</span>(U.chisq, <span class="dv">2</span>)</span>
-<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>    U <span class="ot">&lt;-</span> (U.chisq <span class="sc">-</span> <span class="dv">2</span>)<span class="sc">/</span>n</span>
-<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">&lt;-</span> D <span class="sc">-</span> U</span>
-<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a>    Dxy <span class="ot">&lt;-</span> stats[<span class="st">"Dxy"</span>]</span>
-<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>    C <span class="ot">&lt;-</span> stats[<span class="st">"C"</span>]</span>
-<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>    R2 <span class="ot">&lt;-</span> stats[<span class="st">"R2"</span>]</span>
-<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a>    B <span class="ot">&lt;-</span> <span class="fu">sum</span>((p <span class="sc">-</span> y)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>n</span>
-<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ES 15dec08 add Brier scaled</span></span>
-<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>    Bmax  <span class="ot">&lt;-</span> <span class="fu">mean</span>(y) <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span><span class="fu">mean</span>(y))<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">-</span><span class="fu">mean</span>(y)) <span class="sc">*</span> <span class="fu">mean</span>(y)<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a>    Bscaled <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> B<span class="sc">/</span>Bmax</span>
-<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a>    stats <span class="ot">&lt;-</span> <span class="fu">c</span>(Dxy, C, R2, D, lr, p.lr, U, U.chisq, p.U, Q, B, </span>
-<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a>               f2<span class="sc">$</span>coef[<span class="dv">1</span>], f<span class="sc">$</span>coef[<span class="dv">2</span>], emax, Bscaled)</span>
-<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(stats) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Dxy"</span>, <span class="st">"C (ROC)"</span>, <span class="st">"R2"</span>, <span class="st">"D"</span>, <span class="st">"D:Chi-sq"</span>, </span>
-<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"D:p"</span>, <span class="st">"U"</span>, <span class="st">"U:Chi-sq"</span>, <span class="st">"U:p"</span>, <span class="st">"Q"</span>, <span class="st">"Brier"</span>, <span class="st">"Intercept"</span>, </span>
-<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Slope"</span>, <span class="st">"Emax"</span>, <span class="st">"Brier scaled"</span>)</span>
-<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(smooth)</span>
-<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a>      stats <span class="ot">&lt;-</span> <span class="fu">c</span>(stats, <span class="fu">c</span>(<span class="at">Eavg =</span> eavg))</span>
-<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Cut off definition    </span></span>
-<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">missing</span>(cutoff)) {</span>
-<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a>      <span class="fu">arrows</span>(<span class="at">x0=</span>cutoff,<span class="at">y0=</span>.<span class="dv">1</span>,<span class="at">x1=</span>cutoff,<span class="at">y1=</span><span class="sc">-</span><span class="fl">0.025</span>,<span class="at">length=</span>.<span class="dv">15</span>)</span>
-<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>    }   </span>
-<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(pl) {</span>
-<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a>      logit <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">7</span>, <span class="dv">7</span>, <span class="at">length =</span> <span class="dv">200</span>)</span>
-<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a>      prob <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> logit))</span>
-<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a>      pred.prob <span class="ot">&lt;-</span> f<span class="sc">$</span>coef[<span class="dv">1</span>] <span class="sc">+</span> f<span class="sc">$</span>coef[<span class="dv">2</span>] <span class="sc">*</span> logit</span>
-<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a>      pred.prob <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> pred.prob))</span>
-<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(logistic.cal) <span class="fu">lines</span>(prob, pred.prob, <span class="at">lty =</span> <span class="dv">1</span>)  </span>
-<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a>      <span class="co"># pc &lt;- rep(" ", length(lt))</span></span>
-<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a>      <span class="co"># pc[lt==0] &lt;- "."</span></span>
-<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a>      lp <span class="ot">&lt;-</span> legendloc</span>
-<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.logical</span>(lp)) {</span>
-<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.list</span>(lp)) </span>
-<span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a>          lp <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">x =</span> lp[<span class="dv">1</span>], <span class="at">y =</span> lp[<span class="dv">2</span>])</span>
-<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a>        <span class="fu">legend</span>(lp, leg, <span class="at">lty =</span> lt, <span class="at">pch =</span> marks, <span class="at">cex =</span> cex, <span class="at">bty =</span> <span class="st">"n"</span>)</span>
-<span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.logical</span>(statloc)) {</span>
-<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a>        dostats <span class="ot">&lt;-</span> dostats</span>
-<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">format</span>(<span class="fu">names</span>(stats)[dostats])    <span class="co">#constant length</span></span>
-<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a>        leg <span class="ot">&lt;-</span> <span class="fu">paste</span>(leg, <span class="st">":"</span>, <span class="fu">format</span>(stats[dostats], <span class="at">digits=</span>roundstats), <span class="at">sep =</span> </span>
-<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a>                       <span class="st">""</span>)</span>
-<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.list</span>(statloc))</span>
-<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a>          statloc <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">x =</span> statloc[<span class="dv">1</span>], <span class="at">y =</span> statloc[<span class="dv">2</span>])</span>
-<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text</span>(statloc, <span class="fu">paste</span>(<span class="fu">format</span>(<span class="fu">names</span>(stats[dostats])), </span>
-<span id="cb8-182"><a href="#cb8-182" aria-hidden="true" tabindex="-1"></a>                            <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>), <span class="at">adj =</span> <span class="dv">0</span>, <span class="at">cex =</span> cex)</span>
-<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text</span>(statloc<span class="sc">$</span>x <span class="sc">+</span> (xlim[<span class="dv">2</span>]<span class="sc">-</span>xlim[<span class="dv">1</span>])<span class="sc">/</span><span class="dv">3</span> , statloc<span class="sc">$</span>y, <span class="fu">paste</span>(</span>
-<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a>          <span class="fu">format</span>(<span class="fu">round</span>(stats[dostats], <span class="at">digits=</span>roundstats)), <span class="at">collapse =</span> </span>
-<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a>            <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>), <span class="at">adj =</span> <span class="dv">1</span>, <span class="at">cex =</span> cex)  </span>
-<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">is.character</span>(riskdist)) {</span>
-<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(riskdist <span class="sc">==</span> <span class="st">"calibrated"</span>) {</span>
-<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a>          x <span class="ot">&lt;-</span> f<span class="sc">$</span>coef[<span class="dv">1</span>] <span class="sc">+</span> f<span class="sc">$</span>coef[<span class="dv">2</span>] <span class="sc">*</span> <span class="fu">log</span>(p<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">-</span> p))</span>
-<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a>          x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>( <span class="sc">-</span> x))</span>
-<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a>          x[p <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a>          x[p <span class="sc">==</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> x <span class="ot">&lt;-</span> p</span>
-<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a>        bins <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">min</span>(<span class="dv">1</span>,<span class="fu">max</span>(xlim)), <span class="at">length =</span> <span class="dv">101</span>) </span>
-<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a>        x <span class="ot">&lt;-</span> x[x <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> x <span class="sc">&lt;=</span> <span class="dv">1</span>]</span>
-<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a>        <span class="co">#08.04.01,yvon: distribution of predicted prob according to outcome</span></span>
-<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a>        f0  <span class="ot">&lt;-</span><span class="fu">table</span>(<span class="fu">cut</span>(x[y<span class="sc">==</span><span class="dv">0</span>],bins))</span>
-<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a>        f1  <span class="ot">&lt;-</span><span class="fu">table</span>(<span class="fu">cut</span>(x[y<span class="sc">==</span><span class="dv">1</span>],bins))</span>
-<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a>        j0  <span class="ot">&lt;-</span>f0 <span class="sc">&gt;</span> <span class="dv">0</span></span>
-<span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a>        j1  <span class="ot">&lt;-</span>f1 <span class="sc">&gt;</span> <span class="dv">0</span></span>
-<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a>        bins0 <span class="ot">&lt;-</span>(bins[<span class="sc">-</span><span class="dv">101</span>])[j0]</span>
-<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a>        bins1 <span class="ot">&lt;-</span>(bins[<span class="sc">-</span><span class="dv">101</span>])[j1]</span>
-<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a>        f0  <span class="ot">&lt;-</span>f0[j0]</span>
-<span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a>        f1  <span class="ot">&lt;-</span>f1[j1]</span>
-<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a>        maxf <span class="ot">&lt;-</span><span class="fu">max</span>(f0,f1)</span>
-<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a>        f0  <span class="ot">&lt;-</span>(<span class="fl">0.1</span><span class="sc">*</span>f0)<span class="sc">/</span>maxf</span>
-<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a>        f1  <span class="ot">&lt;-</span>(<span class="fl">0.1</span><span class="sc">*</span>f1)<span class="sc">/</span>maxf</span>
-<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a>        <span class="fu">segments</span>(bins1,line.bins,bins1,length.seg<span class="sc">*</span>f1<span class="sc">+</span>line.bins)</span>
-<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a>        <span class="fu">segments</span>(bins0,line.bins,bins0,length.seg<span class="sc">*-</span>f0<span class="sc">+</span>line.bins)</span>
-<span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lines</span>(<span class="fu">c</span>(<span class="fu">min</span>(bins0,bins1)<span class="sc">-</span><span class="fl">0.01</span>,<span class="fu">max</span>(bins0,bins1)<span class="sc">+</span><span class="fl">0.01</span>),<span class="fu">c</span>(line.bins,line.bins))</span>
-<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text</span>(<span class="fu">max</span>(bins0,bins1)<span class="sc">+</span>dist.label,line.bins<span class="sc">+</span>dist.label2,d1lab,<span class="at">cex=</span>cex.d01)</span>
-<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text</span>(<span class="fu">max</span>(bins0,bins1)<span class="sc">+</span>dist.label,line.bins<span class="sc">-</span>dist.label2,d0lab,<span class="at">cex=</span>cex.d01)</span>
-<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb8-215"><a href="#cb8-215" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-216"><a href="#cb8-216" aria-hidden="true" tabindex="-1"></a>    stats</span>
-<span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-219"><a href="#cb8-219" aria-hidden="true" tabindex="-1"></a><span class="co"># calibration plot - with 95% CIs - using the validation dataset</span></span>
-<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a><span class="fu">val.prob.ci</span>(wcgs1.val<span class="sc">$</span>pred,wcgs1.val<span class="sc">$</span>chd69, <span class="at">pl=</span>T,<span class="at">smooth=</span>T,<span class="at">logistic.cal=</span>F,</span>
-<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a>            <span class="at">g=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-error">
-<pre><code>Error in lrm.fit(logit[i], y[i]): could not find function "lrm.fit"</code></pre>
+<div class="cell-output cell-output-stdout">
+<pre><code>          Dxy       C (ROC)            R2             D      D:Chi-sq 
+ 4.456794e-01  7.228397e-01  1.027665e-01  4.398439e-02  6.943971e+01 
+          D:p             U      U:Chi-sq           U:p             Q 
+ 1.110223e-16 -7.891226e-04  7.721253e-01  6.797279e-01  4.477351e-02 
+        Brier     Intercept         Slope          Emax  Brier scaled 
+ 6.973287e-02 -3.298974e-02  9.088922e-01  6.825304e-02  4.213247e-02 
+         Eavg 
+ 7.421886e-03 </code></pre>
 </div>
 </div>
 <p>Stata code (figures will be displayed when running the code)</p>
 <div class="cell" data-collectcode="true">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> wcgs.dta</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">drop</span> <span class="kw">if</span> chol &gt; 645 </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 1001</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> val = runiform()&lt;.5 </span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">logistic</span> chd69 age chol sbp bmi smoke <span class="kw">if</span> val==0</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="kw">predict</span> proba, pr</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>** Use pmcalplot to produce a calibration plot <span class="kw">of</span> the apparent performance <span class="kw">of</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>** the <span class="kw">model</span> <span class="kw">in</span> the Training dataset</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>pmcalplot proba chd69 <span class="kw">if</span> val==0, <span class="kw">ci</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>** Now produce the calibration plot <span class="kw">for</span> the models performance <span class="kw">in</span> the</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>** validation dataset = the one we need</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>pmcalplot proba chd69 <span class="kw">if</span> val==1, <span class="kw">ci</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>** highest category poorly <span class="kw">fitted</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>** Now produce the calibration plot <span class="kw">for</span> the models performance <span class="kw">in</span> the</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>** validation cohort <span class="kw">using</span> risk thresholds <span class="kw">of</span> &lt;5%, 5-15%, 15-20% and &gt;20%.</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>** This is useful <span class="kw">if</span> the <span class="kw">model</span> has been proposed <span class="kw">for</span> decision making <span class="fu">at</span> these</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>** thresholds.  Use the <span class="kw">keep</span> option to <span class="fu">return</span> the groupings to your dataset</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>pmcalplot proba chd69 <span class="kw">if</span> val==1, <span class="fu">cut</span>(.05 0.10 .15 .20) <span class="kw">ci</span> <span class="kw">keep</span></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>## (12 observations deleted)</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>## Logistic regression                                     Number <span class="kw">of</span> <span class="kw">obs</span> =  1,579</span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>##                                                         LR <span class="fu">chi2</span>(5)    = 100.20</span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>##                                                         Prob &gt; <span class="fu">chi2</span>   = 0.0000</span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>## Log likelihood = -413.32347                             Pseudo R2     = 0.1081</span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>##        chd69 | Odds <span class="kw">ratio</span>   Std. err.      z    P&gt;|z|     [95% conf. interval]</span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>##          age |   1.065177   .0175377     3.83   0.000     1.031353    1.100111</span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>##         chol |   1.012124   .0020439     5.97   0.000     1.008126    1.016138</span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>##          sbp |   1.019312   .0064403     3.03   0.002     1.006767    1.032014</span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>##          bmi |   1.047462   .0397636     1.22   0.222     .9723557     1.12837</span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>##        smoke |   2.443136   .4891536     4.46   0.000     1.650152     3.61719</span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |   4.26e-06   5.96e-06    -8.83   0.000     2.74e-07    .0000663</span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>## Note: <span class="dt">_cons</span> <span class="kw">estimates</span> baseline odds.</span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>## command pmcalplot is unrecognized</span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(199);</span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(199);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> wcgs.dta</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">drop</span> <span class="kw">if</span> chol &gt; 645 </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 1001</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> val = runiform()&lt;.5 </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="kw">logistic</span> chd69 age chol sbp bmi smoke <span class="kw">if</span> val==0</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="kw">predict</span> proba, pr</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>** Use pmcalplot to produce a calibration plot <span class="kw">of</span> the apparent performance <span class="kw">of</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>** the <span class="kw">model</span> <span class="kw">in</span> the Training dataset</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>pmcalplot proba chd69 <span class="kw">if</span> val==0, <span class="kw">ci</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>** Now produce the calibration plot <span class="kw">for</span> the models performance <span class="kw">in</span> the</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>** validation dataset = the one we need</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>pmcalplot proba chd69 <span class="kw">if</span> val==1, <span class="kw">ci</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>** highest category poorly <span class="kw">fitted</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>** Now produce the calibration plot <span class="kw">for</span> the models performance <span class="kw">in</span> the</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>** validation cohort <span class="kw">using</span> risk thresholds <span class="kw">of</span> &lt;5%, 5-15%, 15-20% and &gt;20%.</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>** This is useful <span class="kw">if</span> the <span class="kw">model</span> has been proposed <span class="kw">for</span> decision making <span class="fu">at</span> these</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>** thresholds.  Use the <span class="kw">keep</span> option to <span class="fu">return</span> the groupings to your dataset</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>pmcalplot proba chd69 <span class="kw">if</span> val==1, <span class="fu">cut</span>(.05 0.10 .15 .20) <span class="kw">ci</span> <span class="kw">keep</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>## (12 observations deleted)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>## Logistic regression                                     Number <span class="kw">of</span> <span class="kw">obs</span> =  1,579</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>##                                                         LR <span class="fu">chi2</span>(5)    = 100.20</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>##                                                         Prob &gt; <span class="fu">chi2</span>   = 0.0000</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>## Log likelihood = -413.32347                             Pseudo R2     = 0.1081</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>##        chd69 | Odds <span class="kw">ratio</span>   Std. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>##          age |   1.065177   .0175377     3.83   0.000     1.031353    1.100111</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>##         chol |   1.012124   .0020439     5.97   0.000     1.008126    1.016138</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>##          sbp |   1.019312   .0064403     3.03   0.002     1.006767    1.032014</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>##          bmi |   1.047462   .0397636     1.22   0.222     .9723557     1.12837</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>##        smoke |   2.443136   .4891536     4.46   0.000     1.650152     3.61719</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |   4.26e-06   5.96e-06    -8.83   0.000     2.74e-07    .0000663</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>## Note: <span class="dt">_cons</span> <span class="kw">estimates</span> baseline odds.</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>## command pmcalplot is unrecognized</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(199);</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(199);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>The plot is reasonably close to the 45-degree line up to the highest risk category where the CHD risk tends to be overestimated but the 95% CI may just touch the 45-degree line. This plot is an internal calibration plot since only one dataset was used. We would proceed in a similar way for external calibration, were new data available, the difference being that we would use the whole WGSC dataset to fit the model and the new data to build the calibration plot. Constructing calibration plots is part of the validation process in general.</p>
