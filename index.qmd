@@ -9,5 +9,3 @@ Make sure that you have access to **Regression Methods in Biostatistics** book b
 I will be releasing more chapters throughout the semester.
 
 Please let me know of any typos or bugs so I can update the notes.
-
-

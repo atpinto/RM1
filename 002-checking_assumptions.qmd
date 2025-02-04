@@ -3,7 +3,7 @@ library(ggplot2)
 library(Statamarkdown)
 stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
 knitr::opts_chunk$set(engine.path=list(stata=stataexe))
-knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+#knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
 ```
 
 # Checking Assumptions {#checking_assumptions}
@@ -85,16 +85,16 @@ A well-known formal method for assessing non-normality is the Shapiro-Wilk test.
 ::::: grid
 ::: g-col-6
 ### Stata Lecture {.unnumbered}
-<a href="https://sydney.instructuremedia.com/embed/6db4263e-3964-4c8e-9121-62112a477d89" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> 
-<img src="images/RM1_video.png" width="300"> </a>
+
+<a href="https://sydney.instructuremedia.com/embed/6db4263e-3964-4c8e-9121-62112a477d89" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> <img src="images/RM1_video.png" width="300"/> </a>
 :::
+
 ::: g-col-6
 ### R Lecture {.unnumbered}
-<a href="https://sydney.instructuremedia.com/embed/eac8eebe-7b75-4e48-bb97-02a33d9677c4" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> 
-<img src="images/RM1_video.png" width="300"> </a>
+
+<a href="https://sydney.instructuremedia.com/embed/eac8eebe-7b75-4e48-bb97-02a33d9677c4" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> <img src="images/RM1_video.png" width="300"/> </a>
 :::
 :::::
-
 
 Let's check the assumptions of the regression the [week 1 exercise](#exercise_wk_01_01) where we use [hers_subset.csv](https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1){target="_blank"} data to measure the association between diastolic blood pressure (DBP - the outcome) and body mass index (BMI - the exposure). The first plot shows the residual versus fitted plot. This shows an even scatter around zero with no fanning present for the majority of the plot. Towards the end of the plot, the residuals do seem to be a bit more negative than positive - but the sparsity of the data here makes this difficult to confirm. I would conclude here is no evidence against linearity or homoscedasticity and we can accept these assumptions as true. I would also like to see more data at higher fitted values levels to better confirm this. In the second plot, we see that the residuals are normally distributed as they follow a reasonably straight line on the normal quantile plot. Therefore we conclude the assumption of normality of residuals is true. Without further context of the study design that collected this data, we cannot draw any conclusions about the indepdence of observations - so we will assume this has been met. Therefore all the assumptions have been met and we conclude that a linear regression is appropriate for this data.
 
@@ -248,11 +248,11 @@ Discuss your analysis of the assumptions with your group in a self organised zoo
 ## Summary {.unnumbered}
 
 ::: {.callout-note title="This week’s key concepts are:"}
-- Linear regression has four key assumptions that should be investigated:
-  - Linearity - investigated with a residual versus fitted plot. An even scatter around zero indicates this assumption has been met
-  - Homoscedasticity (constant variance) - investigated with a residual versus fitted plot. An even scatter around zero with no "fanning" indicates this assumption has been met
-  - Normality of residuals - investigated with a normal quantile plot, or a histogram, of the residuals. For large sample sizes, moderate deviations to this assumption are ok.
-  - Independence of observations. This is usually investigated by reviewing the study design. However sometimes there can be warning flags present in the data (e.g. a participant identifier column with duplicate entries).
-- Violations of any of the assumptions above will result in regression results that are biased, have incorrect interpretations, or have inflated type 1 errors. The greater the violation to the assumption, the greater the consequence
-- Log transformations are a useful tool that can often improve assumption violations. However, the interpretation of regression coefficients will change with a log transformation.
+-   Linear regression has four key assumptions that should be investigated:
+    -   Linearity - investigated with a residual versus fitted plot. An even scatter around zero indicates this assumption has been met
+    -   Homoscedasticity (constant variance) - investigated with a residual versus fitted plot. An even scatter around zero with no "fanning" indicates this assumption has been met
+    -   Normality of residuals - investigated with a normal quantile plot, or a histogram, of the residuals. For large sample sizes, moderate deviations to this assumption are ok.
+    -   Independence of observations. This is usually investigated by reviewing the study design. However sometimes there can be warning flags present in the data (e.g. a participant identifier column with duplicate entries).
+-   Violations of any of the assumptions above will result in regression results that are biased, have incorrect interpretations, or have inflated type 1 errors. The greater the violation to the assumption, the greater the consequence
+-   Log transformations are a useful tool that can often improve assumption violations. However, the interpretation of regression coefficients will change with a log transformation.
 :::
