@@ -264,7 +264,10 @@ window.Quarto = {
   <li><a href="#learn_obj_wk03" id="toc-learn_obj_wk03" class="nav-link active" data-scroll-target="#learn_obj_wk03">Learning objectives</a></li>
   <li><a href="#learn_act_wk03" id="toc-learn_act_wk03" class="nav-link" data-scroll-target="#learn_act_wk03">Learning activities</a></li>
   <li><a href="#binary-covariates" id="toc-binary-covariates" class="nav-link" data-scroll-target="#binary-covariates">Binary covariates</a></li>
-  <li><a href="#outliers-and-influential-observations" id="toc-outliers-and-influential-observations" class="nav-link" data-scroll-target="#outliers-and-influential-observations">Outliers and influential observations</a></li>
+  <li><a href="#outliers-and-influential-observations" id="toc-outliers-and-influential-observations" class="nav-link" data-scroll-target="#outliers-and-influential-observations">Outliers and influential observations</a>
+  <ul class="collapse">
+  <li><a href="#book-chapter-4.-outlying-high-leverage-and-influential-poitns-4.7.4-pages-124-128." id="toc-book-chapter-4.-outlying-high-leverage-and-influential-poitns-4.7.4-pages-124-128." class="nav-link" data-scroll-target="#book-chapter-4.-outlying-high-leverage-and-influential-poitns-4.7.4-pages-124-128.">Book Chapter 4. Outlying, High Leverage, and Influential Poitns 4.7.4 (pages 124-128).</a></li>
+  </ul></li>
   <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises:</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
@@ -325,246 +328,160 @@ window.Quarto = {
 </section>
 <section id="binary-covariates" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="binary-covariates">Binary covariates</h2>
+<div class="grid">
+<div class="g-col-9">
 <p>So far we have limited our analysis to continuous independent variables (e.g.&nbsp;age). This week we are going to explore the situation where the independent variable (the <span class="math inline">\(x\)</span> variable) is binary.</p>
-<iframe width="740" height="416" src="https://www.youtube.com/embed/BENjkcPL5uo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
-</iframe>
+</div>
+<div class="g-col-3">
+<p><a href="https://www.youtube.com/embed/BENjkcPL5uo" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> <img src="https://img.youtube.com/vi/BENjkcPL5uo/hqdefault.jpg" width="200"> </a></p>
+</div>
+</div>
 </section>
 <section id="outliers-and-influential-observations" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="outliers-and-influential-observations">Outliers and influential observations</h2>
 <p>An outlier is a point with a large residual. Sometimes an outlier can have a large impact on the estimates of the regression parameter. If you move some of the points in the scatter so they become outliers (far from other points), you can see this will affect the estimated regression line. However, not all outliers are the same. Try moving up and down one of the points at the beginning or the end of the X scale. The impact in the regression line is much stronger than if you do the same with a point in the mid range of X.</p>
-<script> window.onload=(function(){
-var n = 29;
 
-var points = [{
-     x: 39*9,
-     y: 144*2
-}, {
-     x: 45*9,
-     y: 138*2
-}, {
-     x: 47*9,
-     y: 145*2
-}, {
-     x: 65*9,
-     y: 162*2
-}, {
-     x: 46*9,
-     y: 142*2
-}, {
-     x: 67*9,
-     y: 170*2
-}, {
-     x: 42*9,
-     y: 124*2
-}, {
-     x: 67*9,
-     y: 158*2
-}, {
-     x: 56*9,
-     y: 154*2
-}, {
-     x: 64*9,
-     y: 162*2
-}, {
-     x: 56*9,
-     y: 150*2
-}, {
-     x: 59*9,
-     y: 140*2
-}, {
-     x: 34*9,
-     y: 110*2
-}, {
-     x: 42*9,
-     y: 128*2
-}, {
-     x: 48*9,
-     y: 130*2
-}, {
-     x: 45*9,
-     y: 135*2
-}, {
-     x: 17*9,
-     y: 114*2
-}, {
-     x: 20*9,
-     y: 116*2
-}, {
-     x: 19*9,
-     y: 124*2
-}, {
-     x: 36*9,
-     y: 136*2
-}, {
-     x: 50*9,
-     y: 142*2
-}, {
-     x: 39*9,
-     y:120*2
-}, {
-     x: 21*9,
-     y:120*2
-}, {
-     x: 44*9,
-     y:160*2
-}, {
-     x: 53*9,
-     y:158*2
-}, {
-     x: 63*9,
-     y:144*2
-}, {
-     x: 29*9,
-     y:130*2
-}, {
-     x: 25*9,
-     y:125*2
-}, {
-     x: 69*9,
-     y:175*2
-}]    
-    
-    
-
-var drag_point = -1;
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
-//ctx.setTransform(1,0,0,-1,200,250); //INVERT THE SCALE
-
-canvas.onmousedown = function(e) {
-  var pos = getPosition(e);
-  drag_point = getPointAt(pos.x, pos.y);
-  if (drag_point == -1) {
-    points.push(pos);
-    n=n+1;
-    redraw();
-   //ctx.fillText(pos.x, pos.x, pos.y);
-
-  }
-};
-
-canvas.onmousemove = function(e) {
-  if (drag_point != -1) {
-    var pos = getPosition(e);
-    points[drag_point].x = pos.x;
-    points[drag_point].y = pos.y;
-    redraw(); 
-  }
-};
-
-canvas.onmouseup = function(e) {
-  drag_point = -1;
-};
-
-function getPosition(event) {
-  var rect = canvas.getBoundingClientRect();
-  var x = event.clientX - rect.left;
-  var y = event.clientY - rect.top;
-  return {x, y};
-}
-
-
-function getPointAt(x, y) {
-  for (var i = 0; i < points.length; i++) {
-    if (
-      Math.abs(points[i].x - x) < pointSize &&
-      Math.abs(points[i].y - y) < pointSize
-    )
-      return i;
-  }
-  return -1; 
-}
-
-function redraw() {
-  if (points.length > 0) {
-    ctx.clearRect(0, 0, 800, 400);
-    drawRegLine();
-    drawPoints();
-
-  }
-}
-
-function drawLines() {
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-  ctx.strokeStyle = "blue";
-  ctx.lineWidth = 2;
-  points.forEach((p) => {
-    ctx.lineTo(p.x, p.y);
-  })
-  ctx.stroke();
-}
-
-function drawRegLine(){
-        var lr = {};
-        var sum_x = 0;
-        var sum_y = 0;
-        var sum_xy = 0;
-        var sum_xx = 0;
-        var sum_yy = 0;
-   
-
-        for (var i = 0; i < n; i++) {
-
-            sum_x += points[i].x;
-            sum_y += points[i].y;
-            sum_xy += (points[i].x*points[i].y);
-            sum_xx += (points[i].x*points[i].x);
-            sum_yy += (points[i].y*points[i].y);
-        } 
-
-        lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x);
-        lr['intercept'] = (sum_y - lr.slope * sum_x)/n;
-        lr['r2'] = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
-
-        var IntEquation = 400-lr.intercept;
-        var SlEquation = -100*lr.slope;
-
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = 'red';
-        ctx.beginPath();
-        ctx.moveTo(0, lr.intercept);
-        ctx.lineTo(800, lr.intercept + lr.slope*800);
-        ctx.stroke();
-        ctx.font = "bold 24px arial";
-        var sign = " + ";
-        if (SlEquation<0) {
-          sign = " ";
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Regression Plot</title>
+    <style>
+        canvas {
+            border: 2px solid #333;
+            background: #f9f9f9;
+            display: block;
+            margin: 20px auto;
+            cursor: crosshair;
         }
-      
-        ctx.fillText("Fitted line", 350, 60);
-        ctx.fillText("y = " + IntEquation.toFixed(1) + sign + SlEquation.toFixed(1) + "x", 350, 80);
+    </style>
 
 
-     return lr;
-}
-  
+    <h4 class="anchored"><center>Interactive Regression Plot</center></h4>
+    <canvas id="canvas" width="640" height="400"></canvas>
+    <script>
+        window.onload = function() {
+            var n = 29;
+            var pointSize = 6;
+            var drag_point = -1;
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
 
-function drawPoints() {
-  ctx.strokeStyle = "blue";
-  ctx.lineWidth = 10;
-  pointSize = 5;
-  points.forEach((p) => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, pointSize, 0, Math.PI * 2, true);
-    ctx.stroke();
-  })
-}
+            var points = [
+                {x: 39*9, y: 144*2}, {x: 45*9, y: 138*2}, {x: 47*9, y: 145*2}, 
+                {x: 65*9, y: 162*2}, {x: 46*9, y: 142*2}, {x: 67*9, y: 170*2}, 
+                {x: 42*9, y: 124*2}, {x: 67*9, y: 158*2}, {x: 56*9, y: 154*2}, 
+                {x: 64*9, y: 162*2}, {x: 56*9, y: 150*2}, {x: 59*9, y: 140*2}, 
+                {x: 34*9, y: 110*2}, {x: 42*9, y: 128*2}, {x: 48*9, y: 130*2}, 
+                {x: 45*9, y: 135*2}, {x: 17*9, y: 114*2}, {x: 20*9, y: 116*2}, 
+                {x: 19*9, y: 124*2}, {x: 36*9, y: 136*2}, {x: 50*9, y: 142*2}, 
+                {x: 39*9, y: 120*2}, {x: 21*9, y: 120*2}, {x: 44*9, y: 160*2}, 
+                {x: 53*9, y: 158*2}, {x: 63*9, y: 144*2}, {x: 29*9, y: 130*2}, 
+                {x: 25*9, y: 125*2}, {x: 69*9, y: 175*2}
+            ];
 
-redraw()
+            canvas.onmousedown = function(e) {
+                var pos = getPosition(e);
+                drag_point = getPointAt(pos.x, pos.y);
+                if (drag_point == -1) {
+                    points.push(pos);
+                    n++;
+                    redraw();
+                }
+            };
 
-}); 
-</script>
-<canvas id="canvas" width="640" height="400">
-</canvas>
-<p>Conversely, a data point may not have a large residual but still have an important influence in the estimated regression line. Below, you can see that the data point in the left does not appear to have a large residual but it strongly affects the regression line.</p>
+            canvas.onmousemove = function(e) {
+                if (drag_point !== -1) {
+                    var pos = getPosition(e);
+                    points[drag_point].x = pos.x;
+                    points[drag_point].y = pos.y;
+                    redraw();
+                }
+            };
+
+            canvas.onmouseup = function() {
+                drag_point = -1;
+            };
+
+            function getPosition(event) {
+                var rect = canvas.getBoundingClientRect();
+                return {x: event.clientX - rect.left, y: event.clientY - rect.top};
+            }
+
+            function getPointAt(x, y) {
+                for (var i = 0; i < points.length; i++) {
+                    if (Math.abs(points[i].x - x) < pointSize && Math.abs(points[i].y - y) < pointSize)
+                        return i;
+                }
+                return -1;
+            }
+
+            function redraw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawRegressionLine();
+                drawPoints();
+            }
+
+            function drawRegressionLine() {
+                var sum_x = 0, sum_y = 0, sum_xy = 0, sum_xx = 0, sum_yy = 0;
+
+                for (var i = 0; i < n; i++) {
+                    sum_x += points[i].x;
+                    sum_y += points[i].y;
+                    sum_xy += points[i].x * points[i].y;
+                    sum_xx += points[i].x * points[i].x;
+                    sum_yy += points[i].y * points[i].y;
+                }
+
+                var slope = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
+                var intercept = (sum_y - slope * sum_x) / n;
+
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = 'red';
+                ctx.beginPath();
+                ctx.moveTo(0, intercept);
+                ctx.lineTo(canvas.width, intercept + slope * canvas.width);
+                ctx.stroke();
+
+                ctx.fillStyle = "black";
+                ctx.font = "bold 18px Arial";
+                ctx.fillText(`y = ${intercept.toFixed(2)} + ${slope.toFixed(2)}x`, 20, 30);
+            }
+
+            function drawPoints() {
+                points.forEach((p, index) => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, pointSize, 0, Math.PI * 2, true);
+                    ctx.fillStyle = (drag_point === index) ? "orange" : "blue";
+                    ctx.fill();
+                    ctx.strokeStyle = "black";
+                    ctx.stroke();
+                });
+            }
+
+            redraw();
+        };
+    </script>
+
+<div class="grid">
+<div class="g-col-7">
+<p>Conversely, a data point may not have a large residual but still have an important influence in the estimated regression line. Below, you can see that the data point in the left does not appear to have a large residual but it strongly affects the regression line. In the figure on the right, we can see that despite the main cloud of points not suggesting any trend, the extreme left point has a high influence in the final regression line.</p>
+</div>
+<div class="g-col-5">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/image-1341453037.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="300"></p>
+<p><img src="images/image-1341453037.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
+</div>
+</div>
 <p>There are several statistics to measure and explore outliers and influential points. We will discuss some here:</p>
-<p><strong>Leverage</strong>: measure of how far away each value of the independent variable is from the others. Data points with high-leverage points, if any, are outliers with respect to the independent variables. The leverage is given by <span class="math inline">\(\frac{1}{n} + \frac{(x_i-\bar{x})^2}{\sum{(x_i - \bar{x})^2}}\)</span> and varies between 0 and 1.</p>
+<div class="grid">
+<div class="g-col-9">
+<p><strong>Leverage</strong>: measures of how far away each value of the independent variable is from the others. Data with high-leverage points, if any, are outliers with respect to the independent variables. The levarage (<span class="math inline">\(L\)</span>) varies between 0 and 1.</p>
+</div>
+<div class="g-col-3 border p-3">
+<p><strong>Formula</strong> <span class="math inline">\(L = \frac{1}{n} + \frac{(x_i-\bar{x})^2}{\sum{(x_i - \bar{x})^2}}\)</span></p>
+</div>
+</div>
 <p>Consider the simple example below with 10 simulated data points. The 10th value for X was chosen to be far from the others.</p>
 <p><strong>R code</strong></p>
 <div class="cell">
@@ -644,64 +561,68 @@ redraw()
 <div class="cell" data-collectcode="true">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clear</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 1011</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>*<span class="kw">generate</span> the <span class="kw">data</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">set</span> <span class="kw">obs</span> 10</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">generate</span> x = rnormal()</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">replace</span> x = 5 <span class="kw">in</span> 10</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">generate</span> <span class="fu">y</span> = rnormal(0.5+2*x,1)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">regress</span> <span class="fu">y</span> x</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>*<span class="kw">leverage</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">predict</span> lev, <span class="kw">leverage</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>*<span class="kw">leverage</span> computed manually</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">gen</span> lev_manual =1/10 + (x- .9228745)^2/( 1.563043^2 *9)</span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>    <span class="kw">clear</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">set</span> <span class="dv">seed</span> 1011</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    * Generate the <span class="kw">data</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">set</span> <span class="kw">obs</span> 10</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> id = <span class="dt">_n</span>             <span class="co">// create an id for later merging</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> x = rnormal()</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">replace</span> x = 5 <span class="kw">in</span> 10</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    * Note: In Stata the typical way to <span class="kw">generate</span> a <span class="fu">normal</span> <span class="kw">variable</span> with <span class="kw">mean</span> mu and <span class="fu">sd</span> sigma is:</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    *       <span class="kw">generate</span> <span class="fu">y</span> = (0.5+2*x) + sigma*rnormal()</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    * Here we mimic the provided code.</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> <span class="fu">y</span> = (0.5+2*x) + rnormal()</span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="ot">list</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>## Number <span class="kw">of</span> observations (_N) was 0, now 10.</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>## (1 <span class="fu">real</span> change made)</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =        10</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(1, 8)         =     52.69</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>##        Model |  86.4227998         1  86.4227998   Prob &gt; <span class="fu">F</span>        =    0.0001</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>##     Residual |  13.1226538         8  1.64033173   R-squared       =    0.8682</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.8517</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>##        Total |  99.5454536         9   11.060606   Root MSE        =    1.2808</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>##            <span class="fu">y</span> | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>##            x |    1.98254   .2731326     7.26   0.000     1.352695    2.612385</span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |    .516953    .477044     1.08   0.310    -.5831126    1.617018</span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    * Estimate the full <span class="kw">model</span> and <span class="kw">save</span> coefficients</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">regress</span> <span class="fu">y</span> x</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  *Leverage</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="kw">predict</span> lev, <span class="kw">leverage</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  *Leverage computed manually</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    *----------------------------   </span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="kw">gen</span> lev_manual = 1/10 + (x- .9228745)^2/( 1.563043^2 *9)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="ot">list</span> lev, lev_manual</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>## Number <span class="kw">of</span> observations (_N) was 0, now 10.</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>## (1 <span class="fu">real</span> change made)</span>
 <span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>## </span>
 <span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>## </span>
 <span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>##      +---------------------------------------------+</span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>##      |         x           <span class="fu">y</span>        lev   lev_ma~<span class="ot">l</span> |</span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>##      |---------------------------------------------|</span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>##   1. |  .8897727    2.534658   .1000498   .1000498 |</span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>##   2. |  .0675149    1.056028   .1332746   .1332746 |</span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>##   3. |  .1199856    1.148383   .1293175   .1293175 |</span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>##   4. |  .1817483    1.488953   .1249804   .1249804 |</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>##   5. |  1.257954    3.040046   .1051064   .1051064 |</span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>##      |---------------------------------------------|</span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>##   6. | -.2278177   -1.908616    .160219   .1602191 |</span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>##   7. | -.1390651   -1.624345   .1512879   .1512879 |</span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>##   8. |  .3885022    2.991632   .1129868   .1129868 |</span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>##   9. |   1.69015    5.084781   .1267743   .1267743 |</span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>##  10. |         5    9.654363   .8560032   .8560035 |</span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>##      +---------------------------------------------+</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =        10</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(1, 8)         =     52.69</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>##        Model |  86.4227998         1  86.4227998   Prob &gt; <span class="fu">F</span>        =    0.0001</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>##     Residual |  13.1226538         8  1.64033173   R-squared       =    0.8682</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.8517</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>##        Total |  99.5454536         9   11.060606   Root MSE        =    1.2808</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>##            <span class="fu">y</span> | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>##            x |    1.98254   .2731326     7.26   0.000     1.352695    2.612385</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |    .516953    .477044     1.08   0.310    -.5831126    1.617018</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>## option lev_manual <span class="kw">not</span> allowed</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(198);</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(198);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p><strong>DFBETA</strong>: We can also compute how the coefficients change if each observation is removed from the data. This will produce a vector for <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> corresponding to <span class="math inline">\(n\)</span> regressions fitted by deleting each observation at a time. The difference betweeen the full data estimates and the estimates by removing each data point is called <em>DFBETA</em>. In the example of the small simulated dataset set above, the dfbeta can also be obtained from the <code>influence()</code> function in r.</p>
+<p><strong>DFBETA</strong>: We can also compute how the coefficients change if each observation is removed from the data. This will produce a vector for <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> corresponding to <span class="math inline">\(n\)</span> regressions fitted by deleting each observation at a time. The difference between the full data estimates and the estimates by removing each data point is called <em>DFBETA</em>. In the example of the small simulated dataset set above, the dfbeta can also be obtained from the <code>influence()</code> function in r.</p>
 <p><strong>R code</strong></p>
 <div class="cell" data-ccollapse="true">
 <details class="code-fold">
@@ -734,27 +655,144 @@ redraw()
 </div>
 </div>
 <p><strong>Stata code</strong></p>
-<div class="cell" data-ccollapse="true">
+<div class="cell" data-collectcode="true">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="sc">*</span>I am not aware of a <span class="cf">function</span> <span class="cf">in</span> Stata to compute </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="sc">*</span>the unstandardised version of DFBETA</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="sc">*</span>See below the code <span class="cf">for</span> the standardised DFBETA</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>*<span class="fu">I</span> am <span class="kw">not</span> aware <span class="kw">of</span> a <span class="kw">function</span> <span class="kw">in</span> Stata to compute </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>*the unstandardised <span class="kw">version</span> <span class="kw">of</span> DFBETA.</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>*This script computes <span class="kw">de</span> unstandardise DFBETA <span class="st">"manually"</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">clear</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">set</span> <span class="dv">seed</span> 1011</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    * Generate the <span class="kw">data</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">set</span> <span class="kw">obs</span> 10</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> id = <span class="dt">_n</span>             <span class="co">// create an id for later merging</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> x = rnormal()</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">replace</span> x = 5 <span class="kw">in</span> 10</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    * Note: In Stata the typical way to <span class="kw">generate</span> a <span class="fu">normal</span> <span class="kw">variable</span> with <span class="kw">mean</span> mu and <span class="fu">sd</span> sigma is:</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    *       <span class="kw">generate</span> <span class="fu">y</span> = (0.5+2*x) + sigma*rnormal()</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    * Here we mimic the provided code.</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> <span class="fu">y</span> = (0.5+2*x) + rnormal()</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    * Estimate the full <span class="kw">model</span> and <span class="kw">save</span> coefficients</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">regress</span> <span class="fu">y</span> x</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scalar</span> b0_full = _b[<span class="dt">_cons</span>]</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scalar</span> b1_full = _b[x]</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    * Loop <span class="bn">over</span> each observation to compute DFBETA</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    * We will <span class="kw">use</span> a <span class="kw">postfile</span> to collect the results.</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">tempname</span> results</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">tempfile</span> <span class="kw">dfbeta</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    <span class="kw">postfile</span> <span class="ot">`results'</span> id dfb0 dfb1 <span class="kw">using</span> <span class="st">"`dfbeta'"</span>, <span class="kw">replace</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    <span class="kw">forvalues</span> i = 1/<span class="ot">`=_N'</span> {</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>        <span class="kw">preserve</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>        <span class="kw">drop</span> <span class="kw">if</span> id == <span class="ot">`i'</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>        <span class="kw">quietly</span> <span class="kw">regress</span> <span class="fu">y</span> x</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scalar</span> dfb0 = _b[<span class="dt">_cons</span>] - b0_full   <span class="co">// change in intercept</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scalar</span> dfb1 = _b[x] - b1_full        <span class="co">// change in slope for x</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>        <span class="kw">post</span> <span class="ot">`results'</span> (<span class="ot">`i'</span>) (dfb0) (dfb1)</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>        <span class="kw">restore</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>    <span class="kw">postclose</span> <span class="ot">`results'</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>    * Merge the DFBETA results back into the original dataset and <span class="ot">list</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>    <span class="kw">merge</span> 1:1 id <span class="kw">using</span> <span class="st">"`dfbeta'"</span>, nogen</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>    <span class="kw">sort</span> id</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>    <span class="ot">list</span> dfb0 dfb1, sep(0)</span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>## option lev_manual <span class="kw">not</span> allowed</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(198);</span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>## Number <span class="kw">of</span> observations (_N) was 0, now 10.</span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>## (1 <span class="fu">real</span> change made)</span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =        10</span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(1, 8)         =     52.69</span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>##        Model |  86.4227998         1  86.4227998   Prob &gt; <span class="fu">F</span>        =    0.0001</span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>##     Residual |  13.1226538         8  1.64033173   R-squared       =    0.8682</span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.8517</span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a>##        Total |  99.5454536         9   11.060606   Root MSE        =    1.2808</span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>##            <span class="fu">y</span> | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>##            x |    1.98254   .2731326     7.26   0.000     1.352695    2.612385</span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |    .516953    .477044     1.08   0.310    -.5831126    1.617018</span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>## (file /<span class="kw">var</span>/folders/xs/_nnmpq453c9b5lkpwdyr_2rc0000gp/T<span class="co">//S_89799.000001 not found)</span></span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a>## (1 observation deleted)</span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a>## (1 observation deleted)</span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a>## (1 observation deleted)</span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a>## (1 observation deleted)</span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a>## (1 observation deleted)</span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a>## (1 observation deleted)</span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a>## (1 observation deleted)</span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a>## (1 observation deleted)</span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a>## (1 observation deleted)</span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a>## (1 observation deleted)</span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a>##     Result                      Number <span class="kw">of</span> <span class="kw">obs</span></span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a>##     -----------------------------------------</span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a>##     Not matched                             0</span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a>##     Matched                                10  </span>
+<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a>##     -----------------------------------------</span>
+<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a>##      +-----------------------+</span>
+<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a>##      |      dfb0        dfb1 |</span>
+<span id="cb9-114"><a href="#cb9-114" aria-hidden="true" tabindex="-1"></a>##      |-----------------------|</span>
+<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a>##   1. | -.0285816    .0004244 |</span>
+<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a>##   2. | -.0635384    .0181877 |</span>
+<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a>##   3. | -.0604326     .016505 |</span>
+<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a>##   4. | -.0916491     .023562 |</span>
+<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a>##   5. | -.0027993   -.0004964 |</span>
+<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a>##   6. |  .3485724   -.1230088 |</span>
+<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a>##   7. |  .3177898   -.1061628 |</span>
+<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a>##   8. | -.2352551    .0466999 |</span>
+<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a>##   9. | -.0944892   -.0486345 |</span>
+<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a>##  10. | -.3829395    .9983445 |</span>
+<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a>##      +-----------------------+</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-error">
-<pre><code>Error in parse(text = input): &lt;text&gt;:1:1: unexpected '*'
-1: *
-    ^</code></pre>
-</div>
 </div>
 <p>Note that the <em>DFBETA</em> above are computed in the original scale of the data. Thus, the magnitude of the difference is dependent on this scale. An alternative is to standardise the <em>DFBETA</em> using the standard errors. This will give as deviance from the original estimate in standard errors. A common cut-off for a very strong influence in the results is the value <span class="math inline">\(2\)</span>.</p>
 <div class="cell" data-ccollapse="true">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a> <span class="co">#computes the standardised dfbeta. </span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#note that there is also a </span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#dfbeta() function that computes the non-stantandardised dfbeta</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dfbetas</span>(lmodel)                   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a> <span class="co">#computes the standardised dfbeta. </span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#note that there is also a </span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#dfbeta() function that computes the non-stantandardised dfbeta</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dfbetas</span>(lmodel)                   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>   (Intercept)           x
@@ -774,74 +812,100 @@ redraw()
 <div class="cell" data-collectcode="true">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clear</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 1011</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>*<span class="kw">generate</span> the <span class="kw">data</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">set</span> <span class="kw">obs</span> 10</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">generate</span> x = rnormal()</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">replace</span> x = 5 <span class="kw">in</span> 10</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">generate</span> <span class="fu">y</span> = rnormal(0.5+2*x,1)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">regress</span> <span class="fu">y</span> x</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">dfbeta</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="ot">list</span> </span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>## Number <span class="kw">of</span> observations (_N) was 0, now 10.</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>## (1 <span class="fu">real</span> change made)</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =        10</span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(1, 8)         =     52.69</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>##        Model |  86.4227998         1  86.4227998   Prob &gt; <span class="fu">F</span>        =    0.0001</span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>##     Residual |  13.1226538         8  1.64033173   R-squared       =    0.8682</span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.8517</span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>##        Total |  99.5454536         9   11.060606   Root MSE        =    1.2808</span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>##            <span class="fu">y</span> | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>##            x |    1.98254   .2731326     7.26   0.000     1.352695    2.612385</span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |    .516953    .477044     1.08   0.310    -.5831126    1.617018</span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>## Generating DFBETA <span class="kw">variable</span> ...</span>
-<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>##     _dfbeta_1: DFBETA x</span>
-<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>##      +-----------------------------------+</span>
-<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>##      |         x           <span class="fu">y</span>   _dfbeta_1 |</span>
-<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>##      |-----------------------------------|</span>
-<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>##   1. |  .8897727    2.534658   -.0014574 |</span>
-<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>##   2. |  .0675149    1.056028   -.0627431 |</span>
-<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>##   3. |  .1199856    1.148383   -.0569127 |</span>
-<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>##   4. |  .1817483    1.488953   -.0820419 |</span>
-<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>##   5. |  1.257954    3.040046    .0017001 |</span>
-<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>##      |-----------------------------------|</span>
-<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>##   6. | -.2278177   -1.908616    .5239667 |</span>
-<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>##   7. | -.1390651   -1.624345    .4384975 |</span>
-<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>##   8. |  .3885022    2.991632   -.1846272 |</span>
-<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>##   9. |   1.69015    5.084781    .1784969 |</span>
-<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>##  10. |         5    9.654363   -4.140455 |</span>
-<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>##      +-----------------------------------+</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">clear</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">set</span> <span class="dv">seed</span> 1011</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    * Generate the <span class="kw">data</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">set</span> <span class="kw">obs</span> 10</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> id = <span class="dt">_n</span>             <span class="co">// create an id for later merging</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> x = rnormal()</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">replace</span> x = 5 <span class="kw">in</span> 10</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    * Note: In Stata the typical way to <span class="kw">generate</span> a <span class="fu">normal</span> <span class="kw">variable</span> with <span class="kw">mean</span> mu and <span class="fu">sd</span> sigma is:</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    *       <span class="kw">generate</span> <span class="fu">y</span> = (0.5+2*x) + sigma*rnormal()</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    * Here we mimic the provided code.</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> <span class="fu">y</span> = (0.5+2*x) + rnormal()</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    * Estimate the full <span class="kw">model</span> </span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    *---------------------------- </span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">regress</span> <span class="fu">y</span> x</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    * Standardised DFBETA </span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    *---------------------------- </span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>  <span class="kw">dfbeta</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>  <span class="ot">list</span> </span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>## option lev_manual <span class="kw">not</span> allowed</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(198);</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>## Number <span class="kw">of</span> observations (_N) was 0, now 10.</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>## (1 <span class="fu">real</span> change made)</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =        10</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(1, 8)         =     52.69</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>##        Model |  86.4227998         1  86.4227998   Prob &gt; <span class="fu">F</span>        =    0.0001</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>##     Residual |  13.1226538         8  1.64033173   R-squared       =    0.8682</span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.8517</span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>##        Total |  99.5454536         9   11.060606   Root MSE        =    1.2808</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>##            <span class="fu">y</span> | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>##            x |    1.98254   .2731326     7.26   0.000     1.352695    2.612385</span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |    .516953    .477044     1.08   0.310    -.5831126    1.617018</span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>## Generating DFBETA <span class="kw">variable</span> ...</span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>##     _dfbeta_1: DFBETA x</span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a>##      +----------------------------------------+</span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a>##      | id           x           <span class="fu">y</span>   _dfbeta_1 |</span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a>##      |----------------------------------------|</span>
+<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a>##   1. |  1    .8897727    2.534658   -.0014574 |</span>
+<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a>##   2. |  2    .0675149    1.056028   -.0627431 |</span>
+<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a>##   3. |  3    .1199856    1.148383   -.0569127 |</span>
+<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a>##   4. |  4    .1817483    1.488953   -.0820419 |</span>
+<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a>##   5. |  5    1.257954    3.040046    .0017001 |</span>
+<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a>##      |----------------------------------------|</span>
+<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a>##   6. |  6   -.2278177   -1.908616    .5239667 |</span>
+<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a>##   7. |  7   -.1390651   -1.624345    .4384975 |</span>
+<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a>##   8. |  8    .3885022    2.991632   -.1846272 |</span>
+<span id="cb12-73"><a href="#cb12-73" aria-hidden="true" tabindex="-1"></a>##   9. |  9     1.69015    5.084781    .1784969 |</span>
+<span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a>##  10. | 10           5    9.654363   -4.140455 |</span>
+<span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a>##      +----------------------------------------+</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>In the example above, the 10th observation seems to haves reasonable impact in the estimates.</p>
-<p><strong>Cook’s distance</strong> - This is another measure of influence that combines the leverage of the data point and its residual. It summarizes how much all the values in the regression model change when each observation is removed. It is computed as</p>
-<p><span class="math inline">\(D_j = \frac{\sum(\hat Y_i-\hat Y_{(-j)})^2}{2\sigma^2}\)</span></p>
-<p>A general rule of thumb is that a point with a Cook’s Distance above <span class="math inline">\(4/n\)</span> is considered to be an outlier.</p>
+<div class="grid">
+<div class="g-col-9">
+<p><strong>Cook’s distance</strong> - This is another measure of influence that combines the leverage of the data point and its residual. It summarizes how much all the values in the regression model change when each observation is removed.</p>
+</div>
+<div class="g-col-3 border p-3">
+<p><strong>Formula</strong> <span class="math inline">\(D_j = \frac{\sum(\hat Y_i-\hat Y_{(-j)})^2}{2\sigma^2}\)</span></p>
+</div>
+</div>
+<p>A general rule of thumb is that a point with a Cook’s Distance (<span class="math inline">\(D_j\)</span>) above <span class="math inline">\(4/n\)</span> is considered to be an outlier.</p>
 <p><strong>R code</strong></p>
 <div class="cell" data-ccollapse="true">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#the column cook.d is the Cook's distance</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#note that this function also computes some of the measures discussed above</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">influence.measures</span>(lmodel)                   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#the column cook.d is the Cook's distance</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#note that this function also computes some of the measures discussed above</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">influence.measures</span>(lmodel)                   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Influence measures of
@@ -864,57 +928,77 @@ redraw()
 <div class="cell" data-collectcode="true">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clear</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 1011</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>*<span class="kw">generate</span> the <span class="kw">data</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">set</span> <span class="kw">obs</span> 10</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">generate</span> x = rnormal()</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">replace</span> x = 5 <span class="kw">in</span> 10</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">generate</span> <span class="fu">y</span> = rnormal(0.5+2*x,1)</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">regress</span> <span class="fu">y</span> x</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">predict</span> cook_d, cook</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="ot">list</span> </span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>## Number <span class="kw">of</span> observations (_N) was 0, now 10.</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>## (1 <span class="fu">real</span> change made)</span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =        10</span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(1, 8)         =     52.69</span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>##        Model |  86.4227998         1  86.4227998   Prob &gt; <span class="fu">F</span>        =    0.0001</span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>##     Residual |  13.1226538         8  1.64033173   R-squared       =    0.8682</span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.8517</span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>##        Total |  99.5454536         9   11.060606   Root MSE        =    1.2808</span>
-<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
-<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>##            <span class="fu">y</span> | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
-<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
-<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>##            x |    1.98254   .2731326     7.26   0.000     1.352695    2.612385</span>
-<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |    .516953    .477044     1.08   0.310    -.5831126    1.617018</span>
-<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
-<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>##      +----------------------------------+</span>
-<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>##      |         x           <span class="fu">y</span>     cook_d |</span>
-<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>##      |----------------------------------|</span>
-<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>##   1. |  .8897727    2.534658   .0024235 |</span>
-<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>##   2. |  .0675149    1.056028     .00888 |</span>
-<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>##   3. |  .1199856    1.148383   .0080535 |</span>
-<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>##   4. |  .1817483    1.488953   .0186161 |</span>
-<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>##   5. |  1.257954    3.040046    .000034 |</span>
-<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>##      |----------------------------------|</span>
-<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>##   6. | -.2278177   -1.908616   .2698209 |</span>
-<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>##   7. | -.1390651   -1.624345   .2228213 |</span>
-<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>##   8. |  .3885022    2.991632   .1271682 |</span>
-<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>##   9. |   1.69015    5.084781   .0750629 |</span>
-<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>##  10. |         5    9.654363   7.563721 |</span>
-<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>##      +----------------------------------+</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">clear</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">set</span> <span class="dv">seed</span> 1011</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    * Generate the <span class="kw">data</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">set</span> <span class="kw">obs</span> 10</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> id = <span class="dt">_n</span>             <span class="co">// create an id for later merging</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> x = rnormal()</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">replace</span> x = 5 <span class="kw">in</span> 10</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    * Note: In Stata the typical way to <span class="kw">generate</span> a <span class="fu">normal</span> <span class="kw">variable</span> with <span class="kw">mean</span> mu and <span class="fu">sd</span> sigma is:</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    *       <span class="kw">generate</span> <span class="fu">y</span> = (0.5+2*x) + sigma*rnormal()</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    * Here we mimic the provided code.</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> <span class="fu">y</span> = (0.5+2*x) + rnormal()</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    * Estimate the full <span class="kw">model</span> </span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    *---------------------------- </span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">regress</span> <span class="fu">y</span> x</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    * Cook distance</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    *---------------------------- </span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>  <span class="kw">predict</span> cook_d, cook</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>  <span class="ot">list</span> </span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>## option lev_manual <span class="kw">not</span> allowed</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(198);</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>## Number <span class="kw">of</span> observations (_N) was 0, now 10.</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>## (1 <span class="fu">real</span> change made)</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =        10</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(1, 8)         =     52.69</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>##        Model |  86.4227998         1  86.4227998   Prob &gt; <span class="fu">F</span>        =    0.0001</span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>##     Residual |  13.1226538         8  1.64033173   R-squared       =    0.8682</span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.8517</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>##        Total |  99.5454536         9   11.060606   Root MSE        =    1.2808</span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>##            <span class="fu">y</span> | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>##            x |    1.98254   .2731326     7.26   0.000     1.352695    2.612385</span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |    .516953    .477044     1.08   0.310    -.5831126    1.617018</span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>##      +---------------------------------------+</span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>##      | id           x           <span class="fu">y</span>     cook_d |</span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>##      |---------------------------------------|</span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>##   1. |  1    .8897727    2.534658   .0024235 |</span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>##   2. |  2    .0675149    1.056028     .00888 |</span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>##   3. |  3    .1199856    1.148383   .0080535 |</span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>##   4. |  4    .1817483    1.488953   .0186161 |</span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>##   5. |  5    1.257954    3.040046    .000034 |</span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>##      |---------------------------------------|</span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>##   6. |  6   -.2278177   -1.908616   .2698209 |</span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>##   7. |  7   -.1390651   -1.624345   .2228213 |</span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a>##   8. |  8    .3885022    2.991632   .1271682 |</span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>##   9. |  9     1.69015    5.084781   .0750629 |</span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a>##  10. | 10           5    9.654363   7.563721 |</span>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>##      +---------------------------------------+</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>With the example using the simulated sample with 10 observations, the rule of thumb would be <span class="math inline">\(4/10\)</span>. Again, the 10th observation is above this threshold and would requires some consideration.</p>
@@ -923,9 +1007,9 @@ redraw()
 <div class="cell" data-ccollapse="true">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#leverage vs residuals</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#A data point with high leverage and high residual may be problematic</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lmodel,<span class="dv">5</span>)                   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#leverage vs residuals</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#A data point with high leverage and high residual may be problematic</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lmodel,<span class="dv">5</span>)                   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -936,8 +1020,8 @@ redraw()
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Cook's distance</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lmodel,<span class="dv">4</span>)                   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Cook's distance</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lmodel,<span class="dv">4</span>)                   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -948,8 +1032,8 @@ redraw()
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Leverage vs Cook's distance </span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lmodel,<span class="dv">6</span>)                   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Leverage vs Cook's distance </span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lmodel,<span class="dv">6</span>)                   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -963,43 +1047,65 @@ redraw()
 <div class="cell" data-collectcode="true">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clear</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 1011</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>*<span class="kw">generate</span> the <span class="kw">data</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">set</span> <span class="kw">obs</span> 10</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">generate</span> x = rnormal()</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">replace</span> x = 5 <span class="kw">in</span> 10</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">generate</span> <span class="fu">y</span> = rnormal(0.5+2*x,1)</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">regress</span> <span class="fu">y</span> x</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">lvr2plot</span></span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>## Number <span class="kw">of</span> observations (_N) was 0, now 10.</span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>## (1 <span class="fu">real</span> change made)</span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =        10</span>
-<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(1, 8)         =     52.69</span>
-<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>##        Model |  86.4227998         1  86.4227998   Prob &gt; <span class="fu">F</span>        =    0.0001</span>
-<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>##     Residual |  13.1226538         8  1.64033173   R-squared       =    0.8682</span>
-<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.8517</span>
-<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>##        Total |  99.5454536         9   11.060606   Root MSE        =    1.2808</span>
-<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
-<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>##            <span class="fu">y</span> | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
-<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
-<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>##            x |    1.98254   .2731326     7.26   0.000     1.352695    2.612385</span>
-<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |    .516953    .477044     1.08   0.310    -.5831126    1.617018</span>
-<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">clear</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">set</span> <span class="dv">seed</span> 1011</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    * Generate the <span class="kw">data</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">set</span> <span class="kw">obs</span> 10</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> id = <span class="dt">_n</span>             <span class="co">// create an id for later merging</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> x = rnormal()</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">replace</span> x = 5 <span class="kw">in</span> 10</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    * Note: In Stata the typical way to <span class="kw">generate</span> a <span class="fu">normal</span> <span class="kw">variable</span> with <span class="kw">mean</span> mu and <span class="fu">sd</span> sigma is:</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    *       <span class="kw">generate</span> <span class="fu">y</span> = (0.5+2*x) + sigma*rnormal()</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    * Here we mimic the provided code.</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">generate</span> <span class="fu">y</span> = (0.5+2*x) + rnormal()</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    * Estimate the full <span class="kw">model</span> </span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    *---------------------------- </span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">regress</span> <span class="fu">y</span> x</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    *----------------------------</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>    * Leverage's plot</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    *---------------------------- </span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>  <span class="kw">lvr2plot</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>## option lev_manual <span class="kw">not</span> allowed</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(198);</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>## Number <span class="kw">of</span> observations (_N) was 0, now 10.</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>## (1 <span class="fu">real</span> change made)</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =        10</span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(1, 8)         =     52.69</span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>##        Model |  86.4227998         1  86.4227998   Prob &gt; <span class="fu">F</span>        =    0.0001</span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>##     Residual |  13.1226538         8  1.64033173   R-squared       =    0.8682</span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.8517</span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>##        Total |  99.5454536         9   11.060606   Root MSE        =    1.2808</span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>##            <span class="fu">y</span> | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>##            x |    1.98254   .2731326     7.26   0.000     1.352695    2.612385</span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |    .516953    .477044     1.08   0.310    -.5831126    1.617018</span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p><img src="images/image-1783609938.png" class="img-fluid" width="400"></p>
-<p>###Book Chapter 4. Outlying, High Leverage, and Influential Poitns 4.7.4 (pages 124-128).</p>
+<section id="book-chapter-4.-outlying-high-leverage-and-influential-poitns-4.7.4-pages-124-128." class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="book-chapter-4.-outlying-high-leverage-and-influential-poitns-4.7.4-pages-124-128.">Book Chapter 4. Outlying, High Leverage, and Influential Poitns 4.7.4 (pages 124-128).</h3>
 <p>This reading supplements the notes above with emphasis in the DFBETA plots. Note that this subchapter appears in the book after the extension of simple linear regression to the use of multiple independent variables (covariates) in the regression model, which we did not yet cover. However, there are only a few references to the multiple linear regression case.</p>
+</section>
 </section>
 <section id="exercises" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="exercises">Exercises:</h2>
@@ -1011,17 +1117,17 @@ redraw()
 <h2 class="unnumbered anchored" data-anchor-id="summary">Summary</h2>
 <p>This weeks key concepts are:</p>
 <div id="box1" class="green-box">
-<ol type="1">
+<ul>
 <li><p>The key concepts around binary variables will be added here after you have had a chance to finish your independent investigation.</p></li>
 <li><p>Outliers are observations with a very large absolute residual value. That is, we normally refer to outliers as observations with extreme values in the outcome variable <span class="math inline">\(Y\)</span>. Outliers in the covariate <span class="math inline">\(x\)</span> are observations with high <em>leverage</em>. The precise formula for leverage is less important than understanding how high leverage observations can impact your regression.</p></li>
 <li><p>A residual versus leverage plot is a very useful diagnostic to see which observations may be highly influential</p>
 <ul>
-<li><p>Observations that are outliers (in the outcome) and that have low leverage, may influence the intercept of your regression model</p></li>
-<li><p>Observations that are not outliers, but have high leverage might artificially inflate the precision of your regression model</p></li>
-<li><p>Observations that are outliers AND have high leverage may influence the intercept and slope of your regression model</p></li>
+<li>Observations that are outliers (in the outcome) and that have low leverage, may influence the intercept of your regression model</li>
+<li>Observations that are not outliers, but have high leverage might artificially inflate the precision of your regression model</li>
+<li>Observations that are outliers AND have high leverage may influence the intercept and slope of your regression model</li>
 </ul></li>
 <li><p>When potentially highly influential observations are detected, a sensitivity analysis where the results are compared with and without those observations is a useful tool for measuring influence.</p></li>
-</ol>
+</ul>
 </div>
 
 

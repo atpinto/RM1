@@ -29,253 +29,164 @@ This week's learning activities include:
 
 ## Binary covariates {.unnumbered}
 
+::::: grid
+::: g-col-9
 So far we have limited our analysis to continuous independent variables (e.g. age). This week we are going to explore the situation where the independent variable (the $x$ variable) is binary.
+:::
+::: g-col-3
+<a href="https://www.youtube.com/embed/BENjkcPL5uo" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> <img src="https://img.youtube.com/vi/BENjkcPL5uo/hqdefault.jpg" width="200"/> </a>
+:::
+:::::
 
-<iframe width="740" height="416" src="https://www.youtube.com/embed/BENjkcPL5uo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
-
-</iframe>
 
 ## Outliers and influential observations {.unnumbered}
 
 An outlier is a point with a large residual. Sometimes an outlier can have a large impact on the estimates of the regression parameter. If you move some of the points in the scatter so they become outliers (far from other points), you can see this will affect the estimated regression line. However, not all outliers are the same. Try moving up and down one of the points at the beginning or the end of the X scale. The impact in the regression line is much stronger than if you do the same with a point in the mid range of X.
 
 ```{=html}
-<script> window.onload=(function(){
-var n = 29;
-
-var points = [{
-     x: 39*9,
-     y: 144*2
-}, {
-     x: 45*9,
-     y: 138*2
-}, {
-     x: 47*9,
-     y: 145*2
-}, {
-     x: 65*9,
-     y: 162*2
-}, {
-     x: 46*9,
-     y: 142*2
-}, {
-     x: 67*9,
-     y: 170*2
-}, {
-     x: 42*9,
-     y: 124*2
-}, {
-     x: 67*9,
-     y: 158*2
-}, {
-     x: 56*9,
-     y: 154*2
-}, {
-     x: 64*9,
-     y: 162*2
-}, {
-     x: 56*9,
-     y: 150*2
-}, {
-     x: 59*9,
-     y: 140*2
-}, {
-     x: 34*9,
-     y: 110*2
-}, {
-     x: 42*9,
-     y: 128*2
-}, {
-     x: 48*9,
-     y: 130*2
-}, {
-     x: 45*9,
-     y: 135*2
-}, {
-     x: 17*9,
-     y: 114*2
-}, {
-     x: 20*9,
-     y: 116*2
-}, {
-     x: 19*9,
-     y: 124*2
-}, {
-     x: 36*9,
-     y: 136*2
-}, {
-     x: 50*9,
-     y: 142*2
-}, {
-     x: 39*9,
-     y:120*2
-}, {
-     x: 21*9,
-     y:120*2
-}, {
-     x: 44*9,
-     y:160*2
-}, {
-     x: 53*9,
-     y:158*2
-}, {
-     x: 63*9,
-     y:144*2
-}, {
-     x: 29*9,
-     y:130*2
-}, {
-     x: 25*9,
-     y:125*2
-}, {
-     x: 69*9,
-     y:175*2
-}]    
-    
-    
-
-var drag_point = -1;
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
-//ctx.setTransform(1,0,0,-1,200,250); //INVERT THE SCALE
-
-canvas.onmousedown = function(e) {
-  var pos = getPosition(e);
-  drag_point = getPointAt(pos.x, pos.y);
-  if (drag_point == -1) {
-    points.push(pos);
-    n=n+1;
-    redraw();
-   //ctx.fillText(pos.x, pos.x, pos.y);
-
-  }
-};
-
-canvas.onmousemove = function(e) {
-  if (drag_point != -1) {
-    var pos = getPosition(e);
-    points[drag_point].x = pos.x;
-    points[drag_point].y = pos.y;
-    redraw(); 
-  }
-};
-
-canvas.onmouseup = function(e) {
-  drag_point = -1;
-};
-
-function getPosition(event) {
-  var rect = canvas.getBoundingClientRect();
-  var x = event.clientX - rect.left;
-  var y = event.clientY - rect.top;
-  return {x, y};
-}
-
-
-function getPointAt(x, y) {
-  for (var i = 0; i < points.length; i++) {
-    if (
-      Math.abs(points[i].x - x) < pointSize &&
-      Math.abs(points[i].y - y) < pointSize
-    )
-      return i;
-  }
-  return -1; 
-}
-
-function redraw() {
-  if (points.length > 0) {
-    ctx.clearRect(0, 0, 800, 400);
-    drawRegLine();
-    drawPoints();
-
-  }
-}
-
-function drawLines() {
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-  ctx.strokeStyle = "blue";
-  ctx.lineWidth = 2;
-  points.forEach((p) => {
-    ctx.lineTo(p.x, p.y);
-  })
-  ctx.stroke();
-}
-
-function drawRegLine(){
-        var lr = {};
-        var sum_x = 0;
-        var sum_y = 0;
-        var sum_xy = 0;
-        var sum_xx = 0;
-        var sum_yy = 0;
-   
-
-        for (var i = 0; i < n; i++) {
-
-            sum_x += points[i].x;
-            sum_y += points[i].y;
-            sum_xy += (points[i].x*points[i].y);
-            sum_xx += (points[i].x*points[i].x);
-            sum_yy += (points[i].y*points[i].y);
-        } 
-
-        lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x);
-        lr['intercept'] = (sum_y - lr.slope * sum_x)/n;
-        lr['r2'] = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
-
-        var IntEquation = 400-lr.intercept;
-        var SlEquation = -100*lr.slope;
-
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = 'red';
-        ctx.beginPath();
-        ctx.moveTo(0, lr.intercept);
-        ctx.lineTo(800, lr.intercept + lr.slope*800);
-        ctx.stroke();
-        ctx.font = "bold 24px arial";
-        var sign = " + ";
-        if (SlEquation<0) {
-          sign = " ";
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Regression Plot</title>
+    <style>
+        canvas {
+            border: 2px solid #333;
+            background: #f9f9f9;
+            display: block;
+            margin: 20px auto;
+            cursor: crosshair;
         }
-      
-        ctx.fillText("Fitted line", 350, 60);
-        ctx.fillText("y = " + IntEquation.toFixed(1) + sign + SlEquation.toFixed(1) + "x", 350, 80);
+    </style>
+</head>
+<body>
+    <h4><center>Interactive Regression Plot</center></h4>
+    <canvas id="canvas" width="640" height="400"></canvas>
+    <script>
+        window.onload = function() {
+            var n = 29;
+            var pointSize = 6;
+            var drag_point = -1;
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
 
+            var points = [
+                {x: 39*9, y: 144*2}, {x: 45*9, y: 138*2}, {x: 47*9, y: 145*2}, 
+                {x: 65*9, y: 162*2}, {x: 46*9, y: 142*2}, {x: 67*9, y: 170*2}, 
+                {x: 42*9, y: 124*2}, {x: 67*9, y: 158*2}, {x: 56*9, y: 154*2}, 
+                {x: 64*9, y: 162*2}, {x: 56*9, y: 150*2}, {x: 59*9, y: 140*2}, 
+                {x: 34*9, y: 110*2}, {x: 42*9, y: 128*2}, {x: 48*9, y: 130*2}, 
+                {x: 45*9, y: 135*2}, {x: 17*9, y: 114*2}, {x: 20*9, y: 116*2}, 
+                {x: 19*9, y: 124*2}, {x: 36*9, y: 136*2}, {x: 50*9, y: 142*2}, 
+                {x: 39*9, y: 120*2}, {x: 21*9, y: 120*2}, {x: 44*9, y: 160*2}, 
+                {x: 53*9, y: 158*2}, {x: 63*9, y: 144*2}, {x: 29*9, y: 130*2}, 
+                {x: 25*9, y: 125*2}, {x: 69*9, y: 175*2}
+            ];
 
-     return lr;
-}
-  
+            canvas.onmousedown = function(e) {
+                var pos = getPosition(e);
+                drag_point = getPointAt(pos.x, pos.y);
+                if (drag_point == -1) {
+                    points.push(pos);
+                    n++;
+                    redraw();
+                }
+            };
 
-function drawPoints() {
-  ctx.strokeStyle = "blue";
-  ctx.lineWidth = 10;
-  pointSize = 5;
-  points.forEach((p) => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, pointSize, 0, Math.PI * 2, true);
-    ctx.stroke();
-  })
-}
+            canvas.onmousemove = function(e) {
+                if (drag_point !== -1) {
+                    var pos = getPosition(e);
+                    points[drag_point].x = pos.x;
+                    points[drag_point].y = pos.y;
+                    redraw();
+                }
+            };
 
-redraw()
+            canvas.onmouseup = function() {
+                drag_point = -1;
+            };
 
-}); 
-</script>
+            function getPosition(event) {
+                var rect = canvas.getBoundingClientRect();
+                return {x: event.clientX - rect.left, y: event.clientY - rect.top};
+            }
+
+            function getPointAt(x, y) {
+                for (var i = 0; i < points.length; i++) {
+                    if (Math.abs(points[i].x - x) < pointSize && Math.abs(points[i].y - y) < pointSize)
+                        return i;
+                }
+                return -1;
+            }
+
+            function redraw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawRegressionLine();
+                drawPoints();
+            }
+
+            function drawRegressionLine() {
+                var sum_x = 0, sum_y = 0, sum_xy = 0, sum_xx = 0, sum_yy = 0;
+
+                for (var i = 0; i < n; i++) {
+                    sum_x += points[i].x;
+                    sum_y += points[i].y;
+                    sum_xy += points[i].x * points[i].y;
+                    sum_xx += points[i].x * points[i].x;
+                    sum_yy += points[i].y * points[i].y;
+                }
+
+                var slope = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
+                var intercept = (sum_y - slope * sum_x) / n;
+
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = 'red';
+                ctx.beginPath();
+                ctx.moveTo(0, intercept);
+                ctx.lineTo(canvas.width, intercept + slope * canvas.width);
+                ctx.stroke();
+
+                ctx.fillStyle = "black";
+                ctx.font = "bold 18px Arial";
+                ctx.fillText(`y = ${intercept.toFixed(2)} + ${slope.toFixed(2)}x`, 20, 30);
+            }
+
+            function drawPoints() {
+                points.forEach((p, index) => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, pointSize, 0, Math.PI * 2, true);
+                    ctx.fillStyle = (drag_point === index) ? "orange" : "blue";
+                    ctx.fill();
+                    ctx.strokeStyle = "black";
+                    ctx.stroke();
+                });
+            }
+
+            redraw();
+        };
+    </script>
+</body>
 ```
-
-<canvas id="canvas" width="640" height="400">
-
-</canvas>
-
-Conversely, a data point may not have a large residual but still have an important influence in the estimated regression line. Below, you can see that the data point in the left does not appear to have a large residual but it strongly affects the regression line.
-
-![](images/image-1341453037.png){fig-align="center" width="300"}
+::::: grid
+::: g-col-7
+Conversely, a data point may not have a large residual but still have an important influence in the estimated regression line. Below, you can see that the data point in the left does not appear to have a large residual but it strongly affects the regression line. In the figure on the right, we can see that despite the main cloud of points not suggesting any trend, the extreme left point has a high influence in the final regression line.
+:::
+::: g-col-5
+![](images/image-1341453037.png){fig-align="center"}
+:::
+:::::
 
 There are several statistics to measure and explore outliers and influential points. We will discuss some here:
 
-**Leverage**: measure of how far away each value of the independent variable is from the others. Data points with high-leverage points, if any, are outliers with respect to the independent variables. The leverage is given by $\frac{1}{n} + \frac{(x_i-\bar{x})^2}{\sum{(x_i - \bar{x})^2}}$ and varies between 0 and 1.
+::::: grid
+::: g-col-9
+**Leverage**: measures of how far away each value of the independent variable is from the others. Data with high-leverage points, if any, are outliers with respect to the independent variables. The levarage ($L$) varies between 0 and 1.
+:::
+::: {.g-col-3 .border .p-3}
+**Formula** 
+$L = \frac{1}{n} + \frac{(x_i-\bar{x})^2}{\sum{(x_i - \bar{x})^2}}$ 
+:::
+:::::
+
 
 Consider the simple example below with 10 simulated data points. The 10th value for X was chosen to be far from the others.
 
@@ -320,25 +231,40 @@ influence(lmodel)$hat     #leverage
 **Stata code**
 
 ```{stata, collectcode=TRUE, collapse=TRUE }
-clear
-set seed 1011
-*generate the data
-  set obs 10
-  generate x = rnormal()
-  replace x = 5 in 10
-  generate y = rnormal(0.5+2*x,1)
+	clear
+	set seed 1011
 
-  regress y x
+	*----------------------------
+	* Generate the data
+	*----------------------------
+	set obs 10
+	generate id = _n             // create an id for later merging
+	generate x = rnormal()
+	replace x = 5 in 10
+	* Note: In Stata the typical way to generate a normal variable with mean mu and sd sigma is:
+	*       generate y = (0.5+2*x) + sigma*rnormal()
+	* Here we mimic the provided code.
+	generate y = (0.5+2*x) + rnormal()
 
-*leverage
+	*----------------------------
+	* Estimate the full model and save coefficients
+	*----------------------------
+	regress y x
+ 
+	*----------------------------
+  *Leverage
+	*----------------------------
   predict lev, leverage
-*leverage computed manually
-  gen lev_manual =1/10 + (x- .9228745)^2/( 1.563043^2 *9)
 
-  list
+	*----------------------------
+  *Leverage computed manually
+	*----------------------------	
+  gen lev_manual = 1/10 + (x- .9228745)^2/( 1.563043^2 *9)
+
+  list lev, lev_manual
 ```
 
-**DFBETA**: We can also compute how the coefficients change if each observation is removed from the data. This will produce a vector for $\beta_0$ and $\beta_1$ corresponding to $n$ regressions fitted by deleting each observation at a time. The difference betweeen the full data estimates and the estimates by removing each data point is called *DFBETA*. In the example of the small simulated dataset set above, the dfbeta can also be obtained from the `influence()` function in r.
+**DFBETA**: We can also compute how the coefficients change if each observation is removed from the data. This will produce a vector for $\beta_0$ and $\beta_1$ corresponding to $n$ regressions fitted by deleting each observation at a time. The difference between the full data estimates and the estimates by removing each data point is called *DFBETA*. In the example of the small simulated dataset set above, the dfbeta can also be obtained from the `influence()` function in r.
 
 **R code**
 
@@ -352,10 +278,63 @@ coef(lm(y~x)) - coef(lm(y[-10]~x[-10]))
 
 **Stata code**
 
-```{r, ccollapse = TRUE, include=TRUE}
+```{stata, collectcode=TRUE, collapse=TRUE }
 *I am not aware of a function in Stata to compute 
-*the unstandardised version of DFBETA
-*See below the code for the standardised DFBETA
+*the unstandardised version of DFBETA.
+*This script computes de unstandardise DFBETA "manually"
+
+	clear
+	set seed 1011
+
+	*----------------------------
+	* Generate the data
+	*----------------------------
+	set obs 10
+	generate id = _n             // create an id for later merging
+	generate x = rnormal()
+	replace x = 5 in 10
+	* Note: In Stata the typical way to generate a normal variable with mean mu and sd sigma is:
+	*       generate y = (0.5+2*x) + sigma*rnormal()
+	* Here we mimic the provided code.
+	generate y = (0.5+2*x) + rnormal()
+
+	*----------------------------
+	* Estimate the full model and save coefficients
+	*----------------------------
+	regress y x
+	scalar b0_full = _b[_cons]
+	scalar b1_full = _b[x]
+
+	*----------------------------
+	* Loop over each observation to compute DFBETA
+	*----------------------------
+	* We will use a postfile to collect the results.
+	tempname results
+	tempfile dfbeta
+
+	postfile `results' id dfb0 dfb1 using "`dfbeta'", replace
+
+	forvalues i = 1/`=_N' {
+		preserve
+		drop if id == `i'
+		quietly regress y x
+		scalar dfb0 = _b[_cons] - b0_full   // change in intercept
+		scalar dfb1 = _b[x] - b1_full        // change in slope for x
+		post `results' (`i') (dfb0) (dfb1)
+		restore
+	}
+
+	postclose `results'
+
+	*----------------------------
+	* Merge the DFBETA results back into the original dataset and list
+	*----------------------------
+	merge 1:1 id using "`dfbeta'", nogen
+	sort id
+	
+	
+	list dfb0 dfb1, sep(0)
+
 ```
 
 Note that the *DFBETA* above are computed in the original scale of the data. Thus, the magnitude of the difference is dependent on this scale. An alternative is to standardise the *DFBETA* using the standard errors. This will give as deviance from the original estimate in standard errors. A common cut-off for a very strong influence in the results is the value $2$.
@@ -370,16 +349,29 @@ dfbetas(lmodel)
 **Stata code**
 
 ```{stata, collectcode=TRUE, collapse=TRUE }
-clear
-set seed 1011
-*generate the data
-  set obs 10
-  generate x = rnormal()
-  replace x = 5 in 10
-  generate y = rnormal(0.5+2*x,1)
-  
+  clear
+  set seed 1011
+
+	*----------------------------
+	* Generate the data
+	*----------------------------
+	set obs 10
+	generate id = _n             // create an id for later merging
+	generate x = rnormal()
+	replace x = 5 in 10
+	* Note: In Stata the typical way to generate a normal variable with mean mu and sd sigma is:
+	*       generate y = (0.5+2*x) + sigma*rnormal()
+	* Here we mimic the provided code.
+	generate y = (0.5+2*x) + rnormal()
+
+ 	*----------------------------
+	* Estimate the full model 
+	*---------------------------- 
   regress y x
 
+	*----------------------------
+	* Standardised DFBETA 
+	*---------------------------- 
   dfbeta
   list 
 
@@ -387,11 +379,18 @@ set seed 1011
 
 In the example above, the 10th observation seems to haves reasonable impact in the estimates.
 
-**Cook's distance** - This is another measure of influence that combines the leverage of the data point and its residual. It summarizes how much all the values in the regression model change when each observation is removed. It is computed as
 
+::::: grid
+::: g-col-9
+**Cook's distance** - This is another measure of influence that combines the leverage of the data point and its residual. It summarizes how much all the values in the regression model change when each observation is removed. 
+:::
+::: {.g-col-3 .border .p-3}
+**Formula**
 $D_j = \frac{\sum(\hat Y_i-\hat Y_{(-j)})^2}{2\sigma^2}$
+:::
+:::::
 
-A general rule of thumb is that a point with a Cook's Distance above $4/n$ is considered to be an outlier.
+A general rule of thumb is that a point with a Cook's Distance ($D_j$) above $4/n$ is considered to be an outlier.
 
 **R code**
 
@@ -404,16 +403,29 @@ influence.measures(lmodel)
 **Stata code**
 
 ```{stata, collectcode=TRUE, collapse=TRUE }
-clear
-set seed 1011
-*generate the data
-  set obs 10
-  generate x = rnormal()
-  replace x = 5 in 10
-  generate y = rnormal(0.5+2*x,1)
-  
+  clear
+  set seed 1011
+
+	*----------------------------
+	* Generate the data
+	*----------------------------
+	set obs 10
+	generate id = _n             // create an id for later merging
+	generate x = rnormal()
+	replace x = 5 in 10
+	* Note: In Stata the typical way to generate a normal variable with mean mu and sd sigma is:
+	*       generate y = (0.5+2*x) + sigma*rnormal()
+	* Here we mimic the provided code.
+	generate y = (0.5+2*x) + rnormal()
+
+ 	*----------------------------
+	* Estimate the full model 
+	*---------------------------- 
   regress y x
 
+	*----------------------------
+	* Cook distance
+	*---------------------------- 
   predict cook_d, cook
   list 
 
@@ -440,23 +452,36 @@ plot(lmodel,6)
 **Stata code**
 
 ```{stata, collectcode=TRUE, collapse=TRUE }
-clear
-set seed 1011
-*generate the data
-  set obs 10
-  generate x = rnormal()
-  replace x = 5 in 10
-  generate y = rnormal(0.5+2*x,1)
-  
+  clear
+  set seed 1011
+
+	*----------------------------
+	* Generate the data
+	*----------------------------
+	set obs 10
+	generate id = _n             // create an id for later merging
+	generate x = rnormal()
+	replace x = 5 in 10
+	* Note: In Stata the typical way to generate a normal variable with mean mu and sd sigma is:
+	*       generate y = (0.5+2*x) + sigma*rnormal()
+	* Here we mimic the provided code.
+	generate y = (0.5+2*x) + rnormal()
+
+ 	*----------------------------
+	* Estimate the full model 
+	*---------------------------- 
   regress y x
 
+ 	*----------------------------
+	* Leverage's plot
+	*---------------------------- 
   lvr2plot
 
 ```
 
 ![](images/image-1783609938.png){width="400"}
 
-###Book Chapter 4. Outlying, High Leverage, and Influential Poitns 4.7.4 (pages 124-128).
+### Book Chapter 4. Outlying, High Leverage, and Influential Poitns 4.7.4 (pages 124-128).  {.unnumbered}
 
 This reading supplements the notes above with emphasis in the DFBETA plots. Note that this subchapter appears in the book after the extension of simple linear regression to the use of multiple independent variables (covariates) in the regression model, which we did not yet cover. However, there are only a few references to the multiple linear regression case.
 
@@ -487,17 +512,14 @@ boxplot(inf$infmat[,1],inf$infmat[,2])
 This weeks key concepts are:
 
 ::: {#box1 .green-box}
-1.  The key concepts around binary variables will be added here after you have had a chance to finish your independent investigation.
+- The key concepts around binary variables will be added here after you have had a chance to finish your independent investigation.
 
-2.  Outliers are observations with a very large absolute residual value. That is, we normally refer to outliers as observations with extreme values in the outcome variable $Y$. Outliers in the covariate $x$ are observations with high *leverage*. The precise formula for leverage is less important than understanding how high leverage observations can impact your regression.
+- Outliers are observations with a very large absolute residual value. That is, we normally refer to outliers as observations with extreme values in the outcome variable $Y$. Outliers in the covariate $x$ are observations with high *leverage*. The precise formula for leverage is less important than understanding how high leverage observations can impact your regression.
 
-3.  A residual versus leverage plot is a very useful diagnostic to see which observations may be highly influential
+- A residual versus leverage plot is a very useful diagnostic to see which observations may be highly influential
+  - Observations that are outliers (in the outcome) and that have low leverage, may influence the intercept of your regression model
+  - Observations that are not outliers, but have high leverage might artificially inflate the precision of your regression model
+  - Observations that are outliers AND have high leverage may influence the intercept and slope of your regression model
 
-    -   Observations that are outliers (in the outcome) and that have low leverage, may influence the intercept of your regression model
-
-    -   Observations that are not outliers, but have high leverage might artificially inflate the precision of your regression model
-
-    -   Observations that are outliers AND have high leverage may influence the intercept and slope of your regression model
-
-4.  When potentially highly influential observations are detected, a sensitivity analysis where the results are compared with and without those observations is a useful tool for measuring influence.
+- When potentially highly influential observations are detected, a sensitivity analysis where the results are compared with and without those observations is a useful tool for measuring influence.
 :::
