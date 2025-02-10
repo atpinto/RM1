@@ -21,6 +21,7 @@ book:
     - 012-logistic_regression_model_building.qmd
   sidebar:    
     logo: "images/bca.png"  
+  downloads: [pdf]
 
 format:
   html:
@@ -31,7 +32,5 @@ format:
     documentclass: scrreprt
     keep-md: true
     keep-tex: true
-execute:
-  dir: Data    
 editor: source
 

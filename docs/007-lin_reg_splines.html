@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.7.11">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Regression Modelling for Biostatistics 1 - 7&nbsp; Violations of assumptions</title>
+<title>7&nbsp; Violations of assumptions – Regression Modelling for Biostatistics 1</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -66,22 +66,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="./">
 <link href="./008-model_building.html" rel="next">
 <link href="./006-interaction_collinearity.html" rel="prev">
-<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-73e053f00451a6823eaeab9714ac17cd.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-b7c2d8834e08b04a63bb76a724ffbcac.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -90,14 +97,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -107,13 +142,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./007-lin_reg_splines.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Violations of assumptions</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./007-lin_reg_splines.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Violations of assumptions</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -122,13 +157,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
       <a href="./index.html" class="sidebar-logo-link">
       <img src="./images/bca.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
       </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Regression Modelling for Biostatistics 1</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Regression-Modelling-for-Biostatistics-1.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -219,7 +257,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -266,7 +304,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
+
 
 <section id="learn_obj_wk07" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="learn_obj_wk07">Learning objectives</h2>
@@ -282,7 +322,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="learn_act_wk07" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="learn_act_wk07">Learning activities</h2>
 <p>This week’s learning activities include:</p>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Learning Activity</th>
@@ -325,22 +365,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>To motivate, we consider data on 892 females under 50 years collected in three villages in West Africa. Investigators are interested in exploring the relationship between age and triceps skinfold thickness, a crude measure of body fat. The dataset is called <em>triceps</em> and include <em>age</em>, <em>thick</em> and <em>logthick</em>, for respectively age in years, triceps skinfold thickness in mm and its logarithm. The figure below displays the the relationship between <em>age</em> and <em>logthick</em> and it is immediately clear that this relationship in nonlinear on such a wide age span. A nonparametric smoother (LOWESS) can be applied to the data and returns the blue fitted line confirming the visual impression.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>A simple regression model of the form <span class="math inline">\(logthick_i=\beta_0+\beta_1 age_i+\epsilon_i\)</span> for <span class="math inline">\(i=1,\dots,n=892\)</span> would hardly give an approximation of the observed pattern, so the question arises: how can we modify it to make it more realistic? The first strategy is to replace the linear function of age by a cubic polynomial: <span class="math inline">\(f(age)=\beta_0+\beta_1 age +\beta_2 age^2 + \beta_2 age^3\)</span>. The term ``cubic’’ is used because we are fitting a polynomial of degree 3 due to the largest exponent being 3. A quadratic curve could also be fitted but would not be appropriate given the shape of the plot. Such a model is naturally called polynomial regression, irrespective of the degree of the polynomial function <span class="math inline">\(f(x)\)</span>. Although we can define by hand the quadratic and cubic terms it’s preferable to use the built-in tool <em>poly(x,3)</em> in R to define the polynomial (here <span class="math inline">\(x\)</span> refers to the variable of interest, e.g.&nbsp;<span class="math inline">\(x=age\)</span>). This leads to a simpler univariate smooth model of the form: <span class="math inline">\(y_i=f(x_i)+\epsilon_i\)</span> where <span class="math inline">\(y\)</span> is the generic term for the response (<span class="math inline">\(y=logthick\)</span> in our example).</p>
 <p>The following fit is now obtained and there is clearly some improvement over a linear fit but we may be left with the visual impression that fitting a cubic polynomial is not quite enough to capture the structure of the data, especially around year 10 where the fit does not seem so good.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Although all polynomial coefficients are significant - results not shown -, we should <em>not</em> use significance to decide to include a particular term or not. Another parametrisation based on orthogonal polynomials is often preferable as it is more stable, especially for high-degree polynomials. Using this parametrisation which is the default parametrisation in R yields a non-significant quadratic term. It is nevertheless needed to give the same fit. The F-test (or a LRT test) can help decide whether the cubic polynomial in age is necessary and is, for instance, better than a quadratic polynomial or a simple linear fit. We leave this as an exercise.</p>
 <p>The R code for this section and a slightly simpler version for Stata are given below:</p>
 <p>R Code</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scatter plot and lowess fit</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>triceps<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"https://raw.githubusercontent.com/atpinto/RM1/main/Data/triceps.csv"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>triceps<span class="ot">&lt;-</span><span class="fu">data.frame</span>(triceps)</span>
@@ -349,10 +397,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">lowess</span>(triceps<span class="sc">$</span>logthick <span class="sc">~</span> triceps<span class="sc">$</span>age, <span class="at">f=</span>.<span class="dv">2</span>), <span class="at">col=</span><span class="dv">4</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
-<details>
-<summary>Code</summary>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># scatter plot and cubic polynomial</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>triceps <span class="ot">&lt;-</span> triceps[<span class="fu">order</span>(triceps<span class="sc">$</span>age),] <span class="co"># order data by age</span></span>
@@ -363,13 +415,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(triceps<span class="sc">$</span>age, <span class="fu">predict</span>(fit.poly, <span class="fu">data.frame</span>(<span class="at">age=</span>triceps<span class="sc">$</span>age)), <span class="at">col=</span><span class="st">"red"</span>, <span class="at">lwd=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Stata code and output</p>
 <div class="cell" data-collectcode="true">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>import delimited <span class="st">"https://raw.githubusercontent.com/atpinto/RM1/main/Data/triceps.csv"</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> age2 = age^2</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> age3 = age^3</span>
@@ -418,7 +474,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The disadvantage of polynomials is that they tend to fit the data globally and are not very good locally, for instance around year 10 for <em>logthick</em>. One way to get around this issue is to partition the range of <span class="math inline">\(age\)</span> (or the covariate <span class="math inline">\(x\)</span> in general) into smaller intervals, utilising a small number of points called <em>knots</em>. We can then fit (cubic) polynomials locally but by doing this we will get discontinuities. A simple remedy is to impose constraints on these polynomials so that the global result is a <em>smooth</em> function. We typically do this by forcing the successive derivatives of the function to be continuous up to some order (e.g.&nbsp;2). The resulting function is called a spline. Different splines exist and a common type consists of portions of cubic polynomials in the middle joined together at the knots that become linear in the edges (i.e before the first knot and after the last one). Such splines are called Restricted Cubic Splines (RCS) with RCS(4) denoting a RCS with 4 knots. Restrictions are imposed to the different parts to yield a smooth function. It is not necessary to know their complex algebraic expression but we can see how the look on Figure 7.1 below:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>** Figure 7.1:** Spline basis functions and fitted line</p>
@@ -427,8 +487,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="unnumbered anchored" data-anchor-id="syntax-and-outputs">Syntax and outputs</h3>
 <p>This is how you can fit such a model in R. This requires a slightly different syntax from what you have been using so far. R makes use of the <em>rms</em> library and the command <em>ols</em> instead of <em>lm</em>. The spline function itself is specified by adding <em>rcs</em> within the formula yielding:</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(rms)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ddist <span class="ot">&lt;-</span> <span class="fu">datadist</span>(triceps)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">datadist=</span><span class="st">'ddist'</span>)</span>
@@ -437,8 +497,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>The command <em>rcs(age,4)</em> specifies a RCS in age with 4 knots placed at their default location. Note that the first two lines after calling the <em>rms</em> library are not absolutely needed to get the fit but there will be used to plot the splines, so it’s recommended to add them anyway. The output is given below:</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fit.rcs</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Linear Regression Model</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
@@ -465,10 +525,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>You may notice that the syntax is slightly different from the standard way to display an output after typing the <em>lm</em> command since <em>summary()</em> is not used. The display is rather unsual and indicates the coefficients for the various spline bases with the notation <span class="math inline">\(age^\prime\)</span> and <span class="math inline">\(age^{\prime\prime}\)</span> corresponding to two additional splines terms <span class="math inline">\(S_2(a)\)</span> and <span class="math inline">\(S_3(a)\)</span> that are never interpreted separarely.</p>
 <p>The Stata syntax still uses the usual <em>regress</em> command but it’s preceeded by a command <em>mkspline</em> explaining what splines need to be fitted. Below the syntax and output in Stata.</p>
-<p>Stata code and output</p>
-<div class="cell" data-collectcode="true">
-<details>
-<summary>Code</summary>
+<p>Stata code and output ::: {.cell collectcode=‘true’}</p>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>import delimited <span class="st">"https://raw.githubusercontent.com/atpinto/RM1/main/Data/triceps.csv"</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">mkspline</span> age_spl = age, cubic nknots(4)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">regress</span> logthick  age_spl* </span>
@@ -493,7 +552,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |   2.197331   .0335518    65.49   0.000     2.131481    2.263182</span>
 <span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-</div>
+<p>:::</p>
 <p>The command <em>mkspline age_spl = age, cubic nknots(4)</em> asks Stata to create a RCS in age with 4 knots, Stata will generate the correspponding terms called <em>age_spl1</em>, <em>age_spl2</em> and <em>age_spl3</em>. Note that <em>age_spl1</em> is always <em>age</em> so that the syntax is equivalent to <em>regress logthick age age_spl1 age_spl2</em>. The generic command with * makes sure that <em>all</em> terms are included. Some other options are available that you can explore using the help.</p>
 <p>What remained to be discussed is: 1) how do we choose the knots?; 2) how many knots do we choose?; and possibly 3) how do we know that the splines are needed?</p>
 </section>
@@ -502,13 +561,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Typically a small number of knots is recommended, say between 3 and 5. We chose 5 knots earlier because we have a lot of data but 4 is ofen appropriate. Their location is critical and up to the investigator. A default choice have been fortunately implemented in Stata and R at specific quantiles of the variable of interest. The two figures below gives you the data and 2 different fits, one with 4 knots located using the default (Figure 7.2) and at age 10, 20, 35, 45 (Figure 7.3). We added the vertical dotted lines to indicate their location.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>** Figure 7.2:** A RCS spline fit with 4 knots (default location)</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>** Figure 7.3:** A RCS spline fit with 4 knots at age 10, 20, 35 and 45.</p>
@@ -520,8 +587,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The R and Stata code to fit splines with explanation is below.</p>
 <p><strong>R Code</strong></p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Figure 7.2</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># sort the data by increasing age</span></span>
@@ -536,10 +603,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="fu">quantile</span>(triceps<span class="sc">$</span>age,<span class="fu">c</span>(<span class="fl">0.05</span>,<span class="fl">0.35</span>,<span class="fl">0.65</span>,<span class="fl">0.95</span>)),<span class="at">lty=</span><span class="dv">2</span>,<span class="at">col=</span><span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
-<details>
-<summary>Code</summary>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Testing whether the additional splines terms are necessary</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit.rcs4a)</span>
@@ -556,10 +627,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(triceps<span class="sc">$</span>age[mini<span class="sc">:</span>maxi],pred4b[mini<span class="sc">:</span>maxi],  <span class="at">col=</span><span class="st">"red"</span>, <span class="at">lwd=</span><span class="dv">2</span>,<span class="at">lty=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="007-lin_reg_splines_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
-<details>
-<summary>Code</summary>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># poor fit for lower age</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Figure without fancy colours, do not run the last 3 lines</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -571,8 +646,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Indications on how to produce a simpler figure in R were also provided. We don’t suggest you produce complex figures like this one. Even the vertical lines displaying the knots location are often omitted.</p>
 <p><strong>Stata code and output</strong></p>
 <div class="cell" data-collectcode="true">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>## Figure 7.2, <span class="kw">default</span> knots, and <span class="kw">fit</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>import delimited <span class="st">"https://raw.githubusercontent.com/atpinto/RM1/main/Data/triceps.csv"</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">mkspline</span> age_spl = age, cubic nknots(4) displayknots</span>
@@ -677,8 +752,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>OPTIONAL: Regarding this calculation, Stata users have the edge since the software provides an approximation through the derivative since <span class="math inline">\(f(11)-f(10)\simeq f'(10)\)</span>. In general, <span class="math inline">\(f(a+1)-f(age))\simeq f'(a)\)</span> thanks to a Taylor expansion. The R users don’t have this luxury and have to work out for themselves what this difference is. For that reason, what follows is considered optional but Stata users should not have any problem to run the few lines of code that are needed. Note that the splines have to be generated using the command <em>mkspline2</em> command instead of <em>mkspline</em>. This command and the one that computes the derivative are available once a user-defined code has been installed (type: <em>ssc install postrcspline</em>).</p>
 <p><strong>Stata code</strong></p>
 <div class="cell" data-collectcode="true">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>import delimited <span class="st">"https://raw.githubusercontent.com/atpinto/RM1/main/Data/triceps.csv"</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>mkspline2 age_spl = age, cubic nknots(4)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">regress</span> logthick  age_spl*</span>
@@ -709,8 +784,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><a href="https://canvas.sydney.edu.au/files/23346714/download?download_frd=1">Download video here</a></p>
 <p><strong>R code</strong></p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>triceps<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"https://raw.githubusercontent.com/atpinto/RM1/main/Data/triceps.csv"</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>triceps<span class="ot">&lt;-</span><span class="fu">data.frame</span>(triceps)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>triceps <span class="ot">&lt;-</span> triceps[<span class="fu">order</span>(triceps<span class="sc">$</span>age),] </span>
@@ -824,28 +899,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Click below to see a heavily-documented code illustrating how the resampling works on the <em>hers</em> data and how we can obtain bootstrap-based 95% CIs.</p>
 <p><strong>R Code</strong></p>
 <div class="cell">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Part A)</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(haven)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Loading required package: haven</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>hers<span class="ot">&lt;-</span><span class="fu">read_dta</span>(<span class="st">"https://www.dropbox.com/s/ndtd4o20qogq7fv/hersdata.dta?dl=1"</span>) </span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in open.connection(con, "rb"): HTTP error 400.</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: Failed to parse /private/var/folders/xs/_nnmpq453c9b5lkpwdyr_2rc0000gp/T/Rtmp2DdWGi/file1316a4452afd: This version of the file format is not supported.</span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>hers<span class="ot">&lt;-</span><span class="fu">data.frame</span>(hers)</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'hers' not found</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'hers' not found</span></span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>hers.nondiab<span class="ot">&lt;-</span>hers[hers<span class="sc">$</span>diabetes<span class="sc">==</span><span class="dv">0</span>,]</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'hers' not found</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'hers' not found</span></span>
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) standard analysis on reduced data + normal probability plot</span></span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>hers1<span class="ot">&lt;-</span><span class="fu">cbind</span>(hers.nondiab<span class="sc">$</span>HDL,hers.nondiab<span class="sc">$</span>age,hers.nondiab<span class="sc">$</span>BMI,hers.nondiab<span class="sc">$</span>drinkany)</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'hers.nondiab' not found</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'hers.nondiab' not found</span></span>
 <span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(hers1)<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"HDL"</span>,<span class="st">"age"</span>,<span class="st">"BMI"</span>,<span class="st">"drinkany"</span>)</span>
 <span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'hers1' not found</span></span>
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>hers1<span class="ot">&lt;-</span><span class="fu">data.frame</span>(hers1)</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'hers1' not found</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'hers1' not found</span></span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>hers2<span class="ot">&lt;-</span><span class="fu">na.omit</span>(hers1) <span class="co"># 2032 --&gt; 2021</span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'hers1' not found</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'hers1' not found</span></span>
 <span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="co"># fit the linear model (HDL on age BMI and drinkany() and draw a normality plot of the residual </span></span>
@@ -859,7 +934,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1001</span>)</span>
 <span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>R<span class="ot">=</span><span class="dv">1000</span></span>
 <span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span><span class="fu">dim</span>(hers2)[<span class="dv">1</span>]</span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'hers2' not found</span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'hers2' not found</span></span>
 <span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>all.replicates<span class="ot">&lt;-</span><span class="cn">NULL</span></span>
 <span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(r <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>R){</span>
 <span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate bootstrap sample by resampling the data</span></span>
@@ -869,7 +944,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>  <span class="co"># store all coefficients in all replicates</span></span>
 <span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>  all.replicates<span class="ot">=</span><span class="fu">rbind</span>(all.replicates,out.r<span class="sc">$</span>coeff)</span>
 <span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'hers2' not found</span></span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'hers2' not found</span></span>
 <span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a><span class="co"># all replicates is a matrix Rx4 (since we have R replicates</span></span>
 <span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a><span class="co"># and 4 coefficients in the model)</span></span>
@@ -923,44 +998,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-95"><a href="#cb13-95" aria-hidden="true" tabindex="-1"></a>out<span class="ot">&lt;-</span><span class="fu">lm</span>(HDL<span class="sc">~</span>age<span class="sc">+</span>BMI<span class="sc">+</span>drinkany,<span class="at">data=</span>hers2)</span>
 <span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(mf, parent.frame()): object 'hers2' not found</span></span>
 <span id="cb13-97"><a href="#cb13-97" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(out)</span>
-<span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'out' not found</span></span>
+<span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'out' not found</span></span>
 <span id="cb13-99"><a href="#cb13-99" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-100"><a href="#cb13-100" aria-hidden="true" tabindex="-1"></a><span class="co"># bootsset.seed(1001)</span></span>
 <span id="cb13-101"><a href="#cb13-101" aria-hidden="true" tabindex="-1"></a>B <span class="ot">=</span> <span class="fu">boot</span>(<span class="at">data=</span>hers2,<span class="at">statistic=</span>coeff,<span class="at">R=</span><span class="dv">3000</span>)  </span>
-<span id="cb13-102"><a href="#cb13-102" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'hers2' not found</span></span>
+<span id="cb13-102"><a href="#cb13-102" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'hers2' not found</span></span>
 <span id="cb13-103"><a href="#cb13-103" aria-hidden="true" tabindex="-1"></a>    <span class="co"># increase the nb of replicates for BCA </span></span>
 <span id="cb13-104"><a href="#cb13-104" aria-hidden="true" tabindex="-1"></a>    <span class="co"># (R=1000 is too small, numerical issues)</span></span>
 <span id="cb13-105"><a href="#cb13-105" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-106"><a href="#cb13-106" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 types for the 3rd coeff = BMI's</span></span>
 <span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a><span class="fu">boot.ci</span>(B,<span class="at">index=</span><span class="dv">3</span>,<span class="at">type=</span><span class="st">"norm"</span>)   <span class="co"># normal</span></span>
-<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'B' not found</span></span>
+<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'B' not found</span></span>
 <span id="cb13-109"><a href="#cb13-109" aria-hidden="true" tabindex="-1"></a><span class="fu">boot.ci</span>(B,<span class="at">index=</span><span class="dv">3</span>,<span class="at">type=</span><span class="st">"perc"</span>)   <span class="co"># percentile</span></span>
-<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'B' not found</span></span>
+<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'B' not found</span></span>
 <span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a><span class="fu">boot.ci</span>(B,<span class="at">index=</span><span class="dv">3</span>,<span class="at">type=</span><span class="st">"bca"</span>)    <span class="co"># BCa CI (3 types_)</span></span>
-<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'B' not found</span></span>
+<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'B' not found</span></span>
 <span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a><span class="co"># default coverage =95%</span></span>
 <span id="cb13-115"><a href="#cb13-115" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-116"><a href="#cb13-116" aria-hidden="true" tabindex="-1"></a><span class="co"># all types in one command</span></span>
 <span id="cb13-117"><a href="#cb13-117" aria-hidden="true" tabindex="-1"></a><span class="fu">boot.ci</span>(B,<span class="at">index=</span><span class="dv">3</span>,<span class="at">type=</span><span class="fu">c</span>(<span class="st">"norm"</span>,<span class="st">"perc"</span>, <span class="st">"bca"</span>)) </span>
-<span id="cb13-118"><a href="#cb13-118" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'B' not found</span></span>
+<span id="cb13-118"><a href="#cb13-118" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'B' not found</span></span>
 <span id="cb13-119"><a href="#cb13-119" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-120"><a href="#cb13-120" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-121"><a href="#cb13-121" aria-hidden="true" tabindex="-1"></a><span class="co"># plots</span></span>
 <span id="cb13-122"><a href="#cb13-122" aria-hidden="true" tabindex="-1"></a><span class="co"># -----</span></span>
 <span id="cb13-123"><a href="#cb13-123" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-124"><a href="#cb13-124" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(B, <span class="at">index=</span><span class="dv">1</span>) <span class="co"># intercept</span></span>
-<span id="cb13-125"><a href="#cb13-125" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'B' not found</span></span>
+<span id="cb13-125"><a href="#cb13-125" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'B' not found</span></span>
 <span id="cb13-126"><a href="#cb13-126" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(B, <span class="at">index=</span><span class="dv">2</span>) <span class="co"># x1=age</span></span>
-<span id="cb13-127"><a href="#cb13-127" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'B' not found</span></span>
+<span id="cb13-127"><a href="#cb13-127" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'B' not found</span></span>
 <span id="cb13-128"><a href="#cb13-128" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(B, <span class="at">index=</span><span class="dv">3</span>) <span class="co"># x2=BMI</span></span>
-<span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'B' not found</span></span>
+<span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'B' not found</span></span>
 <span id="cb13-130"><a href="#cb13-130" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(B, <span class="at">index=</span><span class="dv">4</span>) <span class="co"># x3=drinkany</span></span>
-<span id="cb13-131"><a href="#cb13-131" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'B' not found</span></span>
+<span id="cb13-131"><a href="#cb13-131" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'B' not found</span></span>
 <span id="cb13-132"><a href="#cb13-132" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-133"><a href="#cb13-133" aria-hidden="true" tabindex="-1"></a><span class="co"># nicer plots</span></span>
 <span id="cb13-134"><a href="#cb13-134" aria-hidden="true" tabindex="-1"></a>all<span class="ot">&lt;-</span>B<span class="sc">$</span>t</span>
-<span id="cb13-135"><a href="#cb13-135" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'B' not found</span></span>
+<span id="cb13-135"><a href="#cb13-135" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'B' not found</span></span>
 <span id="cb13-136"><a href="#cb13-136" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
 <span id="cb13-137"><a href="#cb13-137" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(all[,<span class="dv">1</span>],<span class="at">main=</span><span class="st">"Histogram"</span>,<span class="at">xlab=</span><span class="st">"Intercept"</span>,<span class="at">prob=</span><span class="cn">TRUE</span>)</span>
 <span id="cb13-138"><a href="#cb13-138" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in all[, 1]: object of type 'builtin' is not subsettable</span></span>
@@ -985,22 +1060,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-157"><a href="#cb13-157" aria-hidden="true" tabindex="-1"></a><span class="co"># percentile 95% CI, 3rd coefficient (BMI)</span></span>
 <span id="cb13-158"><a href="#cb13-158" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1001</span>)</span>
 <span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a>B <span class="ot">=</span> <span class="fu">boot</span>(<span class="at">data=</span>hers2,<span class="at">statistic=</span>coeff,<span class="at">R=</span><span class="dv">3000</span>, <span class="at">formula=</span>HDL<span class="sc">~</span>age<span class="sc">+</span>BMI<span class="sc">+</span>drinkany)</span>
-<span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'hers2' not found</span></span>
+<span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'hers2' not found</span></span>
 <span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a><span class="fu">boot.ci</span>(B,<span class="at">index=</span><span class="dv">3</span>,<span class="at">type=</span><span class="st">"perc"</span>)</span>
-<span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'B' not found</span></span>
+<span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'B' not found</span></span>
 <span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a><span class="co"># percentile 95% CI, 4tg coefficient (drinkany)</span></span>
 <span id="cb13-165"><a href="#cb13-165" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1001</span>)</span>
 <span id="cb13-166"><a href="#cb13-166" aria-hidden="true" tabindex="-1"></a>B <span class="ot">=</span> <span class="fu">boot</span>(<span class="at">data=</span>hers2,<span class="at">statistic=</span>coeff,<span class="at">R=</span><span class="dv">3000</span>, <span class="at">formula=</span>HDL<span class="sc">~</span>age<span class="sc">+</span>BMI<span class="sc">+</span>drinkany)</span>
-<span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'hers2' not found</span></span>
+<span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'hers2' not found</span></span>
 <span id="cb13-168"><a href="#cb13-168" aria-hidden="true" tabindex="-1"></a><span class="fu">boot.ci</span>(B,<span class="at">index=</span><span class="dv">4</span>,<span class="at">type=</span><span class="st">"perc"</span>)</span>
-<span id="cb13-169"><a href="#cb13-169" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in eval(expr, envir, enclos): object 'B' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-169"><a href="#cb13-169" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'B' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p><strong>Stata code</strong></p>
 <div class="cell" data-collectcode="true">
-<details>
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>## read <span class="kw">data</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> hersdata.dta</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">drop</span> <span class="kw">if</span> diabetes ==1   <span class="co">// 731 obs deleted</span></span>
@@ -1291,7 +1366,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb14-288"><a href="#cb14-288" aria-hidden="true" tabindex="-1"></a>## </span>
 <span id="cb14-289"><a href="#cb14-289" aria-hidden="true" tabindex="-1"></a>## Contains <span class="kw">data</span></span>
 <span id="cb14-290"><a href="#cb14-290" aria-hidden="true" tabindex="-1"></a>##  Observations:         1,000                  <span class="kw">simulate</span>: myboot2</span>
-<span id="cb14-291"><a href="#cb14-291" aria-hidden="true" tabindex="-1"></a>##     Variables:             4                  20 Feb 2024 13:20</span>
+<span id="cb14-291"><a href="#cb14-291" aria-hidden="true" tabindex="-1"></a>##     Variables:             4                  10 Feb 2025 18:50</span>
 <span id="cb14-292"><a href="#cb14-292" aria-hidden="true" tabindex="-1"></a>## -------------------------------------------------------------------------------------------------------------------------------</span>
 <span id="cb14-293"><a href="#cb14-293" aria-hidden="true" tabindex="-1"></a>## Variable      Storage   Display    Value</span>
 <span id="cb14-294"><a href="#cb14-294" aria-hidden="true" tabindex="-1"></a>##     <span class="bn">name</span>         <span class="dv">type</span>    <span class="kw">format</span>    <span class="kw">label</span>      Variable <span class="kw">label</span></span>
@@ -1705,18 +1780,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1748,11 +1812,48 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1762,8 +1863,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1775,7 +1885,129 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1819,6 +2051,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1844,6 +2077,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1905,17 +2164,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./006-interaction_collinearity.html" class="pagination-link">
+      <a href="./006-interaction_collinearity.html" class="pagination-link" aria-label="Interaction and Collinearity">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Interaction and Collinearity</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./008-model_building.html" class="pagination-link">
+      <a href="./008-model_building.html" class="pagination-link" aria-label="Regression model building and variable selection">
         <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regression model building and variable selection</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

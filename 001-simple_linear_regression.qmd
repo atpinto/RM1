@@ -3,7 +3,7 @@ library(ggplot2)
 library(Statamarkdown)
 stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
 knitr::opts_chunk$set(engine.path=list(stata=stataexe))
-knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+knitr::opts_knit$set(root.dir = 'Data') # Changes the working director to the Data folder
 ```
 
 # Simple Linear Regression {#slr}
@@ -268,11 +268,13 @@ The lecture below (which you can watch for either Stata or R (or both if you are
 ::::: grid
 ::: g-col-6
 ### Stata Lecture {.unnumbered}
+
 <a href="https://sydney.instructuremedia.com/embed/ffe05595-d38b-441b-914b-f80c0c563e61" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> <img src="images/RM1_video.png" width="300"/> </a>
 :::
 
 ::: g-col-6
 ### R Lecture {.unnumbered}
+
 <a href="https://sydney.instructuremedia.com/embed/8d25c66e-8446-42aa-8794-444b9438d115" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> <img src="images/RM1_video.png" width="300"/> </a>
 :::
 :::::

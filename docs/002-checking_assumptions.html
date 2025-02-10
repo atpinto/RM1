@@ -164,6 +164,9 @@ window.Quarto = {
       </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Regression Modelling for Biostatistics 1</a> 
+        <div class="sidebar-tools-main">
+    <a href="./Regression-Modelling-for-Biostatistics-1.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -419,10 +422,19 @@ Important
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">rvfplot</span> <span class="co">/* the residual versus fitted plot */</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">predict</span> res_std, residuals <span class="co">/* calculate the residuals*/</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">qnorm</span> res_std <span class="co">/* The normal quantile plot of the residuals*/</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>## file hers_subset.dta <span class="kw">not</span> found</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(601);</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>## <span class="fu">r</span>(601);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>##       Source |       SS           df       MS      Number <span class="kw">of</span> <span class="kw">obs</span>   =       276</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   <span class="fu">F</span>(1, 274)       =      4.84</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>##        Model |  423.883938         1  423.883938   Prob &gt; <span class="fu">F</span>        =    0.0286</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>##     Residual |  23988.8842       274  87.5506722   R-squared       =    0.0174</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------   Adj R-squared   =    0.0138</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>##        Total |  24412.7681       275  88.7737022   Root MSE        =    9.3569</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>## </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>##          DBP | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>## -------------+----------------------------------------------------------------</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>##          BMI |   .2221827   .1009756     2.20   0.029     .0233961    .4209693</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>##        <span class="dt">_cons</span> |   67.82592   2.923282    23.20   0.000     62.07097    73.58087</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p><img src="images/Stata_resid.jpg" class="img-fluid" style="width:90.0%"></p>
@@ -484,14 +496,12 @@ Important
 <h3 class="unnumbered anchored" data-anchor-id="log-transformations-of-the-outcome-and-covariates">Log transformations of the outcome and covariates</h3>
 <p>Consider the following scatterplot of brain weight (in grams) versus body weight (in kg) for 62 different mammal species (Allison and Cicchetti, <em>Science</em>, 1976).</p>
 <div class="cell">
-<div class="cell-output cell-output-error">
-<pre><code>Error: 'brain_all.dta' does not exist in current working directory ('/Users/ateixeirapinto/Documents/RM1_Notes_2025').</code></pre>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="002-checking_assumptions_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
-<div class="cell-output cell-output-error">
-<pre><code>Error: object 'brain' not found</code></pre>
-</div>
-<div class="cell-output cell-output-error">
-<pre><code>Error: object 'brain' not found</code></pre>
 </div>
 </div>
 <p>As almost all the data are bunched up in the bottom left hand corner. However, a logarithmic transformation of both brain and body weight reins in the extreme values on both axes and produce a scatterplot worth pursuing with linear regression.</p>
