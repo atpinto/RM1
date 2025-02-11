@@ -6,7 +6,7 @@ knitr::opts_chunk$set(engine.path=list(stata=stataexe))
 knitr::opts_knit$set(root.dir = 'Data') # Changes the working director to the Data folder
 ```
 
-# Model building for Logistic Regression {#model_building_binary }
+# Model building for Logistic Regression {#model_building_binary}
 
 ## Learning objectives {#learn_obj_wk12 .unnumbered}
 

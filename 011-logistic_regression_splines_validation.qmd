@@ -5,7 +5,7 @@ stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
 knitr::opts_chunk$set(engine.path=list(stata=stataexe))
 knitr::opts_knit$set(root.dir = 'Data') # Changes the working director to the Data folder
 ```
-# Non-linearity in Logistic Regression{#logreg_splines_ROC}
+# Non-linearity in Logistic Regression {#logreg_splines_ROC}
 
 ## Learning objectives {#learn_obj_wk11 .unnumbered}
 
