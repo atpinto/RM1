@@ -4,7 +4,7 @@ project:
 book:
   title: "Regression Modelling for Biostatistics 1"
   author: "Schlub T, Heritier S, Teixeira-Pinto A"
-  date: "2/19/2024"
+  date: "2/19/2025"
   chapters:
     - index.qmd
     - 001-simple_linear_regression.qmd
@@ -22,10 +22,15 @@ book:
   sidebar:    
     logo: "images/bca.png"  
   downloads: [pdf]
+  page-footer:
+    left: |
+      Regression Modeling for Biostatistics.
 
 format:
   html:
-    theme: flatly
+    theme: 
+      - cosmo
+      - rm1.scss
     code-fold: true
     code-summary: "Show the code"
   pdf:
