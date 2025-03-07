@@ -272,8 +272,8 @@ window.Quarto = {
   <li><a href="#video_wk02_resid" id="toc-video_wk02_resid" class="nav-link" data-scroll-target="#video_wk02_resid">Assumptions of linear regression</a>
   <ul class="collapse">
   <li><a href="#linearity" id="toc-linearity" class="nav-link" data-scroll-target="#linearity">Linearity</a></li>
-  <li><a href="#homoscedasticity-constant-variance" id="toc-homoscedasticity-constant-variance" class="nav-link" data-scroll-target="#homoscedasticity-constant-variance">Homoscedasticity (constant variance)</a></li>
   <li><a href="#normalitiy" id="toc-normalitiy" class="nav-link" data-scroll-target="#normalitiy">Normalitiy</a></li>
+  <li><a href="#homoscedasticity-constant-variance" id="toc-homoscedasticity-constant-variance" class="nav-link" data-scroll-target="#homoscedasticity-constant-variance">Homoscedasticity (constant variance)</a></li>
   </ul></li>
   <li><a href="#worked-example" id="toc-worked-example" class="nav-link" data-scroll-target="#worked-example">Worked example</a></li>
   <li><a href="#transformations" id="toc-transformations" class="nav-link" data-scroll-target="#transformations">Transformations</a>
@@ -392,6 +392,12 @@ Important
 </div>
 <p>Note in this figure we plot the residuals against the <em>predicted</em> values of the regression line instead of the <span class="math inline">\(x\)</span>-values themselves. When there is just one predictor variable, as the regression line is linear this is equivalent to plotting against <span class="math inline">\(x\)</span>. The advantage to plotting against the fitted value is that this extends naturally into multivariable models. From this <em>residual vs.&nbsp;fitted</em> plot, we can also see that the linearity assumption could be rewritten in terms of the residuals. E.g. the residuals have a mean of zero for all values of <span class="math inline">\(x\)</span>.</p>
 </section>
+<section id="normalitiy" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="normalitiy">Normalitiy</h3>
+<p>This assumption requires that the residuals be normally distributed. Note that this is an assumption about the distribution of the residuals, not about the distribution of <span class="math inline">\(Y\)</span> or <span class="math inline">\(x\)</span>. We can plot the residuals on a histogram or normal quantile plot to assess the normality of residuals assumption – which has clearly been met in the figures below.</p>
+<p><img src="images/normality.jpg" class="img-fluid" style="width:100.0%"></p>
+<p>A well-known formal method for assessing non-normality is the Shapiro-Wilk test. It is based approximately on the correlation between the observed and expected residuals. The null hypothesis is that the residuals are normally distributed, so small p-values indicate evidence against a normal distribution. However, for small samples this test has low power for realistic non-normal alternatives, so it is difficult to use a non-statistically-significant result as evidence to support an assumption of normality in a small sample. Conversely, for large samples, small but unimportant deviations from normality may be declared statistically. Therefore we do not recommend this (or other) formal statistical tests of normality. Rather a visual assessment of a histogram or normal quantile plot is recommended.</p>
+</section>
 <section id="homoscedasticity-constant-variance" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="homoscedasticity-constant-variance">Homoscedasticity (constant variance)</h3>
 <p>This assumption requires that the variance around the regression line is constant for all values of <span class="math inline">\(x\)</span>. That is, the residuals have <em>constant variance</em>. The “residual vs fitted” plot we looked at above is also useful for assessing violations of the homoscedasticity assumption, as illustrated in the scatter and residual vs fitted plots below.</p>
@@ -399,12 +405,6 @@ Important
 <p>Here, we can see that as <span class="math inline">\(x\)</span> increases, so does the variance of the residuals. This leads to a fanning out pattern in the residual vs fitted plot.</p>
 <p>To contrast these plots, the below figures demonstrate what these plots look like when both the linearity and homoscedasticity assumptions are met.</p>
 <p><img src="images/assumptions_met.jpg" class="img-fluid" style="width:100.0%"></p>
-</section>
-<section id="normalitiy" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="normalitiy">Normalitiy</h3>
-<p>This assumption requires that the residuals be normally distributed. Note that this is an assumption about the distribution of the residuals, not about the distribution of <span class="math inline">\(Y\)</span> or <span class="math inline">\(x\)</span>. We can plot the residuals on a histogram or normal quantile plot to assess the normality of residuals assumption – which has clearly been met in the figures below.</p>
-<p><img src="images/normality.jpg" class="img-fluid" style="width:100.0%"></p>
-<p>A well-known formal method for assessing non-normality is the Shapiro-Wilk test. It is based approximately on the correlation between the observed and expected residuals. The null hypothesis is that the residuals are normally distributed, so small p-values indicate evidence against a normal distribution. However, for small samples this test has low power for realistic non-normal alternatives, so it is difficult to use a non-statistically-significant result as evidence to support an assumption of normality in a small sample. Conversely, for large samples, small but unimportant deviations from normality may be declared statistically. Therefore we do not recommend this (or other) formal statistical tests of normality. Rather a visual assessment of a histogram or normal quantile plot is recommended.</p>
 </section>
 </section>
 <section id="worked-example" class="level2 unnumbered">
