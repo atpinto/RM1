@@ -24,7 +24,7 @@ book:
   downloads: [pdf]
   page-footer:
     left: |
-      Regression Modeling for Biostatistics.
+      Regression Modeling for Biostatistics
 
 format:
   html:

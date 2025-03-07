@@ -239,19 +239,19 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./010-logistic_regression_conf_inter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interactions in Logistic Regression</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./011-logistic_regression_splines_validation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Non-linearity in Logistic Regression</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./012-logistic_regression_model_building.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">model building for binary outcomes</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Model building for Logistic Regression</span></span></a>
   </div>
 </li>
     </ul>
@@ -365,6 +365,8 @@ Important
 </section>
 <section id="video_wk02_resid" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="video_wk02_resid">Assumptions of linear regression</h2>
+<div class="grid">
+<div class="g-col-9">
 <p>In this section we introduce some simple methods for assessing the underlying assumptions of the simple regression model. For regression analysis we should always perform a reality check that the model we are fitting is at least approximately appropriate for the problem at hand. The assumptions of linear regression fitted by ordinary least squares are:</p>
 <ol type="1">
 <li><p>Linearity of the relationship</p></li>
@@ -373,6 +375,11 @@ Important
 <li><p>Independence of observations.</p></li>
 </ol>
 <p>As shown below, assumptions (1) - (3) can be defined in terms of the random part of the regression model - the residuals. The residuals are the observed minus the predicted Y’s, i.e.&nbsp;<span class="math inline">\(e_i = Y_i-\hat{Y}_i=Y_i-(b_0+b_1x_i)\)</span>. Assumption (4) however is usually an assessment of the study design rather than assessed with a diagnostic analysis of the data.</p>
+</div>
+<div class="g-col-3">
+<p><a href="https://youtu.be/hFMqIA65Wkg" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> <img src="https://img.youtube.com/vi/hFMqIA65Wkg/hqdefault.jpg" width="200"> </a></p>
+</div>
+</div>
 <section id="linearity" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="linearity">Linearity</h3>
 <p>This assumption requires a linear (straight) relationship between the outcome and predictor. The plot below shows the effect of a non-linear relationship on the residuals.</p>
@@ -1012,7 +1019,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Regression Modeling for Biostatistics.</p>
+<p>Regression Modeling for Biostatistics</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

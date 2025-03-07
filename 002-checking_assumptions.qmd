@@ -35,7 +35,8 @@ In <mar> week 1 </mark> you were allocated into small groups to discuss the exer
 :::
 
 ## Assumptions of linear regression {#video_wk02_resid .unnumbered}
-
+::::: grid
+::: g-col-9
 In this section we introduce some simple methods for assessing the underlying assumptions of the simple regression model. For regression analysis we should always perform a reality check that the model we are fitting is at least approximately appropriate for the problem at hand. The assumptions of linear regression fitted by ordinary least squares are:
 
 1.  Linearity of the relationship
@@ -47,6 +48,14 @@ In this section we introduce some simple methods for assessing the underlying as
 4.  Independence of observations.
 
 As shown below, assumptions (1) - (3) can be defined in terms of the random part of the regression model - the residuals. The residuals are the observed minus the predicted Y's, i.e. $e_i = Y_i-\hat{Y}_i=Y_i-(b_0+b_1x_i)$. Assumption (4) however is usually an assessment of the study design rather than assessed with a diagnostic analysis of the data.
+
+:::
+
+::: g-col-3
+<a href="https://youtu.be/hFMqIA65Wkg" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> <img src="https://img.youtube.com/vi/hFMqIA65Wkg/hqdefault.jpg" width="200"/> </a>
+:::
+:::::
+
 
 ### Linearity {.unnumbered}
 
