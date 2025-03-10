@@ -283,7 +283,7 @@ The lecture below (which you can watch for either Stata or R (or both if you are
 
 The following exercise will allow you to test yourself against what you have learned so far. The solutions will be released at the end of the week.
 
-Using the dataset [hers_subset.csv](https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1) dataset, use simple linear regression in R or Stata to measure the association between diastolic blood pressure (DBP - the outcome) and body mass index (BMI - the exposure).
+Using the dataset [hers_subset.csv](https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1 "These data are a simple random sample of n=276 observations (10%) from the HERS study. The HERS study was a randomized clinical trial of hormone therapy (estrogen plus progestin) for the reduction of cardiovascular disease risk in post-menopausal women with established coronary disease. Study participants were n=2,763 post-menopausal women with coronary disease and with an intact uterus") dataset, use simple linear regression in R or Stata to measure the association between diastolic blood pressure (DBP - the outcome) and body mass index (BMI - the exposure).
 
 a)  Summarise the important findings by interpreting the relevant parameter values, associated P-values and confidence intervals, and $R^2$ value. Three to four sentences is usually enough here.
 
