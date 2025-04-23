@@ -75,7 +75,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-73e053f00451a6823eaeab9714ac17cd.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b7c2d8834e08b04a63bb76a724ffbcac.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-6d90ce357d03a3cacecb70eea96b5016.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -239,19 +239,19 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./010-logistic_regression_conf_inter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interactions in Logistic Regression</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./011-logistic_regression_splines_validation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Non-linearity in Logistic Regression</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./012-logistic_regression_model_building.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">model building for binary outcomes</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Model building for Logistic Regression</span></span></a>
   </div>
 </li>
     </ul>
@@ -883,6 +883,9 @@ window.Quarto = {
 <iframe width="740" height="416" src="https://www.youtube.com/embed/2PWYd8fWniw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
 </iframe>
 <p><a href="https://www.dropbox.com/s/ydo0x77b7d3sa2o/RM1_week7_lecture2_Stata.mp4?dl=1">Download video here</a></p>
+<p>You can use the interactive simulation below using an hypothetical example of a non-linear association between systolic blood pressure and body mass index, and see how different models fit a complet non-linear effect.</p>
+<iframe src="https://atpinto.github.io/MultipleLinearRegression/nonlineareffects.html" width="100%" height="860" title="Fitting nonlinear effects">
+</iframe>
 </section>
 <section id="other-issues" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="other-issues">Other issues</h2>
@@ -905,7 +908,7 @@ window.Quarto = {
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(haven)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Loading required package: haven</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>hers<span class="ot">&lt;-</span><span class="fu">read_dta</span>(<span class="st">"https://www.dropbox.com/s/ndtd4o20qogq7fv/hersdata.dta?dl=1"</span>) </span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: Failed to parse /private/var/folders/xs/_nnmpq453c9b5lkpwdyr_2rc0000gp/T/Rtmp2DdWGi/file1316a4452afd: This version of the file format is not supported.</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: Failed to parse /private/var/folders/xs/_nnmpq453c9b5lkpwdyr_2rc0000gp/T/RtmpxNjivc/file361f4db5caa9: This version of the file format is not supported.</span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>hers<span class="ot">&lt;-</span><span class="fu">data.frame</span>(hers)</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Error: object 'hers' not found</span></span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>hers.nondiab<span class="ot">&lt;-</span>hers[hers<span class="sc">$</span>diabetes<span class="sc">==</span><span class="dv">0</span>,]</span>
@@ -1366,7 +1369,7 @@ window.Quarto = {
 <span id="cb14-288"><a href="#cb14-288" aria-hidden="true" tabindex="-1"></a>## </span>
 <span id="cb14-289"><a href="#cb14-289" aria-hidden="true" tabindex="-1"></a>## Contains <span class="kw">data</span></span>
 <span id="cb14-290"><a href="#cb14-290" aria-hidden="true" tabindex="-1"></a>##  Observations:         1,000                  <span class="kw">simulate</span>: myboot2</span>
-<span id="cb14-291"><a href="#cb14-291" aria-hidden="true" tabindex="-1"></a>##     Variables:             4                  10 Feb 2025 18:50</span>
+<span id="cb14-291"><a href="#cb14-291" aria-hidden="true" tabindex="-1"></a>##     Variables:             4                  24 Apr 2025 09:22</span>
 <span id="cb14-292"><a href="#cb14-292" aria-hidden="true" tabindex="-1"></a>## -------------------------------------------------------------------------------------------------------------------------------</span>
 <span id="cb14-293"><a href="#cb14-293" aria-hidden="true" tabindex="-1"></a>## Variable      Storage   Display    Value</span>
 <span id="cb14-294"><a href="#cb14-294" aria-hidden="true" tabindex="-1"></a>##     <span class="bn">name</span>         <span class="dv">type</span>    <span class="kw">format</span>    <span class="kw">label</span>      Variable <span class="kw">label</span></span>
@@ -2175,6 +2178,19 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Regression Modeling for Biostatistics</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
 
 
 
