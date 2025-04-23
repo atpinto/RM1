@@ -1,0 +1,282 @@
+---
+title: "Week 9 - Exercises-Solutions"
+format:
+  pdf:
+    documentclass: scrreprt
+    keep-md: true
+    keep-tex: true
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(tidyverse)
+library(gtsummary)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+# Exercise solutions
+
+**Stata code and output**
+
+You can certainly remember that we can derive an OR from a 2x2 table. Using the same WCGS data, carry out the following analysis:
+
+a) Reproduce the exploratory analysis with the $\chi^2$-test 
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+tabulate chd69 arcus, col row chi2
+disp (102*2058)/(153*839)  
+```
+
+There is a clear association between arcus and CHD with Chi2=13.64 and a p-value smaller than 0.001.
+
+
+b) Compute the OR and check that is exactly the same result as the one obtained via simple logistic regression
+
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+disp (102*2058)/(153*839) 
+logistic chd69 arcus
+```
+
+A manual calculation returns OR=1.635 which is exactly the point estimate provided by logistic regression in an unadjusted analysis, OR-1.635, 95\%CI=(1.26 ; 2.13)
+
+
+c) A large sample formula for the standard error of the log-OR estimate in a 2x2 table is given by: $SE(log(\hat{OR}))=\sqrt{1/a+1/b+1/c+1/d)}$ where $a$, $b$, $c$ and $d$ are the frequencies in the 2x2 table. Compute the 95\% CI for the estimate you have just computed. How does it compare with the 95\% obtained from logistic regression. Hint: start by computing a 95\% CI for the log-OR.
+
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+scalar OR=(102*2058)/(153*839)  
+disp  OR
+scalar SElog=sqrt(1/2058 + 1/839 + 1/153 + 1/102)
+scalar lower =log(OR)-1.96*SElog
+scalar upper =log(OR)+1.96*SElog
+disp exp(lower)
+disp exp(upper)
+```
+
+A similar 95\% CI is obtained. Note that in general you may see a small difference since SEs are computed using Woolf's formula. The information matrix is used to compute SEs in logistic regression.
+
+
+
+**R code and output**
+
+
+a) Reproduce the exploratory analysis with the $\chi^2$-test 
+
+
+```{r, collapse = TRUE}
+wcgs <- read.csv("https://www.dropbox.com/scl/fi/et8v7k23071t3wmhd8cu4/wcgs.csv?rlkey=w9tkchy1xi64cenoeb9etlfjq&dl=1")
+wcgs$arcus <- factor(wcgs$arcus)
+table(wcgs$chd69,wcgs$arcus)
+chisq.test(wcgs$chd69,
+           wcgs$arcus,
+           correct=FALSE)
+
+#Alternative: Using the gtsummary library to create a table
+wcgs %>%                             #data
+  select(arcus, chd69) %>%           #selects the vars for table
+  tbl_summary( by=chd69 ) %>%        #describes arcus by chd69
+  add_p()                            #adds pvalue
+
+
+```
+
+There is a clear association between arcus and CHD with Chi2=13.64 and a p-value p=0.0002. Note that the default R function add a continuity correction (suppressed here with the option *Correct=FALSE*). Of no practical significance in large samples.
+
+
+
+
+
+
+
+
+b) Compute the OR and check that is exactly the same result as the one obtained via simple logistic regression
+
+```{r, collapse = TRUE} 
+OR <- 102*2058/(153*839)               #manual calculation of the OR
+OR
+
+model0<-glm(chd69 ~ arcus,  family=binomial, data=wcgs)
+summary(model0)
+exp(confint(model0))
+
+#Alternative: Using the gtsummary library to create a table from the model above
+model0 %>% 
+  tbl_regression(exponentiate = T)
+
+```
+
+
+A manual calculation returns OR=1.635 which is exactly the point estimate provided by logistic regression in an unadjusted analysis, OR=1.635, 95\%CI=(1.25 ; 2.12)
+
+
+c) A large sample formula for the standard error of the log-OR estimate in a 2x2 table is given by: $SE(log(\hat{OR}))=\sqrt{1/a+1/b+1/c+1/d)}$ where $a$, $b$, $c$ and $d$ are the frequencies in the 2x2 table. Compute the 95\% CI for the estimate you have just computed. How does it compare with the 95\% obtained from logistic regression. Hint: start by computing a 95\% CI for the log-OR.
+
+```{r, collapse = TRUE}
+OR<-102*2058/(153*839) # 1.635 - same as logistic reg
+SElogOR<-sqrt(1/102+1/2058+1/153+1/839)
+CI1=c(log(OR)-1.96*SElogOR, log(OR)+1.96*SElogOR)
+CI2=exp(CI1)
+CI2
+```
+
+
+A similar 95\% CI is obtained, i.e. 95\% CI=(1.26 ; 2.13). A small difference may be observed since SEs are computed using Woolf's formula in the manual calculation. The information matrix is used to compute SEs in logistic regression.
+
+#### Investigation\
+
+
+**Stata code and output**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+tabulate agec chd69, row chi2
+tabulate agec_type chd69, row chi2
+scalar OR1=55*512/(1036*31)
+scalar OR2=70*512/(680*31)
+scalar OR3=65*512/(463*31)
+scalar OR4=36*512/(206*31)
+disp OR1 
+disp OR2 
+disp OR3 
+disp OR4
+```
+
+There is a clear association between *chd69* and age categories (*agec*) as illustrated by an increased proportion of CHD as patients get older. The Chi2 test confirms this: Chi2=46.65, p-value = 1.801e-09. OR can be computed by hand as before. ORs are increasing with age except for the 2nd age category (1-45) OR=0.87 (non-significant different with the reference category (35-40))
+
+
+
+2) Can you get similar results using logistic regression, how? 
+
+
+Yes, we can simply use *agec* (or *agec_type*) as a predictor in the logistic regression model. *agec* must be  declared as a *i.agec* factor to get ORs per age category.
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+logistic chd69 i.agec
+```
+
+
+3) Can you test the global effect of *agec* on *chd69*. How would you go about it?
+
+
+The best way to do this in logistic regression is to use a LRT. The analysis could be adjusted or not (like here) but the principle is the same. Get the two fits and compute the LRT using the *lrtest* command. A slight difficult arises: how to we fit a model with no covariate in Stata (only the intercept); a possible way is to define a variable *one* equal to 1 and use the *noconstant* option. 
+
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+gen one=1  
+logistic chd69 one, noconstant 
+estimates store mod0
+logistic chd69 i.agec
+lrtest mod0
+```
+
+
+The LRT value is 44.95 (df=4), p < 0.001 (actually p=4.08e-09) suggesting a very strong association between *agec* and *chd69*. This is consistent with the Chi2 analysis, the difference being that you can now adjust for other predictors (not done here). Note that there is no missing data in age so we don't need to worry about missingness; it's recommended to check or create a smaller dataset with only the variables of interest and no missing data; apparently *lrtest*  gives you a warning if you forget! 
+
+Next we can adjust for relevant predictors, it's unlikely that such a significant association disappears after adjustment. We may also use *age* as a continous predictor in the model since the association appears fairly linear - regular increase across age categories on the log-odds scale. 
+
+
+
+**R code and output**
+
+
+1)  Association between *chd69* and  *agec*
+
+
+```{r, collapse = TRUE}
+wcgs <- read.csv("https://www.dropbox.com/s/uc29ddv337zcxk6/wcgs.csv?dl=1")
+table(wcgs$agec)
+table(wcgs$agec_type)
+table(wcgs$agec,wcgs$chd69)
+# row percentages
+tab<-table(wcgs$agec,wcgs$chd69) 
+prop.table(tab, 1)
+# chi2 test
+chisq.test(wcgs$agec,wcgs$chd69)
+# OR by hand
+OR1<-55*512/(1036*31)
+OR2<-70*512/(680*31)
+OR3<-65*512/(463*31)
+OR4<-36*512/(206*31)
+c(OR1,OR2,OR3,OR4)
+
+
+#Alternative: using gtsummary
+wcgs %>% 
+  select(c("agec", "chd69")) %>% 
+  tbl_summary( by="chd69") %>% 
+  add_p()
+```
+
+There is a clear association between *chd69* and age categories (*agec*) as illustrated by an increased proportion of CHD as patients get older. The Chi2 test confirms this: Chi2=46.65, p-value = 1.801e-09. OR can be computed by hand as before. ORs are increasing with age except for the 2nd age category (1-45) OR=0.87 (non-significant different with the reference category (35-40))
+
+
+
+2) Can you get similar results using logistic regression, how? 
+
+
+Yes, we can simply use *agec* (or *agec_type*) as a predictor in the logistic regression model. *agec* must be  declared as a factor to get ORs per age category.
+
+
+```{r, collapse = TRUE}
+out<-glm(chd69 ~ factor(agec), 
+         family=binomial, 
+         data=wcgs)
+summary(out)
+
+# OR and 95% CI
+exp(out$coefficients)[2:5] 
+exp(confint(out))[2:5,]
+
+#Using gtsummary for  OR and 95% CI
+library(gtsummary)
+
+out %>% 
+  tbl_regression(exponentiate=T) 
+```
+
+
+3) Can you test the global effect of *agec* on *chd69*. How would you go about it?
+
+
+The best way to do this in logistic regression is to use a LRT. The analysis could be adjusted or not (like here) but the principle is the same. Get the two fits and compute the LRT by hand or use the *anova* command. 
+
+```{r, collapse = TRUE}
+reduced<-glm(chd69 ~ 1, family=binomial, data=wcgs)
+full<-glm(chd69 ~ factor(agec), family=binomial, data=wcgs)
+# by hand
+LRT=2*(logLik(full)-logLik(reduced)) # no missing data
+LRT 
+pval=1-pchisq(LRT,4)
+pval
+
+# alternative1: using anova
+out<-anova(reduced, full)
+pval<-1-pchisq(out$Deviance[2],4)
+pval
+
+
+# alternative2:  using the lrtest from lmtest library
+library(lmtest)
+lrtest(reduced, full)
+
+
+```
+
+The LRT returns a p-value, p=4.08e-09 suggesting a very strong association between *agec* and *chd69*. This is consistent with the Chi2 analysis, the difference being that you can now adjust for other predictors (not done here). Note that there is no missing data in age so we don't need to worry about missingness; it's recommended to check or create a smaller dataset with only the variables of interest and no missing data. 
+
+Next we can adjust for relevant predictors, it's unlikely that such a significant association disappears after adjustment. We may also use *age* as a continous predictor in the model since the association appears fairly linear - regular increase across age categories on the log-odds scale. 
+

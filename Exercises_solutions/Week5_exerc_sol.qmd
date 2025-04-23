@@ -1,0 +1,398 @@
+---
+title: "Week5-Exercises-Solutions"
+format:
+  pdf:
+    documentclass: scrreprt
+    keep-md: true
+    keep-tex: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(Statamarkdown)
+#stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+#knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+#knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+# Exercise solutions
+
+### Week 5 {.unnumbered}
+
+#### Exercise 1  {.unnumbered}
+  
+  The solutions are embedded in the notes.
+
+### **Solution in R**
+
+#### Exercise 2.1 Reproduce the adjusted analysis of glucose carried out in p. 72. Make sure that you exclude diabetic patients {.unnumbered}
+
+The objective is to reproduce the adjusted analysis of Vittinghof et al. (2012) for glucose in non-diabetic patients given p. 72. 
+
+First, we select the right dataset and then use *lm* with the proper model to get the results we seek:
+
+```{r, collapse = TRUE}
+
+hers <- read.csv("https://www.dropbox.com/scl/fi/ywlbb7duvez2nyk66ojp1/hersdata.csv?rlkey=tmhzlv6ga5zp6uyysnosaqamj&st=gl7h7ym8&dl=1",             stringsAsFactors = T) 
+hers.nondiab <- hers[hers$diabetes=="no",]
+
+
+
+#deletes two missing value for the variable drinkany
+hers.nondiab$drinkany[hers.nondiab$drinkany==""] <- NA
+hers.nondiab$drinkany <- droplevels(hers.nondiab$drinkany)
+
+
+fit <- lm(glucose ~ exercise + age + drinkany + BMI, data = hers.nondiab)
+summary(fit)
+```
+
+#### Exercise 2.2 Use matrix operations in Stata or R to create the X,Y,X′X and X′Y matrices and use these to obtain the LS estimates. [Caution: there are missing values in some of these covariates so delete first all observations with missing values before any matrix manipulation] {.unnumbered}
+
+Matrix manipulations similar to the ones carried out in Exercise 1 gives us the LSE 
+
+```{r, collapse = TRUE}
+# creates the reduced dataset
+hers.nondiab1 <- hers.nondiab[, c("glucose", 
+                      "exercise", "age", 
+                      "drinkany", "BMI")]
+
+
+hers.nondiab1 <-na.omit(hers.nondiab1)
+
+# create the vector of responses and the design matrix
+# do not forget the columns of ones for the intercept
+# check the dimension of the objects that you created
+
+
+
+Y <- hers.nondiab1$glucose
+X <- model.matrix(glucose ~ exercise + age +  #gives the design matrix
+                    drinkany + BMI, 
+                  data = hers.nondiab1)
+
+
+X <- cbind(1, hers.nondiab1$exercise, hers.nondiab1$age, hers.nondiab1$drinkany, hers.nondiab1$BMI)
+
+
+
+dim(X)
+length(Y)
+
+# calculate the LS estimate (called b) and print it
+XTX<-t(X) %*% X
+b=solve(XTX)%*%t(X)%*%Y
+b
+```
+
+#### Exercise 2.2 Optional: Use an explicit matrix calculation in Stata/R to obtain the variance-covariance matrix for b in the regression of glucose on the previous covariates. Calculate the standard errors and confirm your results by comparing with the regression output. {.unnumbered}
+
+This is the same as what has been reported in the R output. You can get the SEs
+using the following code. 
+
+```{r, collapse = TRUE}
+
+sigma2 <- sum((Y- X%*%b)^2)/(406-5) #var of the residuals
+matvar <- sigma2*solve(XTX)     #Var-Covariance matrix   
+matvar
+
+# extract the diagonal and take the square root - to get the SEs
+SE<-sqrt(diag(matvar))
+SE
+```
+
+#### Exercise 3.1 Using your favourite software compute the 95% CI for the mean glucose of a patient aged 65, who does not drink nor exercise and has BMI=29. {.unnumbered}
+
+**Solution in R**
+
+The predicted value and its 95\% CI (for a particular patient profile) can be directly obtained in R via the command predict. Note that the option *confidence* must be used for the confidence interval and *prediction* for a (wider) prediction interval.
+ 
+ 
+```{r, collapse = TRUE}
+fit <- lm(glucose ~ exercise + age + drinkany + BMI, data = hers.nondiab1)
+summary(fit)
+new.data <- data.frame(exercise="no", age = 65, drinkany="no", BMI=29)
+## 95% CI for the mean 
+pred.mean <- predict(fit, new.data, interval = "confidence")
+pred.mean
+# 95% prediction interval 
+pred.forecast <- predict(fit, new.data, interval = "prediction")
+pred.forecast
+```
+ 
+Can you reproduce this result using matrix manipulations and the formula given above?
+ 
+ 
+Algebraically it follows from (we assumed here that we still have the LSE estimates $b$ and the fitted model. If you want to use you calculated estimate $\hat\sigma$ it should work just the same.
+   
+```{r, collapse = TRUE}
+x    <- c(1,0,65,0,29)
+pred.manual <- x%*%b
+
+SE<- summary(fit)$sigma*sqrt(x%*%solve(t(X) %*% X)%*%cbind(x))
+lower<-pred.manual-1.96*SE
+upper<-pred.manual+1.96*SE
+c(pred.manual,lower,upper)
+```
+ 
+The same values (up to rounding) are obtained. We used here 1.96 since the sample is large but the exact quantile from the appropriate $t$-distribution should be used in smaller samples. 
+ 
+
+
+### **Solution in Stata**
+
+NOTE:  I will use the subset of the hers data as I am not able to make calculations with matrices larger than 800 rows (Stata version constrain!) 
+
+#### Exercise 2.1 Reproduce the adjusted analysis of glucose carried out in p. 72. Make sure that you exclude diabetic patients {.unnumbered}
+
+The objective is to reproduce the adjusted analysis of Vittinghof et al. (2012) for glucose in non-diabetic patients given p. 72. 
+
+First, we select the right dataset and then use *regress* with the proper model to get the results we seek:
+  
+  
+```{stata, collectcode=TRUE, collapse=TRUE }
+* Stata code
+
+clear
+import delimited "https://www.dropbox.com/scl/fi/9dtsid3cpziubhhuw9hhy/hers_subset.csv?rlkey=vainwt6vtbbo2kuqidv0e24v9&st=k5r7e42w&dl=1"
+encode  exercise, gen(exercise_r)
+encode drinkany , gen(drinkany_r)
+
+drop if diabetes == "yes"
+
+* We will use only 20% of the data
+* Due to the licence limitation of STATA
+* Otherwise you will get an error message
+
+sample 20
+
+
+regress glucose i.exercise_r age i.drinkany_r bmi 
+
+```
+
+Matrix manipulations similar to the ones carried out in Exercise 1 gives us the LSE (after deleting the missing observations).
+
+```{stata}
+clear
+import delimited "https://www.dropbox.com/scl/fi/ywlbb7duvez2nyk66ojp1/hersdata.csv?rlkey=tmhzlv6ga5zp6uyysnosaqamj&st=gl7h7ym8&dl=1"
+encode  exercise, gen(exercise_r)
+encode drinkany , gen(drinkany_r)
+
+drop if diabetes == "yes"
+
+* remove diabetes patients
+
+drop if bmi ==. | drinkany_r == . 
+
+* only missing observations in BMI and drinkany
+
+gen cons=1
+
+* We will use only 20% of the data
+* Due to the licence limitation of STATA
+* Otherwise you will get an error message
+
+sample 20
+
+
+mkmat cons exercise_r age drinkany_r bmi, matrix(X) 
+mkmat glucose, matrix(Y)
+matrix XTX =X'*X
+matrix invXTX = inv(XTX)
+matrix b=invXTX*X'*Y
+matrix list b 
+```
+
+We get the same LS estimates as the ones reported in the Stata output. You can get the SEs using the following code (that computes first $\hat\sigma$)
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+import delimited "https://www.dropbox.com/scl/fi/9dtsid3cpziubhhuw9hhy/hers_subset.csv?rlkey=vainwt6vtbbo2kuqidv0e24v9&st=k5r7e42w&dl=1"
+encode  exercise, gen(exercise_r)
+encode drinkany , gen(drinkany_r)
+
+drop if diabetes == "yes"
+
+* remove diabetes patients
+drop if bmi ==. | drinkany_r == . 
+* only missing observations in BMI and drinkany
+gen cons=1
+
+* We will use only 20% of the data
+* Due to the licence limitation of STATA
+* Otherwise you will get an error message
+
+sample 20
+
+mkmat cons exercise_r age drinkany_r bmi, matrix(X) 
+mkmat glucose, matrix(Y)
+matrix XTX =X'*X
+matrix invXTX = inv(XTX)
+matrix b=invXTX*X'*Y
+matrix list b 
+
+
+matrix res=Y-X*b
+matrix sigma2=res'*res/(406-5)
+
+* df= number of observations(times 20% of the sample) - number of parameters=406-5
+
+matrix list sigma2
+
+* it is necessary to transform the matrix (1x1) in a scalar to take the square root
+
+scalar sigma = sqrt(sigma2[1,1])
+display sigma
+```
+
+This is the estimate reported by Stata as Root MSE. The SEs follow:
+  
+  
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+import delimited "https://www.dropbox.com/scl/fi/ywlbb7duvez2nyk66ojp1/hersdata.csv?rlkey=tmhzlv6ga5zp6uyysnosaqamj&st=gl7h7ym8&dl=1"
+encode  exercise, gen(exercise_r)
+encode drinkany , gen(drinkany_r)
+
+drop if diabetes == "yes"
+
+* remove diabetes patients
+drop if bmi ==. | drinkany_r == . 
+* only missing observations in BMI and drinkany
+gen cons=1
+
+* We will use only 20% of the data
+* Due to the licence limitation of STATA
+* Otherwise you will get an error message
+
+sample 20
+
+mkmat cons exercise_r age drinkany_r bmi, matrix(X) 
+mkmat glucose, matrix(Y)
+matrix XTX =X'*X
+matrix invXTX = inv(XTX)
+matrix b=invXTX*X'*Y
+matrix list b 
+
+* Stata code
+matrix res=Y-X*b
+matrix sigma2=res'*res/(406*.2-5)
+* df= number of observations - number of parameters=406-5=401
+matrix list sigma2
+* it is necessary to transform the matrix (1x1) in a scalar to take the square root
+scalar sigma = sqrt(sigma2[1,1])
+display sigma
+
+
+* Inverse the matrix X'X and extract the diagonal
+matrix D=vecdiag(invXTX)
+matrix list D
+* SE(b0) intercept
+scalar SE0=sqrt(D[1,1])*sigma
+display SE0
+* SE(b1) exercise
+scalar SE1=sqrt(D[1,2])*sigma
+display SE1
+* SE(b2) age
+scalar SE2=sqrt(D[1,3])*sigma
+display SE2
+```
+And so on for the other coefficients. They match the SEs reported in the Stata output.
+
+
+#### Exercise 3 {.unnumbered}
+
+
+Solution in Stata
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+import delimited "https://www.dropbox.com/scl/fi/ywlbb7duvez2nyk66ojp1/hersdata.csv?rlkey=tmhzlv6ga5zp6uyysnosaqamj&st=gl7h7ym8&dl=1"
+encode  exercise, gen(exercise_r)
+encode drinkany , gen(drinkany_r)
+
+drop if diabetes == "yes"
+
+regress glucose exercise_r age drinkany_r bmi 
+* 95% CI for the mean glucoae for a patient
+* aged 65, no exercise, no drinking, BMI=29
+adjust exercise_r=0 age=65 drinkany_r=0 bmi=29, ci
+```
+
+Algebraically it follows from the few lines below (assuming we kept the previous quantities and estimates):
+  
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+import delimited "https://www.dropbox.com/scl/fi/ywlbb7duvez2nyk66ojp1/hersdata.csv?rlkey=tmhzlv6ga5zp6uyysnosaqamj&st=gl7h7ym8&dl=1"
+encode  exercise, gen(exercise_r)
+encode drinkany , gen(drinkany_r)
+
+drop if diabetes == "yes"
+
+* remove diabetes patients
+drop if bmi ==. | drinkany_r == . 
+* only missing observations in BMI and drinkany
+gen cons=1
+
+
+* We will use only 20% of the data
+* Due to the licence limitation of STATA
+* Otherwise you will get an error message
+
+sample 20
+
+
+mkmat cons exercise_r age drinkany_r bmi, matrix(X) 
+mkmat glucose, matrix(Y)
+matrix XTX =X'*X
+matrix invXTX = inv(XTX)
+matrix b=invXTX*X'*Y
+matrix list b 
+
+
+
+* Stata code
+matrix res=Y-X*b
+matrix sigma2=res'*res/(406-5)
+* df= number of observations - number of parameters=406-5=401
+matrix list sigma2
+* it is necessary to transform the matrix (1x1) in a scalar to take the square root
+scalar sigma = sqrt(sigma2[1,1])
+display sigma
+
+
+* Inverse the matrix X'X and extract the diagonal
+matrix D=vecdiag(invXTX)
+matrix list D
+*SE(b0) intercept
+scalar SE0=sqrt(D[1,1])*sigma
+display SE0
+*SE(b1) exercise
+scalar SE1=sqrt(D[1,2])*sigma
+display SE1
+*SE(b2) age
+scalar SE2=sqrt(D[1,3])*sigma
+display SE2
+
+
+
+matrix profile=(1,0,65,0,29) 
+matrix E=profile*invXTX*profile'
+scalar SE=sigma*sqrt(E[1,1])
+display SE
+matrix pred=profile*b
+display pred[1,1]    
+matrix list pred 
+matrix lower=pred-1.96*SE
+matrix upper=pred+1.96*SE
+matrix list lower
+matrix list upper 
+```
+
+The same values (up to rounding) are obtained once again. We used here 1.96 since the sample is large but the exact quantile from the appropriate $t$-distribution should be used in smaller samples. 
+
+
+

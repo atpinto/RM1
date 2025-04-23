@@ -1,0 +1,29 @@
+---
+title: "Exercise MLR"
+format: pdf
+editor: visual
+---
+
+
+
+The dataset [alcohol.csv](https://www.dropbox.com/scl/fi/y4tkggjm5v6g1d3mktoax/alcohol.csv?rlkey=4kts9vfygg3ce7bjxxx3fpb1h&st=c4cgu45h&dl=1) was collected for a study researching the association of alcohol consumption during pregnancy and newborn’s health.
+
+
+- `birthwt` is the birth weight of the newborn and the outcome variable.
+- `mwt0` is the maternal weight before pregnancy
+- `ncigpreg`  is the number of cigarettes per month during pregnancy (in categories "0" "1-9" ">10")
+- `mage` is the maternal age group (4 groups: 13-20,  21-30, 31-35, and 36-55 years old)
+
+
+Fit a linear model to study the association between birth weight and tobacco consumption during pregnancy, adjusting for maternal weight and maternal age.
+
+
+1 - How would you report the association between birth weight and tobacco consumption during pregnancy from the model above? Include all the relevant elements to describe the association.
+
+2 - What is the average birth weight difference of babies born from mothers who smoked 1-9 cigarettes a month versus not smoking (0)?
+
+3 - Create the 3 dummies for the variable `mage` manually and refit the model with these dummy variables instead of `mage`. Compare the result with the previous model.
+
+4 - Create the 3 dummies for the variable `mage` manually by making "31-35" the reference category. Refit the model.
+
+

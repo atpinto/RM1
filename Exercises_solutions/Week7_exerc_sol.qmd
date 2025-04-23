@@ -1,0 +1,533 @@
+---
+title: "Week7-Exercises-Solutions"
+format:
+  pdf:
+    documentclass: scrreprt
+    keep-md: true
+    keep-tex: true
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+# Exercise solutions
+
+### Week 7 {.unnumbered}
+
+#### Investigation
+
+
+Stata code and output
+
+1) Standard regression analysis of  *HDL* on *age*, *BMI*, *nonwhite*,  *smoking* and *drinkany*.
+Note *age* and *BMI* have been centred in Table 4.20 so we do the same. A qudratic term in (centred) *BMI*
+so we will again follow Vittinghof et al.'s logic.
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use hersdata.dta
+summarize age, meanonly
+gen agec = age - r(mean)
+summarize BMI, meanonly
+gen BMIc =  BMI- r(mean)
+gen BMIc2 = BMIc^2
+regress HDL BMIc BMIc2 agec nonwhite smoking drinkany
+```
+
+we indeed observe that the quadratic term in centred BMI (called *BMIc2*) is significant suggesting that linearity might not be appropriate for BMI.
+
+2) Fit a RCS in BMI with 4 knots while adjusting for the other covariates.  Here BMI is not centred so we will keep it as is. We use *agec* as opposed to *age10* but feel free to scale  age if you want.
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use hersdata.dta
+summarize age, meanonly
+gen agec = age - r(mean)
+mkspline BMIsp = BMI, cubic nknots(4) 
+regress HDL BMIsp1 BMIsp2 BMIsp3  agec nonwhite smoking drinkany
+test BMIsp2 BMIsp3         
+test BMIsp1 BMIsp2 BMIsp3  
+```
+
+in Stata's syntax, *BMIsp1* is *age*. Although the additional spline terms (represented by *BMIsp2* and *BMIsp3* in the model) are not significant, the global test with 2 d.f. indicates that the splines are necessary $F=11.75$, $p<0.001$, highly significant result. The global effect of *BMI* is also highly significant and involves all the BMI-related terms (3 d.f), $F=36.91$, $p=0.000$. We let you reproduce the analysis presented in the book with 5 knots (although it's not requested).
+
+
+
+3) Plot the fitted line for BMI with its 95\% band.
+
+Here you need to install *postrcspline* package to get a nice plot. Google helps with this, run the command *ssc install postrcspline* (only once). Then use the command *mkspline2* is used to recreate the splines an plot them at specific values of the covariates.
+ 
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use hersdata.dta
+summarize age, meanonly
+gen agec = age - r(mean)
+mkspline2 BMIsp = BMI, cubic nknots(4) 
+regress HDL BMIsp1 BMIsp2 BMIsp3  agec nonwhite smoking drinkany
+adjustrcspline, at(agec=0 nonwhite=0 smoking=0 drinkany=0) title(Adjusted predictions)
+```
+The command *adjustrcspline* produces the fitted line and its 95\% CI. The spline is adjusted for the other covariates so you have to indicate values for those to get a plot. There is a default but it is probably better to choose your own values, e.g. we chose *agec=0* (i.e. *age=66.65*) and *nonwhite*,  *smoking* and *drinkany* all set to 0. The plot, particularly the confidence band, will change if you choose other value but the shape remains the same.
+
+
+4) Change the location of the 4 knots and refit the model. Try a different number of knots. Conclusion/interpretation.
+ 
+ 
+We can fit a model with 4 knots placed differently (e.g. at age 18, 22, 25, 35)
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use hersdata.dta
+summarize age, meanonly
+gen agec = age - r(mean)
+mkspline2 BMIsp = BMI, cubic knots(18 22 25 35)  
+regress HDL BMIsp1 BMIsp2 BMIsp3  agec nonwhite smoking drinkany
+test BMIsp2 BMIsp3  
+adjustrcspline, at(agec=0 nonwhite=0 smoking=0 drinkany=0) title("4 knots at age 18, 22, 25 and 35")
+```
+
+We can also fit a model with 5 knots placed at their default location.
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use hersdata.dta
+summarize age, meanonly
+gen agec = age - r(mean)
+mkspline2 BMIsp = BMI, cubic nknots(5) 
+regress HDL BMIsp*  agec nonwhite smoking drinkany
+test BMIsp2 BMIsp3 BMIsp4 
+adjustrcspline, at(agec=0 nonwhite=0 smoking=0 drinkany=0) title("5 knots with default location")
+```
+
+Once again, a spline is necessary. We do not have the tools yet to discriminate between the different fitted splines but they look rather similar. The data supports the use of splines. HDL decreases markedly with BMI until the age of 30-35 where the decrease is not as steep. This is after adjustment for (centred) *age*,  *nonwhite*, *smoking* and  *drinkany*. 
+
+
+5) Do we need a RCS model for age? 
+
+ 
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use hersdata.dta
+mkspline2 BMIsp = BMI, cubic nknots(4) 
+mkspline2 agesp = age, cubic nknots(4) 
+regress HDL BMIsp* agesp*  nonwhite smoking drinkany
+test agesp2 agesp3  
+adjustrcspline, at(BMI= 27.75 nonwhite=0 smoking=0 drinkany=0) title("4 knots with default location")
+```
+
+We keep the standard RCS(4) model for BMI and added a spline in age (i.e RCS(4) in age). There is no evidence in the data that the additional terms in age are needed. The command *test agesp2 agesp3*  returns a F-test of 0.69, p=0.499 and the spline in age (plot omitted here)
+is rather straight. We would keep *age* alone in the model but keep the RCS(4) in *BMI* in the final model.
+
+
+R code and output
+
+1) Standard regression analysis of  *HDL* on *age*, *BMI*, *nonwhite*,  *smoking* and *drinkany*.
+Note *age* and *BMI* have been centred in Table 4.20 so we do the same. A quadratic term in (centred) *BMI*
+so we will again follow Vittinghof et al.'s logic.
+
+```{r, collapse = TRUE}
+require(haven)
+hers<-read.csv("https://www.dropbox.com/s/7f5lnv19drg6655/hersdata.csv?dl=1") 
+hers$drinkany[hers$drinkany==""] <- NA
+
+hers$agec<-hers$age-mean(hers$age,na.rm=TRUE)
+hers$BMIc<-hers$BMI-mean(hers$BMI,na.rm=TRUE)
+hers$BMIc2<-hers$BMIc^2
+
+# reduce the dataset and remove missing
+library(tidyverse)
+hers1 <- hers %>% 
+  dplyr::select(c("HDL", "BMI", "age", 
+                  "BMIc", "BMIc2", "agec", 
+                  "nonwhite", 
+                  "smoking", "drinkany")) %>% 
+  na.omit()
+  
+dim(hers1) 
+# 2745 after removing the missing
+
+# exploratory analysis
+plot(HDL ~ BMI, data=hers1)
+lines(lowess(hers1$HDL ~ hers1$BMI), col=4,lwd=2) 
+
+library(ggplot2)
+ggplot(hers1, aes(x=BMI, y=HDL)) + 
+  geom_point() + 
+  geom_smooth() + 
+  theme_classic()
+
+# fit quadratic model in BMI
+# directly
+fit.quad <- lm(HDL ~ BMIc + I(BMIc^2) + agec + nonwhite + smoking + drinkany, data = hers1)
+summary(fit.quad)
+# using poly() that creates the quadratic term
+fit.quad <- lm(HDL ~ poly(BMIc,2, raw="TRUE") + agec + nonwhite + smoking + drinkany, data = hers1)
+summary(fit.quad) # same
+anova(fit.quad)
+```
+
+We indeed observe that the quadratic term in centred BMI (called *BMIc2* in the first fit) is significant suggesting that linearity might not be appropriate for BMI.
+
+2) Fit a RCS in BMI with 4 knots while adjusting for the other covariates.  Here BMI is not centred so we will keep it as is. We use *agec* as opposed to *age10* but feel free to rescale age if you want.
+
+```{r, collapse = TRUE}
+library(rms)
+ddist <- datadist(hers1)
+options(datadist='ddist')
+fit1 <-  ols(HDL ~ rcs(BMI,4) + agec + nonwhite + smoking +drinkany, data = hers1)
+  
+fit1
+anova(fit1)
+```
+
+Although the additional terms (represented by *BMI'* and *BMI''* in the model) are not significant, the global test with 2 d.f. provided by the *anova* command indicates that the additional terms are necessary $F=11.75$, $p=0.000$, a highly significant result. This
+is typical of spline-based analysis. We let you reproduce the analysis presented in the book with 5 knots (although it's not requested).
+
+
+3) Plot the fitted line for BMI with its 95\% band.
+
+
+This is straightforward in R and the command fixes the other covariates at default values. The median of each predictor other than BMI is typically used. 
+
+
+```{r, collapse = TRUE}
+plot(Predict(fit1, BMI))
+```
+
+
+4) Change the location of the 4 knots and refit the model. Try a different number of knots. Conclusion/interpretation.
+ 
+
+We can fit a model with 4 knots placed differently (e.g. at age 18, 22, 25, 35) or with 5 knots (default location) as examples.
+
+```{r, collapse = TRUE}
+# 4 different knots at 18, 22, 25, 35
+fit2 <-  ols(HDL ~ rcs(BMI,iknots=c(18,22,25,35)) + agec + nonwhite + smoking +drinkany, data = hers1)
+fit2
+anova(fit2)
+plot(Predict(fit2, BMI))
+
+# 5  knots, default location
+fit3 <-  ols(HDL ~ rcs(BMI,5) + agec + nonwhite + smoking +drinkany, data = hers1)
+fit3
+anova(fit3)
+plot(Predict(fit3, BMI))
+```
+
+Once again, a spline is necessary irrespective of the number of knots or their location. We do not have the tools yet to discriminate between the different spline fits but they look rather similar. The data supports the use of splines. HDL decreases markedly with BMI until the age of 30-35 where the decrease is not as steep. This is after adjustment for (centred) *age*,  *nonwhite*, *smoking* and  *drinkany*. 
+
+
+5) Do we need a RCS model for age? 
+
+```{r, collapse = TRUE}
+fit4 <-  ols(HDL ~ rcs(BMI,4) + rcs(age,4) + nonwhite + smoking + drinkany, data = hers1)
+fit4
+anova(fit4)
+plot(Predict(fit4, age))
+```
+
+We keep the standard RCS(4) model for BMI and added an age spline (i.e RCS(4) in age). There is no evidence in the data that the spline in age is needed. The *anova* command  returns a F-test of 0.69 for the non-linear component in age, p=0.499. This is also confirmed when we look at the plot, the effect of age appearing linear. We would keep *age* alone in the model but keep the RCS(4) in *BMI* in the final model.
+
+
+
+
+
+#### Bootstrap investigation
+
+
+Part A) of the investigation is mainly running the code to get familiar with bootstrapping in the regression. The remainder should be straightforward commands. 
+
+
+Stata code and output
+
+
+1) standard regression of  *HDL* on *BMI*, *age* and  *drinkany* after removing diabetic patients. Examination of the residuals. 
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use hersdata.dta
+drop if diabetes ==1   
+drop if mi(HDL) | mi(BMI) | mi(age) | mi(drinkany) 
+keep HDL BMI age drinkany
+regress HDL BMI age drinkany
+predict res, res
+qnorm(res)
+```
+
+We clearly seem some upward curvature in the residuals (plot omitted here). Given the large sample size, normality is not that critical but we are going to check that inference is indeed valid using the bootstrap. 
+
+2) Read Part A) of the code, run it and draw a histogram of the bootstrap samples (or replicates) for each of the coefficients
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use hersdata.dta
+drop if diabetes ==1   
+drop if mi(HDL) | mi(BMI) | mi(age) | mi(drinkany) 
+keep HDL BMI age drinkany
+regress HDL BMI age drinkany 
+matrix observe= (_b[_cons], _b[BMI], _b[age], _b[drinkany])
+matrix list observe
+capture program drop myboot2
+program define myboot2, rclass
+ preserve 
+  bsample
+    regress HDL BMI age drinkany  
+	  return scalar b0 = _b[_cons]
+    return scalar b1 = _b[BMI]
+    return scalar b2 = _b[age]
+	return scalar b3 = _b[drinkany]
+ restore
+end
+** simulation = resampling the data using the program myboot2 
+simulate  b0=r(b0) b1=r(b1) b2=r(b2) b3=r(b3), reps(1000) seed(12345): myboot2
+desc
+hist b0
+qnorm(b0)
+hist b1
+qnorm(b1)
+hist b2
+qnorm(b2)
+hist b3
+qnorm(b3)
+bstat, stat(observe) n(2021)
+estat bootstrap, percentile
+estat bootstrap, all
+```
+
+
+The dataset contains R=1000 replicates or bootstrap samples (1000x4 since we have 4 coefficients), see the column names b0, b1, b2 and b3 as described by *desc*. Of course, you can change the number of replicates (e.g. use *reps(3000)* if you want 3000 replicates. R should be chosen large enough (at least 1000) for 95\% confidence intervals. Histograms and normality plots follow easily. The plots have been omitted but you can check that the histograms are fairly symmetric and the distributions appear to be be normal. The commands *btsat* and *estat* give you the various CIs depending on the option you choose. When using *bstat* you need to specify  the number of observations via the option *n(2021)*. To be updated with a different dataset.
+
+
+
+3) direct calculation of the percentile 95\% CI using a one-line command.
+
+
+We can calculate the 2.5\% and 97.5\% centile for each variable (b0, b1, b2, b3) to get the required percentile CIs. The summary provided by Stata is also provided.
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use all_replicates
+** these two lines are not needed when you run the code directly 
+** all replicates are saved in all_replicates.dta to simplify writing here
+centile b0, centile(2.5 97.5)
+centile b1, centile(2.5 97.5)
+centile b2, centile(2.5 97.5)
+centile b3, centile(2.5 97.5)
+```
+
+The results are very similar to Stata's (tiny differences), e.g. the percentile 95\% CI for BMI is (-.519 ; -.299). 
+
+
+
+
+4) Using the Stata built-in command to avoid having to do the resampling ``by hand''. Use Part B) and compare to the standard analysis. You can decide to display all 3 types or only one by speciying the *bootstrap* or *estat* command as follows: 
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use hersdata.dta
+drop if diabetes ==1   
+drop if mi(HDL) | mi(BMI) | mi(age) | mi(drinkany) 
+keep HDL BMI age drinkany
+** display the 3 types (with R=1000 replicates)
+bootstrap, reps(1000)  seed(12345): regress HDL BMI age drinkany  
+estat bootstrap, all        
+**
+** only normal (R=1000)
+bootstrap, reps(1000)  seed(12345): regress HDL BMI age drinkany 
+estat bootstrap, normal 
+** only percentile (R=1000)
+bootstrap, reps(1000)  seed(12345): regress HDL BMI age drinkany 
+estat bootstrap, percentile 
+** only BCa (R=1000), slightly DIFFERENT command
+bootstrap, bca reps(1000)  seed(12345): regress HDL BMI age drinkany  
+estat bootstrap  
+```
+
+As you can see that all 3 bootstrap 95\% CIs are similar to each other. Also, they are similar to the ones reported using the LS approach as reported in 1);  we can therefore be confident that we don't have any particular issue with the standard analysis.
+
+
+
+
+
+
+R code and output
+
+
+1) standard regression of  *HDL* on *BMI*, *age* and  *drinkany* after removing diabetic patients. Examination of the residuals. 
+
+```{r, collapse = TRUE}
+require(haven)
+hers<-read_dta("hersdata.dta") 
+hers<-data.frame(hers)
+
+# keep only the relevant variables and delete missing data
+hers.nondiab<-hers[hers$diabetes==0,]
+hers1<-cbind(hers.nondiab$HDL,hers.nondiab$age,hers.nondiab$BMI,hers.nondiab$drinkany)
+colnames(hers1)<-c("HDL","age","BMI","drinkany")
+hers1<-data.frame(hers1)
+hers2<-na.omit(hers1) 
+# 2032 --> 2021 observations
+
+# standard analysis and residuals plots
+out<-lm(HDL ~ BMI + age + drinkany, data=hers2)
+res<-residuals(out)
+par(mfrow=c(1,2))
+hist(res)
+qqnorm(res)
+# standard 95\% CI
+confint(out)
+```
+
+We clearly seem some upward curvature in the residuals. Given the large sample size, normality is not that critical but we are going to check that inference is indeed valid using the bootstrap. 
+
+2) Read Part A) of the code, run it and draw a histogram of the bootstrap samples (or replicates) for each of the coefficients.
+
+```{r, collapse = TRUE}
+set.seed(1001)
+R=1000
+n=dim(hers2)[1]
+all.replicates<-NULL
+for(r in 1:R){
+  # generate bootstrap sample by resampling the data
+  hers2.r=hers2[sample(nrow(hers2), n,replace = TRUE), ]
+  # fitted model (based on the bootstrap sample)
+  out.r<-lm(HDL~age+BMI+drinkany,data=hers2.r)
+  # store all coefficients in all.replicates
+  all.replicates=rbind(all.replicates,out.r$coeff)
+}
+
+# all.replicates is a matrix Rx4 (since we have R replicates
+# and 4 coefficients in the model)
+dim(all.replicates)
+head(all.replicates)
+```
+
+
+The dataset all.replicates contains R=1000 replicates or bootstrap samples (1000x4 since we have 4 coefficients). Of course, you can change the number of replicates (e.g. use *R=3000* in the code above if you want 3000 replicates). R should be chosen large enough (at least 1000) for 95\% confidence intervals. Histograms and normality plots follow easily.
+
+
+```{r, collapse = TRUE}
+par(mfrow=c(1,2))
+# intercept
+hist(all.replicates[,1],xlab="Intercept")
+qqnorm(all.replicates[,1])
+# age coefficient
+hist(all.replicates[,2],xlab="Age coeff")
+qqnorm(all.replicates[,2])
+# BMI coefficient
+hist(all.replicates[,3],xlab="BMI coeff")
+qqnorm(all.replicates[,3])
+# drinkany coefficien
+hist(all.replicates[,4],xlab="Drinkany coeff")
+qqnorm(all.replicates[,4])
+```
+
+
+3) direct calculation of the percentile 95\% CI using a one-line command.
+
+```{r, collapse = TRUE}
+# intercept 
+quantile(all.replicates[,1], c(0.025,0.975))
+# age
+quantile(all.replicates[,2], c(0.025,0.975))
+# BMI
+quantile(all.replicates[,3], c(0.025,0.975))
+# drinkany
+quantile(all.replicates[,4], c(0.025,0.975))
+```
+
+You simply calculate the 0.025th and 0.975th quantile for each coefficient (i.e. each column of all.replicates) to get the required percentile CIs. 
+
+
+4) Use the  R library *boot* to avoid having to do the resampling ``by hand''. Use Part B) and compare to the standard analysis. You can decide to display all 3 types or only one. Note that we used here R=3000 replicates, the BCa approach had numerical issues with R=1000. If this happens to you increase the number of replicates.
+
+
+```{r, collapse = TRUE}
+library(boot)
+
+# function collecting the coefficients; in general this function
+# computes the statistic we want to bootstrap.
+coeff<- function(data, indices){
+  data <- data[indices,] # select obs. in bootstrap sample
+  mod <- lm(HDL~age+BMI+drinkany, data=data) # modify formula here
+  coefficients(mod) # return coefficient vector
+}
+
+# NB: R doc says or parametric bootstrap (i.e. the one we are using)
+#  "the first argument to statistic must be the data"
+#  " The second will be a vector of indices, frequencies or weights 
+#   which define the bootstrap sample".
+
+# LS-based 95% CI to compare to
+
+out<-lm(HDL~age+BMI+drinkany,data=hers2)
+confint(out)
+
+set.seed(1001)
+B = boot(data=hers2,statistic=coeff,R=3000)  
+# various 95% CI for the BMI coefficient (index=3)
+# you can also get all the other ones by changing the index (e.g. index=2 for age)
+
+# normal 
+boot.ci(B,index=3,type="norm")   
+# percentile
+boot.ci(B,index=3,type="perc")   
+# BCa
+boot.ci(B,index=3,type="bca") 
+# to get all 3 types in one command
+boot.ci(B,index=3,type=c("norm","perc", "bca")) 
+```
+
+
+The results are very similar to the ones obtained by direct calculation (tiny differences), e.g. the 95\% CI for the BMI coefficient is (-.519 ; -.300) using the percentile and Bca approaches. All three bootstrap 95\% CIs are similar to each other for all coefficients. Also, we don't see substantial differences with the standard 95\% cIs (i.e. the ones reported using the LS approach). We can be confident that we don't have any particular issue with the standard analysis.
+
+Some plots (histogram, normal probabilit plots) of the bootstrap samples can be easily produced using the output B produced by *boot()*:
+
+```{r, collapse = TRUE}
+# intercept
+plot(B, index=1)
+# x1=age
+plot(B, index=2)
+# x2=BMI
+plot(B, index=3) 
+# x3=drinkany
+plot(B, index=4) 
+```
+
+Nicer plots (you can control the labels, titles etc) can be produced using this code:
+```{r, collapse = TRUE}
+all<-B$t
+par(mfrow=c(1,2))
+hist(all[,1],main="Histogram",xlab="Intercept",prob=TRUE)
+qqnorm(all[,1])
+hist(all[,2],main="Histogram",xlab="Age coeff",prob=TRUE)
+qqnorm(all[,2])
+# etc
+# hist(all[,3],main="Histogram",xlab="BMI coeff",prob=TRUE)
+# qqnorm(all[,3])
+# hist(all[,4],main="Histogram",xlab="drinkany coeff",prob=TRUE)
+# qqnorm(all[,4])
+```
+
+
+Note that a somehow slower version can be obtained using a code like this (again illustrated on BMI using the percentile method). It is slower but possibly more ``natural'' since we bootstrap a statistic and provide a dataset and a formula for its calculation.
+
+
+```{r, collapse = TRUE,ECHO=TRUE,message=FALSE}
+coeff<- function(data, indices, formula){
+  data <- data[indices,] 
+  mod <- lm(formula=formula, data=data)
+  coefficients(mod) 
+}
+
+set.seed(1001)
+B = boot(data=hers2,statistic=coeff,R=3000, formula=HDL~age+BMI+drinkany)
+boot.ci(B,index=3,type="perc")
+```
+

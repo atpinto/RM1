@@ -1,0 +1,227 @@
+---
+title: "Week 11 - Exercises-Solutions"
+format:
+  pdf:
+    documentclass: scrreprt
+    keep-md: true
+    keep-tex: true
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(tidyverse)
+library(gtsummary)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+# Exercise solutions
+
+### Week 11 {.unnumbered}
+
+#### Investigation\
+
+
+**R code and output**
+
+1) initial model with covariates (model0) and AIC
+
+
+```{r,collapse=TRUE}
+library(rms)
+medcare<- read.csv("medcare.csv")
+medcare<-data.frame(medcare)
+medcare$age<-medcare$age*10
+ddist <- datadist(medcare)
+options(datadist='ddist')
+model0 <- lrm(healthpoor  ~  age + male + married + ofp + school, data=medcare)
+plot(Predict(model0, age))
+AIC(model0)
+```
+
+Only *age*, *ofp* and *school* are significant in this model that is the standard model without splines which acts as a starting point. AIC=3095.9 for this model. If you use the *plot(Predict(model0, age))* command after this fit you get a straight line since we did not include
+a spline in age.
+
+2) model with RCS(4) in *ofc* and *school*(model1) and AIC. Are splines necessary?
+
+```{r,collapse=TRUE}
+dist <- datadist(medcare)
+options(datadist='ddist')
+model1 <- lrm(healthpoor  ~  age + male + married + rcs(ofp,4) + rcs(school,4), data=medcare)
+model1
+AIC(model1)
+anova(model1)
+plot(Predict(model1,ofp))
+plot(Predict(model1,school))
+```
+
+A spline in *ofp* is clearly needed (p<0.0001), with the log-odds of being in poor heath increasing markedly from 2 to 10 and less steeply after that. Note that a 1-2 visits to the doctor's don't seem to increase the odds of a poor outcome. A slight downward curvature is observed in the association with *school*, years of education, but there is no evidence that the spline is *school* is needed (p=0.16). Note that the plots have been drawn for other covariates set at their median values (by default) The AIC has been decreased subtantially compared with model0's, AIC=3064.4. We definetely need to keep a spline in *ofp* in the model (we could play around we the number of knots, their location but this would be further refinement). It's not so clear what do do with *school* since there is this apparent curvature. Options are: 1) go back to a simpler model with a linear term in *school*; 2) refine the modelling further to try and capture this curvature.
+
+
+3) model with RCS(4) in *ofc* and a quadratic term in *school* (model2) and AIC. 
+
+```{r,collapse=TRUE}
+##medcare$school2<-medcare$school^2
+dist <- datadist(medcare)
+options(datadist='ddist')
+model2 <- lrm(healthpoor  ~  age + male + married + rcs(ofp,4) + poly(school,2,raw=TRUE), data=medcare)
+model2
+AIC(model2)
+anova(model2)
+```
+
+There is now evidence that the quadratic term is necessary (ANOVA returns p<0.0001) for the global effect of the two ofp terms. You can also get a similar result by defining the quadratic term by hand in the dataset, fitting the model and computing a LRT testing whether these two terms are necessary. It's simpler to use *poly()* and *anova()*. The AIC has decreased further for this model (model2) since AIC=3060.6
+
+
+4) What is the best model fitted so far based on the AIC (or BIC)?
+
+
+Model2 is the better model due its smaller AIC if we consider this statistic to rank models. The command: *BIC(model0, model1, model2)* gives the corresponding BIC values, i.e. 3134.3, 3128.3 and 3118.1
+favouring more neatly model2 (BIC=3118.1 is neatly smaller than the two other BIC's). So there seems to be evidence of small quadratic term as indicated first in the plot.
+
+
+```{r,collapse=TRUE}
+BIC(model0, model1, model2)
+```
+
+
+5) smaller AIC/BIC? further refinements
+
+
+We could try to play with the knots but a simple way to possibly reduce further the AIC/BIC is to remove the non-significant variables e.g. *married* and *male* yielding the following results:
+
+
+```{r,collapse=TRUE}
+dist <- datadist(medcare)
+options(datadist='ddist')
+model3 <- lrm(healthpoor  ~  age + rcs(ofp,4) + poly(school,2,raw=TRUE), data=medcare)
+model3
+AIC(model3)
+BIC(model3)
+anova(model3)
+```
+
+
+AIC=3056.7 and BIC=3101.4 have been further reduced suggesting that this more parsimonious model is preferable (unless there is external evidence to keep *married* and *male*, for instance due to their confounding effect in other studies). Such evidence is lacking so we may be happy to stick with model3 from a purely statistical perspective. We have not formally validated the model but using splines or polynomials is no substitute for validation. Often, we deal with outliers and influential observations prior to this sort of modelling.
+
+6) Conclusions
+
+There is no unique way to describe the different steps but here is one that starts by describing what we are trying to do, the different steps, what we found and describe the final model.
+We investigated the association between poor health (*poorhealth*) and various predictors, i.e. age , male, the number of physician office visits (*ofp*), years of education (*school*) using logistic regression.
+Since associations with continous covariates were not necessary linear (on the log-odds scale), we used restricted cubic splines and polynomials to relax this assumption. There was no enough evidence to suggest that the association with age was not linear but a spline in *ofp* was necessary. The log-odds of being in poor heath increases markedly with *ofp* from 2 to 10 and less steeply after that. The relationship of *poorhealth* with *school* (on the log-odds scale) is better captured by a quadratic polynomial displaying a faster decay with larger values of years of educations. Plots can be referred to to support that claim. The AIC/BIC confirmed that such a model was indeed preferable. A more parsimonious model (i.e. without the non-significant predictors *married* and *age*) is supported by a smaller AIC/BIC. You can also gives some ORs and 95\% CIs for the linear association(s, only age if you keep the latter model. The OR for age is OR=exp(0.0365)=1.037, 95\%CI=(1.023 ; 1.053) i.e. on average the odds increases by about 4%, 95\% CI=(2.3\% ; 5.2\%) per additional year of age.
+
+<!-- model3: age 0.0365 0.0072 5.09 <0.0001 -->
+
+
+**Stata code and output**
+
+1) initial model with covariates (model0) and AIC
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use medcare.dta
+replace age=age*10
+logistic healthpoor age married male ofp school, coef
+estat ic
+```
+Only *age*, *ofp* and *school* are significant in this model that is the standard model without splines which acts as a starting point. AIC=3095.9 for this model. 
+
+
+2)  model with RCS(4) in *ofc* and *school*(model1) and AIC. Are splines necessary?
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use medcare.dta
+replace age=age*10
+mkspline2 ofpspl = ofp, cubic nknots(4)
+mkspline2 schoolspl = school, cubic nknots(4)
+logistic healthpoor age married male ofpspl* schoolspl*, coef
+** splines for school) (on the logit scale)
+adjustrcspline, at(age=73 married=1 male=0 ofp=4) custominvlink("xb()") ytitle("log-odds")
+** NB: caution with the scale - default= proba
+** logit scale via the option custominvlink("xb()"
+estat ic
+test ofpspl2 ofpspl3
+test schoolspl2 schoolspl3
+** --------------------------------------
+** to get the second plot refit the model
+** --------------------------------------
+clear
+use medcare.dta
+replace age=age*10
+mkspline2 schoolspl = school, cubic nknots(4)
+mkspline2 ofpspl = ofp, cubic nknots(4)
+quiet logistic healthpoor age married male ofpspl* schoolspl*, coef
+** splines for ofp (on the logit scale)
+adjustrcspline if ofp <=50, at(age=73 married=1 male=0 school=11) custominvlink("xb()") ytitle("log-odds")
+**logit scale via the option custominvlink("xb()")
+**
+** figures will be displayed when you run the code. 
+```
+
+A spline in *ofp* is clearly needed (p<0.0001), with the log-odds of being in poor heath increasing markedly from 2 to 10 and less steeply after that. Note that a 1-2 visits to the doctor's don't seem to increase the odds of a poor outcome. A slight downward curvature is observed in the association with *school*, years of education, but there is no evidence that the spline is *school* is needed (p=0.16). Note that the plots have been drawn for other covariates set at their median values (by default) The AIC has been decreased subtantially compared with model0's, AIC=3064.4. We definetely need to keep a spline in *ofp* in the model (we could play around we the number of knots, their location but this would be further refinement). It's not so clear what do do with *school* since there is this apparent curvature. Options are: 1) go back to a simpler model with a linear term in *school*; 2) refine the modelling further to try and capture this curvature.
+
+
+3) model with RCS(4) in *ofc* and a quadratic term in *school* (model2) and AIC. 
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use medcare.dta
+replace age=age*10
+gen school2=school^2
+mkspline2 ofpspl = ofp, cubic nknots(4)
+mkspline2 schoolspl = school, cubic nknots(4)
+logistic healthpoor age married male ofpspl* school school2, coef
+estat ic
+test ofpspl2 ofpspl3
+test school school2
+```
+
+
+
+There is now evidence that the quadratic term is necessary (test 2df returns p<0.0001) for the global effect of the two ofp terms. The AIC has decreased further for this model (model2) since AIC=3060.6
+
+4) What is the best model fitted so far based on the AIC (or BIC)?
+
+
+Model2 is the better model due its smaller AIC if we consider this statistic to rank models. The command: *estat ic* after each model fit gives the corresponding BIC values, i.e. 3134.3, 3128.3 and 3118.1
+favouring more neatly model2 (BIC=3118.1 is neatly smaller than the two other BIC's). So there seems to be evidence of small quadratic term as indicated first in the plot.
+
+
+5) smaller AIC/BIC? further refinements
+
+
+We could try to play with the knots but a simple way to possibly reduce further the AIC/BIC is to remove the non-significant variables e.g. *married* and *male* yielding the following results:
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use medcare.dta
+replace age=age*10
+gen school2=school^2
+mkspline2 ofpspl = ofp, cubic nknots(4)
+mkspline2 schoolspl = school, cubic nknots(4)
+logistic healthpoor age  ofpspl* school school2, coef
+estat ic
+test ofpspl2 ofpspl3
+test school school2
+** OR for age 
+lincom age, or
+```
+
+
+AIC=3056.7 and BIC=3101.4 have been further reduced suggesting that this more parsimonious model is preferable (unless there is external evidence to keep *married* and *male*, for instance due to their confounding effect in other studies). Such evidence is lacking so we may be happy to stick with model3 from a purely statistical perspective. We have not formally validated the model but using splines or polynomials is no substitute for validation. Often, we deal with outliers and influential observations prior to this sort of modelling.
+
+6) Conclusions
+
+There is no unique way to describe the different steps but here is one that starts by describing what we are trying to do, the different steps, what we found and describe the final model. We investigated the association between poor health (*poorhealth*) and various predictors, i.e. age , male, the number of physician office visits (*ofp*), years of education (*school*) using logistic regression.
+Since associations with continous covariates were not necessary linear (on the log-odds scale), we used restricted cubic splines and polynomials to relax this assumption. There was no enough evidence to suggest that the association with age was not linear but a spline in *ofp* was necessary. The log-odds of being in poor heath increases markedly with *ofp* from 2 to 10 and less steeply after that. The relationship of *poorhealth* with *school* (on the log-odds scale) is better captured by a quadratic polynomial displaying a faster decay with larger values of years of educations. Plots can be referred to to support that claim. The AIC/BIC confirmed that such a model was indeed preferable. A more parsimonious model (i.e. without the non-significant predictors *married* and *age*) is supported by a smaller AIC/BIC. You can also gives some ORs and 95\% CIs for the linear association(s, only age if you keep the latter model. The OR for age is OR=exp(0.0365)=1.037, 95\%CI=(1.02 ; 1.05) i.e. on average the odds increases by 3.7%, 95\% CI=(2.2\% ; 5.1\%) per additional year of age.
+
+
+
+

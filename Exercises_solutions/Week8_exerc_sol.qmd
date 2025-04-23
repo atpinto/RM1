@@ -1,0 +1,110 @@
+---
+title: "Week8-Exercises-Solutions"
+format:
+  pdf:
+    documentclass: scrreprt
+    keep-md: true
+    keep-tex: true
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+# Exercise solutions
+
+Use the tools above to investigate the ideal number of knots for the week 7 investigation between HDL and BMI.
+
+
+Below shows the code and output for running a cubic spline with 3, 4, and 5 knots. We see that AIC and BIC consistently increase with increasing number of knots, and that 3 knots seems to generate the lowest AIC and BIC values. Therefore 3 knots is the most appropriate function form for BMI in this data.
+
+Stata code and output
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+use hersdata.dta
+
+mkspline BMIsp3k = BMI, cubic nknots(3) 
+regress HDL BMIsp3k1 BMIsp3k2 age nonwhite smoking drinkany
+estimates stats
+
+mkspline BMIsp4k = BMI, cubic nknots(4) 
+regress HDL BMIsp4k1 BMIsp4k2 BMIsp4k3 age nonwhite smoking drinkany
+estimates stats
+
+mkspline BMIsp5k = BMI, cubic nknots(5) 
+regress HDL BMIsp5k1 BMIsp5k2 BMIsp5k3 BMIsp5k4 age nonwhite smoking drinkany
+estimates stats
+```
+
+R code and output.
+```{r, collapse = TRUE}
+require(haven)
+library(rms)
+
+hers<-read_dta("https://www.dropbox.com/s/ndtd4o20qogq7fv/hersdata.dta?dl=1") 
+hers<-data.frame(hers)
+
+# reduce the dataset and remove missing
+hers1<-hers[,c("HDL", "BMI", "age", "nonwhite", "smoking", "drinkany")]
+hers1<-na.omit(hers1)
+dim(hers1) 
+# 2745 after removing the missing
+
+ddist <- datadist(hers1)
+options(datadist='ddist')
+
+# Run models with 3 - 7 knots
+fit.3knots <-  lm(HDL ~ rcs(BMI,3) + age + nonwhite + smoking +drinkany, data = hers1)
+fit.4knots <-  lm(HDL ~ rcs(BMI,4) + age + nonwhite + smoking +drinkany, data = hers1)
+fit.5knots <-  lm(HDL ~ rcs(BMI,5) + age + nonwhite + smoking +drinkany, data = hers1)
+
+AIC(fit.3knots)
+AIC(fit.4knots)
+AIC(fit.5knots)
+
+BIC(fit.3knots)
+BIC(fit.4knots)
+BIC(fit.5knots)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,133 @@
+---
+title: "Week4-Exercises-Solutions"
+format: 
+  html:
+    self-contained: true
+#  pdf:
+#    documentclass: scrreprt
+#    keep-md: true
+#    keep-tex: true
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+# Exercise solutions
+
+### Week 4 {.unnumbered}
+
+#### Continuing on with the hers_subset example. Write down the regression equation for a regression with an outcome of body mass index, and with age and physical activity (physact) as covariates. Interpret each parameter in this equation.
+
+The regression equation is
+
+$$ BMI = \beta_0 + \beta_1age + \beta_2MLA + \beta_3 MMA + \beta_4 SLA + \beta_5 SMA $$
+
+where
+
+  - $\beta_0$ is the mean BMI for someone "about as active" and aged 0
+  
+  - $\beta_1$ is the amount by which the mean BMI increases for every one year increase in age for individuals with the same level of exercise.
+  
+  - $\beta_2$ is the mean difference in BMI between the "much less active group" and the "about as active" group, for individuals of the same age.
+  
+  - $\beta_3$ is the mean difference in BMI between the "much more active group" and the "about as active" group, for individuals of the same age.
+  
+  - $\beta_4$ is the mean difference in BMI between the "somewhat less active" group and the "about as active" group, for individuals of the same age.
+  
+  - $\beta_5$ is the mean difference in BMI between the "somehwat more active" group and the "about as active" group, for individuals of the same age.
+  
+To work out the linear combination for these difference, I find it helpful to use the following notation. Let $\mu_{group}$ represent the mean BMI for physical activity group $group$ for those aged zero. Then
+
+  - $\mu_{MLA} = \beta_2 - \beta_0$
+  
+  - $\mu_{MMA} = \beta_3 - \beta_0$
+  
+  - $\mu_{SLA} = \beta_4 - \beta_0$
+  
+  - $\mu_{SMA} = \beta_5 - \beta_0$
+  
+We can therefore represent the three comparisons in terms of $\mu$, and then substitute in the betas.
+
+Comparison 1: $\text{Mean difference} = \mu_{MMA} - \mu_{MLA} = (\beta_3 - \beta_0) - (\beta_2 - \beta_0) = \beta_3 - \beta_2$
+
+Comparison 2: $\text{Mean difference} = \mu_{MMA} - \mu_{SMA} = (\beta_3 - \beta_0) - (\beta_5 - \beta_0) = \beta_3 - \beta_5$
+
+Comparison 3: 
+
+$$\text{Mean difference} = \frac{\mu_{MMA} + \mu_{SMA}}{2} - \frac{\mu_{MLA} + \mu_{SLA}}{2}  \\
+= \frac{\beta_3 - \beta_0 + \beta_5 - \beta_0}{2} - \frac{\beta_2 - \beta_0 + \beta_4 - \beta_0}{2} \\
+ = \frac{\beta_3 + \beta_5 - \beta_2 - \beta_4}{2}$$
+
+This last comparison could potentially be more complex than this as well, depending on what we mean by combining the two groups. E.g. if by "somewhat and much more active combined" we mean the mean of a sample of equal numbers of somewhat and much more active participants combined, then the expression above would be suitable. However if we mean the mean of a sample of unequal numbers of the two groups (perhaps representative numbers from our sample), then the expression above would be incorrect. Can you think of how to adapt this so that we have a weighted mean?
+
+
+
+#### Carry out this regression and report on the key findings.
+
+#### Finally, express the following comparisons in terms of the regression coefficients of your equation above, and calculate these using Stata or R
+
+The mean difference between much more active, and much less active, for individuals of the same age.
+
+The mean difference between much more active, and somewhat more active, for individuals of the same age.
+
+[Challenge question] The mean difference between the more active groups (somewhat and much more active combined), and the less active groups (somewhat and less active combined), for individuals of the same age.
+
+
+
+*Stata code and output*
+
+Note that some of the output below has unfortunately been truncated (but is not truncated when carried out in Stata). The reference category chosen by Stata here is "much less active", and the order of the coefficients below is: "somewhat less active", "about as active", "somewhat more active" and "much more active". So this is different to the regression equation reported above, and you may need to change these linear combinations based on the change in reference category.
+
+Another way to work this out is to use the "label" command in Stata. In this instance `label list physact` which will show the labeling
+
+           1 much less active
+           
+           2 somewhat less active
+           
+           3 about as active
+           
+           4 somewhat more active
+           
+           5 much more active
+
+We then use this numeric coding in our lincom statement as follows
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use "https://www.dropbox.com/scl/fi/onx8zrpw9qoaaf3tw8hkb/hers_subset.dta?rlkey=mprmw7n6u1n8o0exrx3tu3dtp&st=nls5yemh&dl=1"
+label list physact /* Display the label encoding for physact */
+reg BMI age i.physact
+lincom 5.physact - 1.physact
+lincom 5.physact - 4.physact
+lincom (5.physact + 4.physact - 2.physact - 1.physact)/2
+```
+
+R code and output
+
+```{r, echo=TRUE, collapse=TRUE}
+library(multcomp, quietly=TRUE)
+hers_subset <- read.csv("https://www.dropbox.com/scl/fi/ywlbb7duvez2nyk66ojp1/hersdata.csv?rlkey=tmhzlv6ga5zp6uyysnosaqamj&st=radztfxu&dl=1")
+
+lm.exercise <- lm(BMI ~ age + physact, data = hers_subset)
+summary(lm.exercise)
+comparison1 <- matrix(c(0,0,-1,1,0,0), nrow=1)
+comparison2 <- matrix(c(0,0,0,1,0,-1), nrow=1)
+comparison3 <- matrix(c(0,0,-1,1,-1,1)/2, nrow=1)
+lincom1 <- glht(lm.exercise, comparison1)
+lincom2 <- glht(lm.exercise, comparison2)
+lincom3 <- glht(lm.exercise, comparison3)
+summary(lincom1)
+confint(lincom1)
+summary(lincom2)
+confint(lincom2)
+summary(lincom3)
+confint(lincom3)
+```
+
+

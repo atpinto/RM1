@@ -1,0 +1,2406 @@
+```{r, setup, include=FALSE}
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+
+library(readxl)
+library(RStata)
+library(ggplot2)
+options("RStata.StataPath" = "\"C:/Program Files/Stata16/StataIC-64\"") 
+options("RStata.StataVersion" = 16)
+options("RStata.StataEcho" = TRUE)
+statapath <- "C:/Program Files/Stata16/StataIC-64"
+```
+
+# Exercise solutions
+
+### Week 1 {.unnumbered}
+
+#### (a) and (b) {.unnumbered}
+
+Stata code and output
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+/* Part a */
+use hers_subset
+reg DBP BMI
+
+# Part b
+gen BMI5 = BMI / 5
+reg DBP BMI5
+```
+
+R code and output
+```{r, collapse = TRUE}
+# Part a
+hers_subset <- read.csv("hers_subset.csv")
+lm.hers <- lm(DBP ~ BMI, data = hers_subset)
+summary(lm.hers)
+confint(lm.hers)
+
+# Part b
+hers_subset$BMI5 <- hers_subset$BMI / 5
+lm.hers <- lm(DBP ~ BMI5, data = hers_subset)
+summary(lm.hers)
+```
+
+We find evidence that diastolic blood pressure increases as body mass index increases (P = 0.029). For every one kg/m^-2^ increase in BMI, the mean diastolic blood pressure increases by 0.22mmHg, and we are 95% confident the true increase lies between 0.023 and 0.42mmHg. BMI accounts for 1.7% of the overall variability in diastolic blood pressure.
+
+
+If a one kg/m^-2^ increase in BMI accounts for a 0.22mmHg increase in DBP, then a 5kg/m^-2^ increase in BMI accounts for a `5x0.22 = 1.1`mmHg increase in DBP. We can confirm this in Stata or R by creating a new covariate `BMI5` which is BMI scaled by a factor of 1/5 (so that a 1 increase in BMI5 corresponds to a 5 increase in BMI).
+
+
+#### (c) {.unnumbered}
+
+From 3.3.7 of the textbook, the standard error of the regression coefficient is as follows:
+
+$$ \text{se}(\beta_1) = \frac{\text{Root mean squared error}}{\sigma_x \sqrt{(n-1)} } $$
+We can use R or Stata to calculate $\sigma_x = 5.5879$. Subsituting this in we obtain $\text{se}(\beta_1) = 9.357/(5.5879 \sqrt{275}) = 0.101$ in agreement with the Stata and R output.
+
+The t-value is the regression cofficient divided by it's standard error $t = 0.222 / 0.101 = 2.2$, and the P-value can be calculated by looking up a corresponding t-table with $n-2 = 276-2 = 274$ degrees of freedom:
+
+
+Stata code and output
+```{r, echo=1, collapse = TRUE, comment=""} 
+## Stata code
+x <- capture.output(stata("disp tprob(274,2.2)"))
+cat("disp tprob(274,2.2)")
+cat(paste("##", x[-1]), sep = "\n") 
+```
+
+R code and output
+```{r, echo=TRUE, collapse = TRUE}
+(1-pt(2.2,274))*2
+```
+
+R^-2^ is the fraction of the total variance explained by the model so is equal to $R^{-2} = 423.88/24412.77 = 0.017$. These two variances are default output in Stata. In R the model sum of squares and residual sum of squares can be obtained  using `anova(lm.hers)`, after which the R^{-2} can be calculated.
+
+#### (d), (e) and (f) {.unnumbered}
+
+Stata code and output
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+use hers_subset
+reg DBP BMI
+
+lincom _cons + 28*BMI
+
+set obs 277
+replace BMI = 28 in 277
+predict fitDBP
+predict seprDBP, stdf
+gen upper = fitDBP + 1.96*seprDBP in 277
+gen lower = fitDBP -1.96*seprDBP in 277
+
+list BMI fitDBP lower upper in 277
+```
+
+R code and output
+```{r, collapse = TRUE}
+hers_subset <- read.csv("hers_subset.csv")
+lm.hers <- lm(DBP ~ BMI, data = hers_subset)
+
+new_observation <- data.frame(BMI = 28)
+predict(lm.hers, newdata = new_observation, interval="confidence")
+predict(lm.hers, newdata = new_observation, interval="prediction")
+```
+We predict that the mean diastolic blood pressure for those with a BMI of 28kgm^-2^ to be 74mmHg. We are 95% confident the true mean lies between 72.9mmHg and 75.2mmHg. We expect that 95% of women with that BMI will have a diastolic blood pressure between 55.6mmHg and 92.5mmHg.
+
+
+
+
+
+### Week 2 {.unnumbered}
+
+Note that some of these plots are a little difficult to interpret, and there is some flexibility in the decision as to whether an assumption has or has not been met - or to what degree it has been met. The solutions below represent my views on these assumptions.
+
+Recall there are four assumptions of linear regression: linearity, homoscedasticity, normality of residuals, and independence of observations. The last assumption is better checked by investigating the study design - or if there are identification variables in the dataset. As this is simulated data we will focus on the first three assumptions.
+
+For the continuous exposure `x1`, linearity and homoscedasticity can both be checked with a residual versus fitted plot. For the binary outcome `x2`, linearity does not need to be checked as linearity is always met for categorical variables. For homoscedasticity, the residual versus fitted plot is not particularly useful as the points all overlap each other making the graph difficult to interpret. To check homoscedasticity, you should use either boxplots or calculate and compare the standard deviation in each group. The assumption of normally distributed residuals can be checked with either a histogram, or a normal-quantile plot. Example code for Stata and R is shown below. Although it is not strictly needed, it can be helpful to also just plot the data in a scatter plot as well.
+
+Example Stata Code
+```{stata, eval=FALSE}
+/* For the continuous explanatory variable x1 */
+scatter y1 x1 /* scatter plot */
+reg y1 x1 /* carry out regression */
+rvfplot /* residual versus fitted plot */
+predict res_std, residuals /* calculate residuals */
+qnorm res_std /* normal quantile plot of residuals */
+  
+/* For the binary explanatory variable x2 */
+graph box y1, over(x2) /* Box plot */
+tabulate x2, summarize(y1) /* Calculates the standard deviation in each group */
+reg y1 x2 /* carry out regression */
+predict res_std_x2, residuals /* calculate residuals */
+qnorm res_std_x2 /* normal quantile plot of residuals */
+```
+
+Example R code
+```{r, echo=-2, eval=FALSE}
+# For the continous explanatory variable x1
+assumptions <- read.csv("assumptions.csv")
+plot(y1 ~ x1, data = assumptions) # Scatter plot
+y1_x1_reg <- lm(y1 ~ x1, data = assumptions) # Carry out regression
+plot(y1_x1_reg, 1) # Residual versus fitted plot
+plot(y1_x1_reg, 2) # Normal quantile plot of residuals
+
+# For the binary explanatory variable x2
+boxplot(y1 ~ x2, data = assumptions)
+aggregate( y1 ~ x2, data = assumptions, FUN = sd) # Calculates the standard deviation in each group
+y1_x2_reg <- lm(y1 ~ x2, data = assumptions) # Carry out regression
+plot(y1_x2_reg, 2)  # Normal quantile plot of residuals
+```
+
+#### Regression between y1 and x1
+```{r, eval=FALSE, echo=FALSE}
+assumptions <- read.csv("assumptions.csv")
+plot(y1 ~ x1, data = assumptions) # Scatter plot
+y1_x1_reg <- lm(y1 ~ x1, data = assumptions) # Carry out regression
+plot(y1_x1_reg, 1) # Residual versus fitted plot
+plot(y1_x1_reg, 2) # Normal quantile plot of residuals
+```
+The residua versus fitted plot shows that the linearity assumption is violated in this data. This is because residuals are generally positive for low and high values of `x`, and negative for mid range `x` values. The violation of linearity here makes homoscedasticity more difficult to assess, however as there is no obvious fanning in the residuals, this assumption has been met. The normal quantile plot shows no evidence for a concerning deviation from normality, so the normality of residuals assumption is met.
+
+#### Regression between y2 and x1
+The residual versus fitted plot shows that the linearity assumption is met in this data. This is because the residuals are generally scattered around zero for all fitted values. The fanning out pattern in this plot however show that the residual error is increasing for larger fitted values. This shows that that homoscedasticity assumption is violated. The normality of residuals assumption has been met as demonstrated by a reasonably straight line in the normal quantile plot.
+
+#### Regression between y3 and x1
+The residual versus fitted plot shows an even scatter around zero for all fitted values that neither fans in our out. Therefore linearity and homoscedasticity are met in this regression. The normal quantile plot also follows a very straight line, showing that the normality of residual assumption has been met.
+
+#### Regression between y4 and x1
+The residual versus fitted plot is a little strange on this one. There is on evidence of non-linearity (the residauls don't trend upwards or downwards), and there is no evidence of hetergeniety (as the scatter doesn't fan in or out). However there are larger positive valued residuals than negative valued residuals. This is indicating that the residuals are skewed. The normal quantile plot confirms this with strong departures from normality. This is also evident in a histogram of residuals.
+
+#### Regression between y1 and x2
+The boxplot shows different variances for each value of `x2`, so it looks like homoscedasticity might be violated here. The standard deviation is each group is 0.37 and 0.70 - confirming heterogeneity. As `x2` is categorical, we do not need to check linearity. The normal quantile plot of the residuals shows some departures of normality towards the tails, but is reasonably fine - so this assumption is met.
+
+#### Regression between y2 and x2
+The boxplot shows different variances for each value of `x2`, so it looks like homoscedasticity might be violated here. The standard deviation is each group is 0.28 and 0.48 - confirming heterogeneity. As `x2` is categorical, we do not need to check linearity. The normal quantile plot of the residuals is fairly straight, and so the assumption of normality is met.
+
+#### Regression between y3 and x2
+The bloxplot show relative similar variances for each value of `x2` - so it looks like the homoscedasticity assumption is met here. The calculated standard deviation in each group is 0.34 and 0.39 - a relatively small difference that may be attributable to random variation. So the homoscedasticity assumption is met. As `x2` is categorical, we do not need to check linearity. The normal quantile plot of the residuals is fairly straight, and so the assumption of normality is met.
+
+#### Regression between y4 and x2
+The bloxplot show relative similar variances for each value of `x2` - so it looks like the homoscedasticity assumption is met here. The calculated standard deviation in each group is 0.22 and 0.27. The boxplot also shows a few high value outliers, that may indicate the data is skewed. The normal quantile plot does show some departure from normality (particularly for the larger quantiles), but it isn't too extreme. Given the reasonably large dataset (100 observations), the central limit theorem will ensure that a simple linear regression is appropriate here, even with some small depature from normality of the residuals.
+
+
+### Week 4 {.unnumbered}
+
+The regression equation is
+
+$$ BMI = \beta_0 + \beta_1age + \beta_2MLA + \beta_3 MMA + \beta_4 SLA + \beta_5 SMA $$
+
+where
+
+  - $\beta_0$ is the mean BMI for someone "about as active" and aged 0
+  
+  - $\beta_1$ is the amount by which the mean BMI increases for every one year increase in age
+  
+  - $\beta_2$ is the mean difference in BMI between the "much less active group" and the "about as active" group
+  
+  - $\beta_3$ is the mean difference in BMI between the "much more active group" and the "about as active" group.
+  
+  - $\beta_4$ is the mean difference in BMI between the "somewhat less active" group and the "about as active" group
+  
+  - $\beta_5$ is the mean difference in BMI between the "somehwat more active" group and the "about as active" group.
+  
+To work out the linear combination for these difference, I find it helpful to use the following notation. Let $\mu_{group}$ represent the mean BMI for physical activity group $group$ for those aged zero. Then
+
+  - $\mu_{MLA} = \beta_2 - \beta_0$
+  
+  - $\mu_{MMA} = \beta_3 - \beta_0$
+  
+  - $\mu_{SLA} = \beta_4 - \beta_0$
+  
+  - $\mu_{SMA} = \beta_5 - \beta_0$
+  
+We can therefore represent the three comparisons in terms of $\mu$, and then substitute in the betas.
+
+Comparison 1: $\text{Mean difference} = \mu_{MMA} - \mu_{MLA} = (\beta_3 - \beta_0) - (\beta_2 - \beta_0) = \beta_3 - \beta_2$
+
+Comparison 2: $\text{Mean difference} = \mu_{MMA} - \mu_{SMA} = (\beta_3 - \beta_0) - (\beta_5 - \beta_0) = \beta_3 - \beta_5$
+
+Comparison 3: 
+
+$$\text{Mean difference} = \frac{\mu_{MMA} + \mu_{SMA}}{2} - \frac{\mu_{MLA} + \mu_{SLA}}{2}  \\
+= \frac{\beta_3 - \beta_0 + \beta_5 - \beta_0}{2} - \frac{\beta_2 - \beta_0 + \beta_4 - \beta_0}{2} \\
+ = \frac{\beta_3 + \beta_5 - \beta_2 - \beta_4}{2}$$
+
+This last comparison could potentially be more complex than this as well, depending on what we mean by combining the two groups. E.g. if by "somewhat and much more active combined" we mean the mean of a sample of equal numbers of somewhat and much more active participants combined, then the expression above would be suitable. However if we mean the mean of a sample of unequal numbers of the two groups (perhaps representative numbers from our sample), then the expression above would be incorrect. Can you think of how to adapt this so that we have a weighted mean?
+
+
+
+```{r, echo=FALSE, include=FALSE}
+hers_subset <- read.csv("hers_subset.csv")
+library(multcomp, quietly=TRUE)
+```
+Stata code and output
+
+Note that some of the output below has unfortunately been truncated (but is not truncated when carried out in Stata). The reference category chosen by Stata here is "much less active", and the order of the coefficients below is: "somewhat less active", "about as active", "somewhat more active" and "much more active". So this is different to the regression equation reported above, and you may need to change these linear combinations based on the change in reference category.
+
+Another way to work this out is to use the "label" command in Stata. In this instance `label list physact` which will show the labeling
+
+           1 much less active
+           
+           2 somewhat less active
+           
+           3 about as active
+           
+           4 somewhat more active
+           
+           5 much more active
+
+We then use this numeric coding in our lincom statement as follows
+
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+use hers_subset
+label list physact /* Display the label encoding for physact */
+reg BMI age i.physact
+lincom 5.physact - 1.physact
+lincom 5.physact - 4.physact
+lincom (5.physact + 4.physact - 2.physact - 1.physact)/2
+```
+
+R code and output
+```{r, echo=TRUE, collapse=TRUE}
+library(multcomp)
+lm.exercise <- lm(BMI ~ age + physact, data = hers_subset)
+summary(lm.exercise)
+comparison1 <- matrix(c(0,0,-1,1,0,0), nrow=1)
+comparison2 <- matrix(c(0,0,0,1,0,-1), nrow=1)
+comparison3 <- matrix(c(0,0,-1,1,-1,1)/2, nrow=1)
+lincom1 <- glht(lm.exercise, comparison1)
+lincom2 <- glht(lm.exercise, comparison2)
+lincom3 <- glht(lm.exercise, comparison3)
+summary(lincom1)
+confint(lincom1)
+summary(lincom2)
+confint(lincom2)
+summary(lincom3)
+confint(lincom3)
+```
+
+
+
+### Week 5 {.unnumbered}
+
+#### Exercise 1 {.unnumbered}
+
+
+Solution in R
+
+First, let's create the data in R and run a simple regression
+analyis of glucose versus age - to remind us the results
+
+```{r, collapse = TRUE}
+age<-c(62,72,60,69,66,73,72,66,61,75)
+glucose<-c(113,105,125,94,99,95,84,94,86,98)
+hers.small<-data.frame(cbind(age,glucose))
+out<-lm(glucose ~ age, data=hers.small)
+summary(out)
+```
+
+The command *as.matrix* is used to create the matrix $X$ and $Y$ (as in the lecture). You can check the dimension or print the matrices to be sure.
+
+```{r, collapse = TRUE}
+Y<-as.matrix(glucose,ncol=1)
+X<-as.matrix(cbind(1,age),ncol=2) 
+# here cbind had a columns of ones to age - for the intercept
+# if you forget this, you will have problems with matrix multiplication later
+dim(X)
+dim(Y)
+```
+
+Matrix multiplication and the use of *solve* to invert a matrix are used to computed the LSE named $b$. Remember here that the matrix multiplication is denoted $\%*\%$ in R. Matrices must be conformable to be muliplied. You can always check that they are by printing the dimensions.
+
+
+```{r, collapse = TRUE}
+XTX<-t(X) %*% X
+b=solve(XTX)%*%t(X)%*%Y
+b
+```
+It is immediately clear it is the same as what is reported in the R output
+
+We can check that *solve* has indeed inversed $XTX$ by mutiplying the two
+matrices
+
+```{r, collapse = TRUE}
+invXTX=solve(XTX)
+invXTX%*%XTX
+```
+This gives us the identity matrix up to rounding. 
+
+The vector of residuals can be obtained by substracting the vector of fitted values to $Y$. Again do not forget to use $\%*\%$. It easy to sum the residuals by using *sum(res)* - zero up to rounding -  and the sum of the the squared residuals by the same token. The variance $\hat\sigma^2$ comes next by diving by the appropriate d.f ($n-p=10-2-8$) and then $\hat\sigma$.
+
+
+```{r, collapse = TRUE}
+res<-Y-X%*%b
+sum(res) # < 10e-10
+sigma2<-sum(res^2)/(10-2)
+sigma<-sqrt(sigma2)
+sigma
+```
+
+This is the same as what is called ``residual standard error'' = 11.8 in the ouput. You can check that your residuals in *res* are the same as the ones
+provided by R through *residuals(out)*.
+
+
+
+#### Exercise 2 {.unnumbered}
+
+The objective is to reproduce the adjusted analysis of Vittinghof et al. (2012) for glucose in non-diabetic patients given p. 72. A word of caution
+is given to delete missing observations prior to performing matrix manipulations
+
+Solution in R
+
+First, we select the right dataset and then use *lm* with the proper model to get the results we seek:
+
+```{r, collapse = TRUE}
+require(haven)
+hers<-read_dta("hersdata.dta") 
+hers.nondiab<-hers[hers$diabetes==0,]
+fit <- lm(glucose ~ exercise + age + drinkany + BMI, data = hers.nondiab)
+summary(fit)
+# note that 4 observations were deleted (by lm) due to missing values
+```
+
+Matrix manipulations similar to the ones carried out in Exercise 1 gives us the LSE (after deleting the missing observations via *na.omit*)
+
+```{r, collapse = TRUE}
+# creates the reduced dataset
+hers.nondiab1=cbind(hers.nondiab$glucose, hers.nondiab$exercise, hers.nondiab$age, hers.nondiab$drinkany, hers.nondiab$BMI)
+hers.nondiab1<-data.frame(hers.nondiab1)
+colnames(hers.nondiab1)<-c("glucose","exercise", "age", "drinkany", "BMI")
+dim(hers.nondiab1)
+# remove missinf and check the dimension
+hers.nondiab1=na.omit(hers.nondiab1)
+dim(hers.nondiab1)
+# create the vector of responses and the design matrix
+# do not forget the columns of ones for the intercept
+# check the dimension of the objects that you created
+Y<-as.matrix(hers.nondiab1$glucose,ncol=1)
+X<-as.matrix(cbind(1,hers.nondiab1$exercise, hers.nondiab1$age, hers.nondiab1$drinkany, hers.nondiab1$BMI),ncol=5)
+dim(X)
+dim(Y)
+# calculate the LS estimate (called b) and print it
+XTX<-t(X) %*% X
+b=solve(XTX)%*%t(X)%*%Y
+b
+```
+This is the same as what has been reported in the R output. You can get the SEs
+using the following code. 
+
+
+```{r, collapse = TRUE}
+matvar<-summary(fit)$sigma^2*solve(t(X) %*% X)
+# extrct the diagonal and take the square root - to get the SEs
+SE<-sqrt(diag(matvar))
+SE
+```
+
+They match the SEs reported in the R output. Note that we used the output to get $\hat\sigma^2$. You can also calculate it by hand by computing the residuals and summing up the squares as in Exercise 1
+
+```{r, collapse = TRUE}
+res=Y-X%*%b
+sigma2=sum(res^2)/(2028-5)  
+# we have 2023 df
+sqrt(sigma2)
+```
+
+This is the same as the Residual standard error reported earlier that was used
+in the SE calculation (up to rounding)
+
+
+
+
+#### Exercise 3 {.unnumbered}
+
+
+Solution in R
+
+The predicted value and its 95\% CI (for a particular patient profile) can be directly obtained in R via the command predict. Note that the option *confidence* must be used for the confidence interval and *prediction* for a (wider) prediction interval.
+ 
+ 
+```{r, collapse = TRUE}
+fit <- lm(glucose ~ exercise + age + drinkany + BMI, data = hers.nondiab1)
+summary(fit)
+new <- data.frame(exercise=0, age = 65, drinkany=0, BMI=29)
+## 95% CI for the mean 
+pred.mean <- predict(fit, new, interval = "confidence")
+pred.mean
+# 95% prediction interval 
+pred.forecast <- predict(fit, new, interval = "prediction")
+pred.forecast
+```
+ 
+Algebraically it follows from (we assumed here that we still have the LSE estimates $b$ and the fitted model. If you want to use you calcuated estimate $\hat\sigma$ it should work just the same.
+   
+```{r, collapse = TRUE}
+x=c(1,0,65,0,29)
+pred<-x%*%b
+SE=summary(fit)$sigma*sqrt(x%*%solve(t(X) %*% X)%*%cbind(x))
+lower<-pred-1.96*SE
+upper<-pred+1.96*SE
+c(pred,lower,upper)
+```
+ 
+The same values (up to rounding) are obtained. We used here 1.96 since the sample is large but the exact quantile from the appropriate $t$-distribution should be used in smaller samples. 
+ 
+
+
+#### Exercise 1 {.unnumbered}
+
+Solution in Stata
+
+First you need to use the Stata editor to create a small dataset with 10 rows
+and two columns (age and glucose) corresponding to the data. Stata has a series of commands that can be used to create vectors/matrices and manipulate them. Similar to the code given in the lecture.
+
+  +----------------------------+--------------------------------------------+ 
+  | Command                    |  Task                                      | 
+  +:==========================:+:==========================================:+ 
+  |gen cons =1                 | generate a column of 1                     | 
+  |mkmat cons age, matrix(X)   | create a matrix X using cons and age       |
+  |mkmat glucose, matrix(Y)    | create a matrix Y using glucose            |
+  |matrix XTX = X’*X           | create the matrix X’X (named XTX)          |
+  |matrix invXTX = inv(XTX)    | inverse XTX and call it invXTX             |
+  |list b                      | list a (predefined) vector b               |
+  |matrix d=vecdiag(S)         | Extract the diagonal of a squared matrix S |
+  +----------------------------+--------------------------------------------+ 
+  
+  
+Putting this together on the dataset you created gives you the LSE
+
+
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+## Stata code
+## the dataset test_data.dta contains the data we need
+use hers_small.dta 
+gen cons=1
+mkmat cons age, matrix(X)
+mkmat glucose, matrix(Y)
+matrix XTX =X’*X
+matrix invXTX = inv(XTX)
+matrix b=invXTX*X’*Y
+matrix list b
+```
+
+
+NB: sometimes pasting the code above into a do file creates a problem due
+to the font used transposing a vector/matrix. I then suggest that you retype
+this symbol directly in the do file every time you see it before running the code. 
+
+It is immediately clear it is the same as what is reported in the R output
+that you can get by typing:
+  
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+regress glucose age
+```
+
+
+A similar calculation gives you the $10\times 1$ vector of the residuals. To get the sum of squared residuals, use a math trick used for the squared norm i.e. the sum of the squared components. It can be obtained by multiplying the transpose of the vector by itself
+
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+## calculate residuals, sigma2, sigma
+matrix res=Y-X*b
+matrix sigma2=res’*res/(10-2)
+matrix list sigma2
+## here the result sigma2 is a (1x1) matrix for Stata
+## to take the square root you can transform into a scalar first
+## or list it and do it by and.
+scalar sigma = sqrt(sigma2[1,1])
+disp sigma
+```
+This is again the value reported as root MSE=11.8 in the Stata output
+
+
+#### Exercise 2 {.unnumbered}
+
+The objective is to reproduce the adjusted analysis of Vittinghof et al. (2012) for glucose in non-diabetic patients given p. 72. A word of caution
+is given to delete missing observations prior to performing matrix manipulations
+
+Solution in Stata
+
+First, we select the right dataset and then use *regress* with the proper model to get the results we seek:
+  
+  
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+## Stata code
+clear
+use hersdata.dta
+regress glucose i.exercise age i.drinkany BMI if diabetes == 0
+```
+
+Matrix manipulations similar to the ones carried out in Exercise 1 gives us the LSE (after deleting the missing observations).
+
+
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+## Stata code
+drop if diabetes ==1 
+## remove diabetes patients
+drop if BMI ==. | drinkany == . 
+## only missing observations in BMI and drinkany
+gen cons=1
+set matsize 2500
+mkmat cons exercise age drinkany BMI, matrix(X) 
+mkmat glucose, matrix(Y)
+matrix XTX =X’*X
+matrix invXTX = inv(XTX)
+matrix b=invXTX*X’*Y
+matrix list b 
+```
+
+We get the same LS estimates as the ones reported in the Stata output. You can get the SEs using the following code (that computes first $\hat\sigma$)
+
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+## Stata code
+matrix res=Y-X*b
+matrix sigma2=res’*res/(2028-5)
+## df= number of observations - number of parameters=2028-5=2023
+matrix list sigma2
+## it is necessary to transform the matrix (1x1) in a scalar to take the square root
+scalar sigma = sqrt(sigma2[1,1])
+disp sigma
+```
+
+This is the estimate reported by Stata as Root MSE. The SEs follow:
+  
+  
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+## Inverse the matrix X'X and extract the diagonal
+matrix D=vecdiag(invXTX)
+matrix list D
+##SE(b0) intercept
+scalar SE0=sqrt(D[1,1])*sigma
+disp SE0
+##SE(b1) exercise
+scalar SE1=sqrt(D[1,2])*sigma
+disp SE1
+##SE(b2) age
+scalar SE2=sqrt(D[1,3])*sigma
+disp SE2
+```
+And so on for the other coefficients. They match the SEs reported in the Stata output.
+
+
+#### Exercise 3 {.unnumbered}
+
+
+Solution in Stata
+
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+regress glucose exercise age drinkany BMI if diabetes == 0
+## 95% CI for the mean glucoce for a patient
+## aged 65, no exercise, no drinking, BMI=29
+adjust exercise=0 age=65 drinkany=0 BMI=29, ci
+```
+
+Algebraically it follows from the few lines below (assumimg we kept the previous quantities and estimates):
+  
+  ```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+matrix profile=(1,0,65,0,29) 
+matrix E=profile*invXTX*profile’
+scalar SE=sigma*sqrt(E[1,1])
+disp SE
+matrix pred=profile*b
+disp pred[1,1]    
+matrix list pred 
+matrix lower=pred-1.96*SE
+matrix upper=pred+1.96*SE
+matrix list lower
+matrix list upper 
+```
+
+The same values (up to rounding) are obtained once again. We used here 1.96 since the sample is large but the exact quantile from the appropriate $t$-distribution should be used in smaller samples. 
+
+
+
+### Week 6 {.unnumbered}
+There are a few issues with this dataset, namely the potential non-linearity that can be corrected with a log-transformation of fev1. However we will put this issue asside so that we can focus on collinearity.
+
+Carrying out the regression, and calcuating the variance inflation factors (VIF) gives some very high VIFs (e.g. armspan, ulna length, forearm length, and height), and some moderately high VIFs with age and weight. This makes a lot of sense, armspan, ulna length and forearm lengths are just different measures of "arm length". We would also expect children that are taller to have longer arms, weight more, and be older children. So lots of collinearity issues here. We will first address the similar "arm length" measurements by running four models, one model for each armlength (with the other two removed).
+
+These three models certainly elimate some of the collinearity, but there does still seem to be bad collinearity between height and the remaining armlength variable, and between age, weight (and potentially height). Let's next explore removing either height, or the armlenth variale to see how well this addresses the issue.
+
+This seems to address the issue suitably. Although there is still collinearity between the remaining variables, all still remain strongly associated with the outcome (indicated by small p-values), and so despite their correlations, they are making independent contributions to explaining the variance in FEV1. You may also have noticed how removal of collinear variables has reduced the standard errors in the remaining variables considerably - a good thing.
+
+Finally we must decide which analysis is most suitable for our research purpose. The final four models all are reasonably similar from a statistical perspective, with only a 2% difference observed in R-squared values (between 82% and 84% of variance explained across the models). Given this similarity, instead of choosing the model with the highest R-squared value, we may wish to consider which of the three measurements is most easily captured with low measurement error. Here we can rule out ulna length, as this is most likely the most difficult to measure accurately and non-invasively. Height, may be an obvious choice here - but it would depend on your sample. If your sample is likely to contain children who are unwell (lying in bed), or are in wheelchairs, height would be difficult to measure. Similarly, armspan may be difficult to capture for children with arm injuries. Given these factors, forearm length seems an appropriate choice for this model, and has only a marginally smaller R-squared value than height.
+
+Stata code
+```{stata, eval = FALSE}
+use lungfun.dta
+
+* Initial full model
+reg fev1 age wt ht armsp ulna farm
+vif
+
+* Models with only 1 arm length measurement
+reg fev1 age wt ht armsp
+vif
+reg fev1 age wt ht ulna
+vif
+reg fev1 age wt ht farm
+vif
+
+* Models with only 1 arm length measurement or with height (but not both)
+reg fev1 age wt ht
+vif
+reg fev1 age wt armsp
+vif
+reg fev1 age wt ulna
+vif
+reg fev1 age wt farm
+vif
+```
+
+
+R code
+```{r, eval = FALSE}
+library(car)
+lungfun <- read.csv("lungfun.csv")
+
+# Intitial full model
+lungfun.lm1 <- lm(fev1 ~ age + wt + ht + armsp + ulna + farm, data=lungfun)
+summary(lungfun.lm1)
+vif(lungfun.lm1)
+
+# Models with only 1 arm length measurement
+lungfun.lm3 <- lm(fev1 ~ age + wt + ht + armsp              , data=lungfun)
+lungfun.lm2 <- lm(fev1 ~ age + wt + ht +         ulna       , data=lungfun)
+lungfun.lm4 <- lm(fev1 ~ age + wt + ht +               farm , data=lungfun)
+vif(lungfun.lm2)
+vif(lungfun.lm3)
+vif(lungfun.lm4)
+summary(lungfun.lm2)
+summary(lungfun.lm3)
+summary(lungfun.lm4)
+
+# Models with only 1 arm length measurement or with height (but not both)
+lungfun.lm5 <- lm(fev1 ~ age + wt + ht, data=lungfun)
+lungfun.lm6 <- lm(fev1 ~ age + wt + armsp, data=lungfun)
+lungfun.lm7 <- lm(fev1 ~ age + wt + ulna, data=lungfun)
+lungfun.lm8 <- lm(fev1 ~ age + wt + farm, data=lungfun)
+vif(lungfun.lm5)
+vif(lungfun.lm6)
+vif(lungfun.lm7)
+vif(lungfun.lm8)
+summary(lungfun.lm5)
+summary(lungfun.lm6)
+summary(lungfun.lm7)
+summary(lungfun.lm8)
+```
+
+
+
+
+
+
+
+
+
+
+
+### Week 7 {.unnumbered}
+
+
+
+
+#### Investigation\
+
+
+
+
+Stata code and output
+
+1) Standard regression analysis of  *HDL* on *age*, *BMI*, *nonwhite*,  *smoking* and *drinkany*.
+Note *age* and *BMI* have been centred in Table 4.20 so we do the same. A qudratic term in (centred) *BMI*
+so we will again follow Vittinghof et al.'s logic.
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use hersdata.dta
+summarize age, meanonly
+gen agec = age - r(mean)
+summarize BMI, meanonly
+gen BMIc =  BMI- r(mean)
+gen BMIc2 = BMIc^2
+regress HDL BMIc BMIc2 agec nonwhite smoking drinkany
+```
+
+we indeed observe that the quadratic term in centred BMI (called *BMIc2*) is significant suggesting that linearity might not be appropriate for BMI.
+
+2) Fit a RCS in BMI with 4 knots while adjusting for the other covariates.  Here BMI is not centred so we will keep it as is. We use *agec* as opposed to *age10* but feel free to scale  age if you want.
+
+```{stata, engine.path=statapath, comment="**", collapse = TRUE}
+clear
+use hersdata.dta
+summarize age, meanonly
+gen agec = age - r(mean)
+mkspline BMIsp = BMI, cubic nknots(4) 
+regress HDL BMIsp1 BMIsp2 BMIsp3  agec nonwhite smoking drinkany
+test BMIsp2 BMIsp3         
+test BMIsp1 BMIsp2 BMIsp3  
+```
+
+in Stata's syntax, *BMIsp1* is *age*. Although the additional spline terms (represented by *BMIsp2* and *BMIsp3* in the model) are not significant, the global test with 2 d.f. indicates that the splines are necessary $F=11.75$, $p=0.000$, highly significant result. The global effect of *BMI* is also highly significant and involves all the BMI-related terms (3 d.f), $F=36.91$, $p=0.000$. We let you reproduce the analysis presented in the book with 5 knots (although it's not requested).
+
+
+
+3) Plot the fitted line for BMI with its 95\% band.
+
+Here you need to install *postrcspline* package to get a nice plot. Google helps with this, run the commad *ssc install postrcspline* (only once). Then use the command *mkspline2* is used to recreate the splines an plot them at specific values of the covariates.
+ 
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+clear
+use hersdata.dta
+summarize age, meanonly
+gen agec = age - r(mean)
+mkspline2 BMIsp = BMI, cubic nknots(4) 
+regress HDL BMIsp1 BMIsp2 BMIsp3  agec nonwhite smoking drinkany
+adjustrcspline, at(agec=0 nonwhite=0 smoking=0 drinkany=0) title(Adjusted predictions)
+```
+The command *adjustrcspline* produces the fitted line and its 95\% CI. The spline is adjusted for the other covariates so you have to indicate values for those to get a plot. There is a default but it is probably better to choose your own values, e.g. we chose *agec=0* (i.e. *age=66.65*) and *nonwhite*,  *smoking* and *drinkany* all set to 0. The plot, particularly the confidence band, will change if you choose other value but the shape remains the same.
+
+
+4) Change the location of the 4 knots and refit the model. Try a different number of knots. Conclusion/interpretation.
+ 
+ 
+We can fit a model with 4 knots placed differently (e.g. at age 18, 22, 25, 35)
+
+
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+clear
+use hersdata.dta
+summarize age, meanonly
+gen agec = age - r(mean)
+mkspline2 BMIsp = BMI, cubic knots(18 22 25 35)  
+regress HDL BMIsp1 BMIsp2 BMIsp3  agec nonwhite smoking drinkany
+test BMIsp2 BMIsp3  
+adjustrcspline, at(agec=0 nonwhite=0 smoking=0 drinkany=0) title("4 knots at age 18, 22, 25 and 35")
+```
+
+We can also fit a model with 5 knots placed at their default location.
+
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+clear
+use hersdata.dta
+summarize age, meanonly
+gen agec = age - r(mean)
+mkspline2 BMIsp = BMI, cubic nknots(5) 
+regress HDL BMIsp*  agec nonwhite smoking drinkany
+test BMIsp2 BMIsp3 BMIsp4 
+adjustrcspline, at(agec=0 nonwhite=0 smoking=0 drinkany=0) title("5 knots with default location")
+```
+
+Once again, a spline is necessary. We do not have the tools yet to discriminate between the different fitted splines but they look rather similar. The data supports the use of splines. HDL decreases markedly with BMI until the age of 30-35 where the decrease is not as steep. This is after adjustment for (centred) *age*,  *nonwhite*, *smoking* and  *drinkany*. 
+
+
+5) Do we need a RCS model for age? 
+
+ 
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+clear
+use hersdata.dta
+mkspline2 BMIsp = BMI, cubic nknots(4) 
+mkspline2 agesp = age, cubic nknots(4) 
+regress HDL BMIsp* agesp*  nonwhite smoking drinkany
+test agesp2 agesp3  
+adjustrcspline, at(BMI= 27.75 nonwhite=0 smoking=0 drinkany=0) title("4 knots with default location")
+```
+
+We keep the standard RCS(4) model for BMI and added a spline in age (i.e RCS(4) in age). There is no evidence in the data that the additional terms in age are needed. The command *test agesp2 agesp3*  returns a F-test of 0.69, p=0.499 and the spline in age (plot omitted here)
+is rather straight. We would keep *age* alone in the model but keep the RCS(4) in *BMI* in the final model.
+
+
+R code and output
+
+1) Standard regression analysis of  *HDL* on *age*, *BMI*, *nonwhite*,  *smoking* and *drinkany*.
+Note *age* and *BMI* have been centred in Table 4.20 so we do the same. A quadratic term in (centred) *BMI*
+so we will again follow Vittinghof et al.'s logic.
+
+
+
+```{r, collapse = TRUE}
+require(haven)
+hers<-read_dta("hersdata.dta") 
+hers<-data.frame(hers)
+
+hers$agec<-hers$age-mean(hers$age,na.rm=TRUE)
+hers$BMIc<-hers$BMI-mean(hers$BMI,na.rm=TRUE)
+hers$BMIc2<-hers$BMIc^2
+
+# reduce the dataset and remove missing
+hers1<-cbind(hers$HDL, hers$BMI, hers$age, hers$BMIc, hers$BMIc2, hers$agec, hers$nonwhite, hers$smoking, hers$drinkany)
+hers1<-data.frame(hers1)
+colnames(hers1)=c("HDL", "BMI", "age", "BMIc", "BMIc2", "agec", "nonwhite", "smoking", "drinkany")
+hers1<-na.omit(hers1)
+dim(hers1) 
+# 2745 after removing the missing
+
+# exploratory analysis
+plot(HDL ~ BMI, data=hers1)
+lines(lowess(hers1$HDL ~ hers1$BMI), col=4,lwd=2) 
+# fit quadratic model in BMI
+# directly
+fit.quad <- lm(HDL ~ BMIc + BMIc2 + agec + nonwhite + smoking + drinkany, data = hers1)
+summary(fit.quad)
+# using poly() that creates the quadratic term
+fit.quad <- lm(HDL ~ poly(BMIc,2, raw="TRUE") + agec + nonwhite + smoking + drinkany, data = hers1)
+summary(fit.quad) # same
+anova(fit.quad)
+```
+
+We indeed observe that the quadratic term in centred BMI (called *BMIc2* in the first fit) is significant suggesting that linearity might not be appropriate for BMI.
+
+2) Fit a RCS in BMI with 4 knots while adjusting for the other covariates.  Here BMI is not centred so we will keep it as is. We use *agec* as opposed to *age10* but feel free to rescale age if you want.
+
+```{r, collapse = TRUE}
+library(rms)
+ddist <- datadist(hers1)
+options(datadist='ddist')
+fit1 <-  ols(HDL ~ rcs(BMI,4) + agec + nonwhite + smoking +drinkany, data = hers1)
+fit1
+anova(fit1)
+```
+
+Although the additional terms (represented by *BMI'* and *BMI''* in the model) are not significant, the global test with 2 d.f. provided by the *anova* command indicates that the additional terms are necessary $F=11.75$, $p=0.000$, a highly significant result. This
+is typical of spline-based analysis. We let you reproduce the analysis presented in the book with 5 knots (although it's not requested).
+
+
+3) Plot the fitted line for BMI with its 95\% band.
+
+
+This is straightforward in R and the command fixes the other covariates at default values. The median of each predictor other than BMI is typically used. 
+
+
+```{r, collapse = TRUE}
+plot(Predict(fit1, BMI))
+```
+
+
+4) Change the location of the 4 knots and refit the model. Try a different number of knots. Conclusion/interpretation.
+ 
+
+We can fit a model with 4 knots placed differently (e.g. at age 18, 22, 25, 35) or with 5 knots (default location) as examples.
+
+```{r, collapse = TRUE}
+# 4 different knots at 18, 22, 25, 35
+fit2 <-  ols(HDL ~ rcs(BMI,c(18,22,25,35)) + agec + nonwhite + smoking +drinkany, data = hers1)
+fit2
+anova(fit2)
+plot(Predict(fit2, BMI))
+
+# 5  knots, default location
+fit3 <-  ols(HDL ~ rcs(BMI,5) + agec + nonwhite + smoking +drinkany, data = hers1)
+fit3
+anova(fit3)
+plot(Predict(fit3, BMI))
+```
+
+Once again, a spline is necessary irrespective of the number of knots or their location. We do not have the tools yet to discriminate between the different spline fits but they look rather similar. The data supports the use of splines. HDL decreases markedly with BMI until the age of 30-35 where the decrease is not as steep. This is after adjustment for (centred) *age*,  *nonwhite*, *smoking* and  *drinkany*. 
+
+
+5) Do we need a RCS model for age? 
+
+```{r, collapse = TRUE}
+fit4 <-  ols(HDL ~ rcs(BMI,4) + rcs(age,4) + nonwhite + smoking + drinkany, data = hers1)
+fit4
+anova(fit4)
+plot(Predict(fit4, age))
+```
+
+We keep the standard RCS(4) model for BMI and added an age spline (i.e RCS(4) in age). There is no evidence in the data that the spline in age is needed. The *anova* command  returns a F-test of 0.69 for the non-linear component in age, p=0.499. This is also confirmed when we look at the plot, the effect of age appearing linear. We would keep *age* alone in the model but keep the RCS(4) in *BMI* in the final model.
+
+
+
+
+
+#### Bootstrap investigation\
+
+
+
+
+Part A) of the investigation is mainly running the code to get familiar with bootstrapping in the regression. The remainder should be straightforward commands. 
+
+
+Stata code and output
+
+
+1) standard regression of  *HDL* on *BMI*, *age* and  *drinkany* after removing diabetic patients. Examination of the residuals. 
+
+
+```{stata, engine.path=statapath, comment="##", echo=TRUE, collapse = TRUE}
+use hersdata.dta
+drop if diabetes ==1   
+drop if mi(HDL) | mi(BMI) | mi(age) | mi(drinkany) 
+keep HDL BMI age drinkany
+regress HDL BMI age drinkany
+predict res, res
+qnorm(res)
+```
+
+We clearly seem some upward curvature in the residuals (plot omitted here). Given the large sample size, normality is not that critical but we are going to check that inference is indeed valid using the bootstrap. 
+
+2) Read Part A) of the code, run it and draw a histogram of the bootstrap samples (or replicates) for each of the coefficients
+
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use hersdata.dta
+drop if diabetes ==1   
+drop if mi(HDL) | mi(BMI) | mi(age) | mi(drinkany) 
+keep HDL BMI age drinkany
+regress HDL BMI age drinkany 
+matrix observe= (_b[_cons], _b[BMI], _b[age], _b[drinkany])
+matrix list observe
+capture program drop myboot2
+program define myboot2, rclass
+ preserve 
+  bsample
+    regress HDL BMI age drinkany  
+	  return scalar b0 = _b[_cons]
+    return scalar b1 = _b[BMI]
+    return scalar b2 = _b[age]
+	return scalar b3 = _b[drinkany]
+ restore
+end
+** simulation = resampling the data using the program myboot2 
+simulate  b0=r(b0) b1=r(b1) b2=r(b2) b3=r(b3), reps(1000) seed(12345): myboot2
+desc
+hist b0
+qnorm(b0)
+hist b1
+qnorm(b1)
+hist b2
+qnorm(b2)
+hist b3
+qnorm(b3)
+bstat, stat(observe) n(2021)
+estat bootstrap, percentile
+estat bootstrap, all
+```
+
+
+The dataset contains R=1000 replicates or bootstrap samples (1000x4 since we have 4 coefficients), see the column names b0, b1, b2 and b3 as described by *desc*. Of course, you can change the number of replicates (e.g. use *reps(3000)* if you want 3000 replicates. R should be chosen large enough (at least 1000) for 95\% confidence intervals. Histograms and normality plots follow easily. The plots have been omitted but you can check that the histograms are fairly symmetric and the distributions appear to be be normal. The commands *btsat* and *estat* give you the various CIs depending on the option you choose. When using *bstat* you need to specify  the number of observations via the option *n(2021)*. To be updated with a different dataset.
+
+
+
+3) direct calculation of the percentile 95\% CI using a one-line command.
+
+
+We can calculate the 2.5\% and 97.5\% centile for each variable (b0, b1, b2, b3) to get the required percentile CIs. The summary provided by Stata is also provided.
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+clear
+use all_replicates
+** these two lines are not needed when you run the code directly 
+** all replicates are saved in all_replicates.dta to simplify writing here
+centile b0, centile(2.5 97.5)
+centile b1, centile(2.5 97.5)
+centile b2, centile(2.5 97.5)
+centile b3, centile(2.5 97.5)
+```
+
+The results are very similar to Stata's (tiny differences), e.g. the percentile 95\% CI for BMI is (-.519 ; -.299). 
+
+
+
+
+4) Using the Stata built-in command to avoid having to do the resampling ``by hand''. Use Part B) and compare to the standard analysis. You can decide to display all 3 types or only one by speciying the *bootstrap* or *estat* command as follows: 
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+clear
+use hersdata.dta
+drop if diabetes ==1   
+drop if mi(HDL) | mi(BMI) | mi(age) | mi(drinkany) 
+keep HDL BMI age drinkany
+** display the 3 types (with R=1000 replicates)
+bootstrap, reps(1000)  seed(12345): regress HDL BMI age drinkany  
+estat bootstrap, all        
+**
+** only normal (R=1000)
+bootstrap, reps(1000)  seed(12345): regress HDL BMI age drinkany 
+estat bootstrap, normal 
+** only percentile (R=1000)
+bootstrap, reps(1000)  seed(12345): regress HDL BMI age drinkany 
+estat bootstrap, percentile 
+** only BCa (R=1000), slightly DIFFERENT command
+bootstrap, bca reps(1000)  seed(12345): regress HDL BMI age drinkany  
+estat bootstrap  
+```
+
+As you can see that all 3 bootstrap 95\% CIs are similar to each other. Also, they are similar to the ones reported using the LS approach as reported in 1);  we can therefore be confident that we don't have any particular issue with the standard analysis.
+
+
+
+
+
+
+R code and output
+
+
+1) standard regression of  *HDL* on *BMI*, *age* and  *drinkany* after removing diabetic patients. Examination of the residuals. 
+
+```{r, collapse = TRUE}
+require(haven)
+hers<-read_dta("hersdata.dta") 
+hers<-data.frame(hers)
+
+# keep only the relevant variables and delete missing data
+hers.nondiab<-hers[hers$diabetes==0,]
+hers1<-cbind(hers.nondiab$HDL,hers.nondiab$age,hers.nondiab$BMI,hers.nondiab$drinkany)
+colnames(hers1)<-c("HDL","age","BMI","drinkany")
+hers1<-data.frame(hers1)
+hers2<-na.omit(hers1) 
+# 2032 --> 2021 observations
+
+# standard analysis and residuals plots
+out<-lm(HDL ~ BMI + age + drinkany, data=hers2)
+res<-residuals(out)
+par(mfrow=c(1,2))
+hist(res)
+qqnorm(res)
+# standard 95\% CI
+confint(out)
+```
+
+We clearly seem some upward curvature in the residuals. Given the large sample size, normality is not that critical but we are going to check that inference is indeed valid using the bootstrap. 
+
+2) Read Part A) of the code, run it and draw a histogram of the bootstrap samples (or replicates) for each of the coefficients.
+
+```{r, collapse = TRUE}
+set.seed(1001)
+R=1000
+n=dim(hers2)[1]
+all.replicates<-NULL
+for(r in 1:R){
+  # generate bootstrap sample by resampling the data
+  hers2.r=hers2[sample(nrow(hers2), n,replace = TRUE), ]
+  # fitted model (based on the bootstrap sample)
+  out.r<-lm(HDL~age+BMI+drinkany,data=hers2.r)
+  # store all coefficients in all.replicates
+  all.replicates=rbind(all.replicates,out.r$coeff)
+}
+
+# all.replicates is a matrix Rx4 (since we have R replicates
+# and 4 coefficients in the model)
+dim(all.replicates)
+head(all.replicates)
+```
+
+
+The dataset all.replicates contains R=1000 replicates or bootstrap samples (1000x4 since we have 4 coefficients). Of course, you can change the number of replicates (e.g. use *R=3000* in the code above if you want 3000 replicates). R should be chosen large enough (at least 1000) for 95\% confidence intervals. Histograms and normality plots follow easily.
+
+
+```{r, collapse = TRUE}
+par(mfrow=c(1,2))
+# intercept
+hist(all.replicates[,1],xlab="Intercept")
+qqnorm(all.replicates[,1])
+# age coefficient
+hist(all.replicates[,2],xlab="Age coeff")
+qqnorm(all.replicates[,2])
+# BMI coefficient
+hist(all.replicates[,3],xlab="BMI coeff")
+qqnorm(all.replicates[,3])
+# drinkany coefficien
+hist(all.replicates[,4],xlab="Drinkany coeff")
+qqnorm(all.replicates[,4])
+```
+
+
+3) direct calculation of the percentile 95\% CI using a one-line command.
+
+```{r, collapse = TRUE}
+# intercept 
+quantile(all.replicates[,1], c(0.025,0.975))
+# age
+quantile(all.replicates[,2], c(0.025,0.975))
+# BMI
+quantile(all.replicates[,3], c(0.025,0.975))
+# drinkany
+quantile(all.replicates[,4], c(0.025,0.975))
+```
+
+You simply calculate the 0.025th and 0.975th quantile for each coefficient (i.e. each column of all.replicates) to get the required percentile CIs. 
+
+
+4) Use the  R library *boot* to avoid having to do the resampling ``by hand''. Use Part B) and compare to the standard analysis. You can decide to display all 3 types or only one. Note that we used here R=3000 replicates, the BCa appraoch had numerical issues with R=1000. If this happens to you increase the number of replicates.
+
+
+
+
+```{r, collapse = TRUE}
+library(boot)
+
+# function collecting the coefficients; in general this function
+# computes the statistic we want to bootstrap.
+coeff<- function(data, indices){
+  data <- data[indices,] # select obs. in bootstrap sample
+  mod <- lm(HDL~age+BMI+drinkany, data=data) # modify formula here
+  coefficients(mod) # return coefficient vector
+}
+
+# NB: R doc says or parametric bootstrap (i.e. the one we are using)
+#  "the first argument to statistic must be the data"
+#  " The second will be a vector of indices, frequencies or weights 
+#   which define the bootstrap sample".
+
+# LS-based 95% CI to compare to
+
+out<-lm(HDL~age+BMI+drinkany,data=hers2)
+confint(out)
+
+set.seed(1001)
+B = boot(data=hers2,statistic=coeff,R=3000)  
+# various 95% CI for the BMI coefficient (index=3)
+# you can also get all the other ones by changing the index (e.g. index=2 for age)
+
+# normal 
+boot.ci(B,index=3,type="norm")   
+# percentile
+boot.ci(B,index=3,type="perc")   
+# BCa
+boot.ci(B,index=3,type="bca") 
+# to get all 3 types in one command
+boot.ci(B,index=3,type=c("norm","perc", "bca")) 
+```
+
+
+The results are very similar to the ones obtained by direct calculation (tiny differences), e.g. the 95\% CI for the BMI coefficient is (-.519 ; -.300) using the percentile and Bca approaches. All three bootstrap 95\% CIs are similar to each other for all coefficients. Also, we don't see substantial differences with the standard 95\% cIs (i.e. the ones reported using the LS approach). We can be confident that we don't have any particular issue with the standard analysis.
+
+Some plots (histogram, normal probabilit plots) of the bootstrap samples can be easily produced using the output B produced by *boot()*:
+
+```{r, collapse = TRUE}
+# intercept
+plot(B, index=1)
+# x1=age
+plot(B, index=2)
+# x2=BMI
+plot(B, index=3) 
+# x3=drinkany
+plot(B, index=4) 
+```
+
+Nicer plots (you can control the labels, titles etc) can be produced using this code:
+```{r, collapse = TRUE}
+all<-B$t
+par(mfrow=c(1,2))
+hist(all[,1],main="Histogram",xlab="Intercept",prob=TRUE)
+qqnorm(all[,1])
+hist(all[,2],main="Histogram",xlab="Age coeff",prob=TRUE)
+qqnorm(all[,2])
+# etc
+# hist(all[,3],main="Histogram",xlab="BMI coeff",prob=TRUE)
+# qqnorm(all[,3])
+# hist(all[,4],main="Histogram",xlab="drinkany coeff",prob=TRUE)
+# qqnorm(all[,4])
+```
+
+
+Note that a somehow slower version can be obtained using a code like this (again illustrated on BMI using the percentile method). It is slower but possibly more ``natural'' since we bootstrap a statistic and provide a dataset and a formula for its calcualtion.
+
+
+```{r, collapse = TRUE,ECHO=TRUE,message=FALSE}
+coeff<- function(data, indices, formula){
+  data <- data[indices,] 
+  mod <- lm(formula=formula, data=data)
+  coefficients(mod) 
+}
+
+set.seed(1001)
+B = boot(data=hers2,statistic=coeff,R=3000, formula=HDL~age+BMI+drinkany)
+boot.ci(B,index=3,type="perc")
+```
+
+
+
+### Week 8 {.unnumbered}
+
+Below shows the code and output for running a cubic spline with 3, 4, and 5 knots. We see that AIC and BIC consistently increase with increasing number of knots, and that 3 knots seems to generate the lowest AIC and BIC values. Therefore 3 knots is the most appropriate function form for BMI in this data.
+
+Stata code and output
+```{stata, engine.path=statapath, comment="**", collapse = TRUE}
+clear
+use hersdata.dta
+
+mkspline BMIsp3k = BMI, cubic nknots(3) 
+regress HDL BMIsp3k1 BMIsp3k2 age nonwhite smoking drinkany
+estimates stats
+
+mkspline BMIsp4k = BMI, cubic nknots(4) 
+regress HDL BMIsp4k1 BMIsp4k2 BMIsp4k3 age nonwhite smoking drinkany
+estimates stats
+
+mkspline BMIsp5k = BMI, cubic nknots(5) 
+regress HDL BMIsp5k1 BMIsp5k2 BMIsp5k3 BMIsp5k4 age nonwhite smoking drinkany
+estimates stats
+```
+
+R code and output.
+```{r, collapse = TRUE}
+require(haven)
+library(rms)
+
+hers<-read_dta("hersdata.dta") 
+hers<-data.frame(hers)
+
+# reduce the dataset and remove missing
+hers1<-hers[,c("HDL", "BMI", "age", "nonwhite", "smoking", "drinkany")]
+hers1<-na.omit(hers1)
+dim(hers1) 
+# 2745 after removing the missing
+
+ddist <- datadist(hers1)
+options(datadist='ddist')
+
+# Run models with 3 - 7 knots
+fit.3knots <-  ols(HDL ~ rcs(BMI,3) + age + nonwhite + smoking +drinkany, data = hers1)
+fit.4knots <-  ols(HDL ~ rcs(BMI,4) + age + nonwhite + smoking +drinkany, data = hers1)
+fit.5knots <-  ols(HDL ~ rcs(BMI,5) + age + nonwhite + smoking +drinkany, data = hers1)
+
+AIC(fit.3knots)
+AIC(fit.4knots)
+AIC(fit.5knots)
+
+BIC(fit.3knots)
+BIC(fit.4knots)
+BIC(fit.5knots)
+```
+
+
+
+
+
+
+
+
+
+### Week 9 {.unnumbered}
+
+#### Exercise\
+
+
+
+**Stata code and output**
+
+
+
+1) Reproduce the Chi2 analysis 
+
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+tabulate chd69 arcus, col row chi2
+disp (102*2058)/(153*839)  
+```
+
+There is a clear association between arcus and CHD with Chi2=13.64 and a p-value smaller than 0.001.
+
+
+
+2) Compute the OR and check that is exactly the same result as the one obtained via simple logistic regression
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+disp (102*2058)/(153*839) 
+logistic chd69 arcus
+```
+
+A manual calculation returns OR=1.635 which is exactly the point estimate provided by logistic regression in an unadjusted analysis, OR-1.635, 95\%CI=(1.26 ; 2.13)
+
+
+3) Compute the 95\% CI for the estimate you have just computed. How does it compare with the 95\% obtained from logistic regression. 
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+scalar OR=(102*2058)/(153*839)  
+disp  OR
+scalar SElog=sqrt(1/2058 + 1/839 + 1/153 + 1/102)
+scalar lower =log(OR)-1.96*SElog
+scalar upper =log(OR)+1.96*SElog
+disp exp(lower)
+disp exp(upper)
+```
+
+A similar 95\% CI is obtained. Note that in general you may see a small difference since SEs are computed using Woolf's formula. The information matrix is used to compute SEs in logistic regression.
+
+
+
+**R code and output**
+
+
+1) Reproduce the Chi2 analysis 
+
+
+```{r, collapse = TRUE}
+wcgs <- read.csv("wcgs.csv")
+wcgs<-data.frame(wcgs)
+table(wcgs$chd69,wcgs$arcus)
+chisq.test(wcgs$chd69,wcgs$arcus,correct=FALSE)
+```
+
+
+
+There is a clear association between arcus and CHD with Chi2=13.64 and a p-value p=0.0002. Note that the default R function add a cotinuity correction (suppressed here with the option *Correct=FALSE*). Of no practical significance in large samples.
+
+
+
+
+2) Compute the OR and check that is exactly the same result as the one obtained via simple logistic regression
+
+
+
+
+```{r, collapse = TRUE}
+OR<-102*2058/(153*839)
+OR
+SElogOR<-sqrt(1/102+1/2058+1/153+1/839)
+CI1=c(log(OR)-1.96*SElogOR, log(OR)+1.96*SElogOR)
+CI2=exp(CI1)
+CI2
+model0<-glm(chd69 ~ arcus,  family=binomial, data=wcgs)
+summary(model0)
+exp(confint(model0))
+```
+
+
+A manual calculation returns OR=1.635 which is exactly the point estimate provided by logistic regression in an unadjusted analysis, OR=1.635, 95\%CI=(1.25 ; 2.12)
+
+
+3) Compute the 95\% CI for the estimate you have just computed. How does it compare with the 95\% obtained from logistic regression. 
+
+
+```{r, collapse = TRUE}
+OR<-102*2058/(153*839) # 1.635 - same as logistic reg
+SElogOR<-sqrt(1/102+1/2058+1/153+1/839)
+CI1=c(log(OR)-1.96*SElogOR, log(OR)+1.96*SElogOR)
+CI2=exp(CI1)
+CI2
+```
+
+
+A similar 95\% CI is obtained, i.e. 95\% CI=(1.26 ; 2.13). A small difference may be observed since SEs are computed using Woolf's formula in the manual calculation. The information matrix is used to compute SEs in logistic regression.
+
+#### Investigation\
+
+
+**Stata code and output**
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+tabulate agec chd69, row chi2
+tabulate agec_type chd69, row chi2
+scalar OR1=55*512/(1036*31)
+scalar OR2=70*512/(680*31)
+scalar OR3=65*512/(463*31)
+scalar OR4=36*512/(206*31)
+disp OR1 
+disp OR2 
+disp OR3 
+disp OR4
+```
+
+There is a clear association between *chd69* and age categories (*agec*) as illustrated by an increased proportion of CHD as patients get older. The Chi2 test confirms this: Chi2=46.65, p-value = 1.801e-09. OR can be computed by hand as before. ORs are increasing with age except for the 2nd age category (1-45) OR=0.87 (non-significant different with the reference category (35-40))
+
+
+
+2) Can you get similar results using logistic regression, how? 
+
+
+Yes, we can simply use *agec* (or *agec_type*) as a predictor in the logistic regression model. *agec* must be  declared as a *i.agec* factor to get ORs per age category.
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+logistic chd69 i.agec
+```
+
+
+3) Can you test the global effect of *agec* on *chd69*. How would you go about it?
+
+
+The best way to do this in logistic regression is to use a LRT. The analysis could be adjusted or not (like here) but the principle is the same. Get the two fits and compute the LRT using the *lrtest* command. A slight difficult arises: how to we fit a model with no covariate in Stata (only the intercept); a possible way is to define a variable *one* equal to 1 and use the *noconstant* option. 
+
+
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+gen one=1  
+logistic chd69 one, noconstant 
+estimates store mod0
+logistic chd69 i.agec
+lrtest mod0
+```
+
+
+The LRT valuee is 44.95 (df=4), p < 0.001 (actually p=4.08e-09) suggesting a very strong association between *agec* and *chd69*. This is consistent with the Chi2 analysis, the difference being that you can now adjust for other predictors (not done here). Note that there is no missing data in age so we don't need to worry about missingness; it's recommended to check or create a smaller dataset with only the variables of interest and no missing data; apparently *lrtest*  gives you a warning if you forget! 
+
+Next we can adjust for relevant predictors, it's unlikely that such a significant association disappears after adjustment. We may also use *age* as a continous predictor in the model since the association appears fairly linear - regular increase across age categories on the log-odds scale. 
+
+
+
+**R code and output**
+
+
+1)  Association between *chd69* and  *agec*
+
+
+```{r, collapse = TRUE}
+wcgs <- read.csv("wcgs.csv")
+wcgs<-data.frame(wcgs)
+table(wcgs$agec)
+table(wcgs$agec_type)
+table(wcgs$agec,wcgs$chd69)
+# row percentages
+tab<-table(wcgs$agec,wcgs$chd69) 
+prop.table(tab, 1)
+# chi2 test
+chisq.test(wcgs$agec,wcgs$chd69)
+# OR by hand
+OR1<-55*512/(1036*31)
+OR2<-70*512/(680*31)
+OR3<-65*512/(463*31)
+OR4<-36*512/(206*31)
+c(OR1,OR2,OR3,OR4)
+```
+
+There is a clear association between *chd69* and age categories (*agec*) as illustrated by an increased proportion of CHD as patients get older. The Chi2 test confirms this: Chi2=46.65, p-value = 1.801e-09. OR can be computed by hand as before. ORs are increasing with age except for the 2nd age category (1-45) OR=0.87 (non-significant different with the reference category (35-40))
+
+
+
+2) Can you get similar results using logistic regression, how? 
+
+
+Yes, we can simply use *agec* (or *agec_type*) as a predictor in the logistic regression model. *agec* must be  declared as a factor to get ORs per age category.
+
+
+```{r, collapse = TRUE}
+out<-glm(chd69 ~ factor(agec), family=binomial, data=wcgs)
+summary(out)
+# OR and 95% CI
+exp(out$coefficients)[2:5] 
+exp(confint(out))[2:5,]
+```
+
+
+3) Can you test the global effect of *agec* on *chd69*. How would you go about it?
+
+
+The best way to do this in logistic regression is to use a LRT. The analysis could be adjusted or not (like here) but the principle is the same. Get the two fits and compute the LRT by hand or use the *anova* command. 
+
+```{r, collapse = TRUE}
+reduced<-glm(chd69 ~ 1, family=binomial, data=wcgs)
+full<-glm(chd69 ~ factor(agec), family=binomial, data=wcgs)
+# by hand
+LRT=2*(logLik(full)-logLik(reduced)) # no missing data
+LRT 
+pval=1-pchisq(LRT,4)
+pval
+# using anova
+out<-anova(reduced, full)
+pval<-1-pchisq(out$Deviance[2],4)
+pval
+```
+
+The LRT returns a p-value, p=4.08e-09 suggesting a very strong association between *agec* and *chd69*. This is consistent with the Chi2 analysis, the difference being that you can now adjust for other predictors (not done here). Note that there is no missing data in age so we don't need to worry about missingness; it's recommended to check or create a smaller dataset with only the variables of interest and no missing data. 
+
+Next we can adjust for relevant predictors, it's unlikely that such a significant association disappears after adjustment. We may also use *age* as a continous predictor in the model since the association appears fairly linear - regular increase across age categories on the log-odds scale. 
+
+
+
+
+
+
+
+
+### Week 10 {.unnumbered}
+
+#### Investigation - interaction
+
+
+
+**Stata code and output**
+
+1) Compulsory reading: (Section 5.2.4. p 163-165)
+
+This reading explains how to introduce a possible interaction the between *age* seen this time as a continuous variable and *arcus*  (coded 0/1). 
+
+2) Reproduce the output
+
+Perhaps it helps to write down the model first i.e. \begin{equation} log(p/(1-p))=\beta_0 + \beta_1 arcus+ \beta_2 age + \beta_3 age*arcus \end{equation} where is the probability of CHD over the course of the study given the covariates. This model can be rewritten separately for patients without arcus   \begin{equation}log(p/(1-p))=\beta_0 + \beta_2 age\end{equation} 
+and patients with arcus \begin{equation}log(p/(1-p))=(\beta_0 + \beta_1) + (\beta_2 + \beta_3) age\end{equation} 
+We clearly see that the slope of the association with age (i.e. the log-OR) is not the same in the two arcus groups ($\beta_2$ vs $\beta_2+\beta_3$)
+
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+logistic chd69 i.arcus##c.age, coef
+```
+
+Note that you need to specify the type of variable you are using here. The default in Stata is *categorical* covariates. A code like *logistic chd69 arcus\#\#age, coef* would return an ugly output will all different age values considered as categories (except the reference). The *c.age* option is absolutely necessary. You may forget the *i.* before *arcus* because it's coded 0/1 but in general it's safer to write the command as indicated in the textbook.
+
+The analysis with age as a continuous variable confirms what we found with the dichotomised version of age at baseline; we have a significant interaction between *age* and *arcus*.
+
+
+3) Association between *chd69* and *age* in patients without arcus? OR and 95\% CI 
+
+The fitted model is   $log(p/(1-p))=-6.788+0.09 age$ (up to rounding) with the association being described by $\hat\beta_2=0.09$. To get the OR you can refit the model without the option coeff and get the OR for age (only) i.e. OR=1.09, 95\% CI=(1.06 ; 1. 13). This means that for patients *without arcus* the odds of CHD is 9\% bigger, 95\% CI=(6\% ; 13\%) per additional year of age. If you wanted to describe the association for a 10-year age increment, you can 1) use the trick Vittinghof et al (2012) described, rescale age by dividing by 10 and repeat the procedure; 2) use lincom and type lincom 10*age, or. This gives you OR=2.45, OR=(1.83 ; 3.28) as indicated below
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+logistic chd69 i.arcus##c.age
+lincom age*10, or
+```
+
+4) Association between *chd69* and *age* in patients with arcus? OR and 95\% CI.
+
+The fitted model is   $log(p/(1-p))=(-6.788+ 2.754) + (0.090-0.050) age = -4.034 + 0.04 age$
+Now the association of CHD with age is described by: $\hat\beta_2 +\beta_3=0.04$ (on the log-odds scale). To get an oR and its 95\% we need to use *lincom* again as follows:
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+logistic chd69 i.arcus##c.age, coef
+lincom age + 1.arcus#c.age, or
+```
+In patients with arcus, OR=1.04, 95\% CI=(1.00 ; 1.08). This means that for those patients, the odds of CHD increases with age but at a slower rate, i.e the odds is 4\% bigger, 95\% CI=(0\% ; 8\%) per additional year of age. You can also notice on the plot given p. 164 that the probability of CHD occurrence is higher at a younger age. The two lines cross at a later age (around age 50), which means that older patients with arcus are at somewhat lower risk than patients without arcus. You can also get the OR for a 10-year increment by multiplying everything by 10 in the *lincom* command.
+
+
+5) Can we interpret the coefficient of *arcus* alone? How can we get a more meaningful coefficient for *arcus*?
+
+The coefficient for arcus ($\beta_1$) represents the effect of arcus for someone aged 0 (at birth), assuming we can extrapolate back to that age. It makes little sense. One way to overcome the problem is to centre age using a meaninful value e.g. the age sample mean= 46.275
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+sum age
+gen age_centred=age-46.3
+logistic chd69 i.arcus##c.age_centred, coef
+logistic chd69 i.arcus##c.age_centred
+```
+Now get get $\hat\beta_1=0.44$ and OR=1.56, 95\% CI=(1.18 ; 2.08). The odds of CHD is  56% bigger, 95\% CI=(18\% ; 108\%) for someone of average age with arcus (compared with someone of the same age without arcus). of course, the association with arcus depends on age by symmetry, as discussed in the examples provided in the textbook.  These interpretation assumes that the model is correct (linearity, no confounding)
+
+
+
+
+
+
+
+
+**R code and output**
+
+
+1) Compulsory reading: (Section 5.2.4. p 163-165)
+
+This reading explains how to introduce a possible interaction the between *age* seen this time as a continuous variable and *arcus*  (coded 0/1). 
+
+2) Reproduce the output
+
+Perhaps it helps to write down the model first i.e. 
+\begin{equation} log(p/(1-p))=\beta_0 + \beta_1 arcus+ \beta_2 age + \beta_3 age*arcus \end{equation} 
+where is the probability of CHD over the course of the study given the covariates. This model can be rewritten separately for patients without arcus   
+\begin{equation}log(p/(1-p))=\beta_0 + \beta_2 age\end{equation} 
+and patients with arcus 
+\begin{equation}log(p/(1-p))=(\beta_0 + \beta_1) + (\beta_2 + \beta_3) age\end{equation} 
+We clearly see that the slope of the association with age (i.e. the log-OR) is not the same in the two arcus groups ($\beta_2$ vs $\beta_2+\beta_3$)
+
+
+```{r, collapse = TRUE}
+wcgs <- read.csv("wcgs.csv")
+wcgs<-data.frame(wcgs)
+out<-glm(chd69 ~ arcus*age, family=binomial, data=wcgs)
+summary(out) 
+```
+
+Note that you need to we assume that arcus is coded 0/1; otherwise you will have to define arcus as a factor or use *factor(arcus)* in the model. specify the type of variable you are using here. The default in Stata is *categorical* covariates. The analysis with age as a continuous variable confirms what we found with the dichotomised version of age at baseline; we have a significant interaction between *age* and *arcus*.
+
+
+3) Association between *chd69* and *age* in patients without arcus? OR and 95\% CI 
+
+The fitted model is   $log(p/(1-p))=-6.788+0.09 age$ (up to rounding) with the association being described by $\hat\beta_2=0.09$. To get the OR you can simply take the exponential of the age coefficient $\hat\beta_1$ and do something similar for the 95\% CI, yielding OR=1.09, 95\% CI=(1.06 ; 1. 13). This means that for patients *without arcus* the odds of CHD is 9\% bigger, 95\% CI=(6\% ; 13\%) per additional year of age. If you wanted to describe the association for a 10-year age increment, you can 1) use the trick Vittinghof et al (2012) described, rescale age by dividing by 10 and repeat the procedure; 2) mutiply everything by 10 before exponentiting. This gives you OR=2.45, OR=(1.83 ; 3.28) as indicated below
+
+
+
+```{r, collapse = TRUE}
+wcgs <- read.csv("wcgs.csv")
+wcgs<-data.frame(wcgs)
+out<-glm(chd69 ~ arcus*age, family=binomial, data=wcgs)
+coef<-summary(out)$coef[,1]
+SE<-summary(out)$coef[,2]
+OR=exp(coef[3]) 
+# 3rd element (3rd row of the table)
+lower=exp(coef[3]-1.96*SE[3])
+upper=exp(coef[3]+1.96*SE[3])
+c(OR, lower, upper)
+# for a 10 year increment
+OR=exp(10*coef[3])
+lower=exp(10*(coef[3]-1.96*SE[3]))
+upper=exp(10*(coef[3]+1.96*SE[3]))
+c(OR, lower, upper)
+```
+
+
+
+4) Association between *chd69* and *age* in patients with arcus? OR and 95\% CI.
+
+The fitted model is   $log(p/(1-p))=(-6.788+ 2.754) + (0.090-0.050) age = -4.034 + 0.04 age$
+Now the association of CHD with age is described by: $\hat\beta_2 +\beta_3=0.04$ (on the log-odds scale). To get an oR and its 95\% we need to use the command *glht* of *lincomp* as follows:
+
+
+```{r, collapse = TRUE}
+library(multcomp)
+lincom <- glht(out,linfct=c("age+arcus:age=0"))
+lincom
+out2<-summary(lincom)$test
+OR<-exp(out2$coefficients)
+lower<-exp(out2$coefficients -1.96*out2$sigma)
+upper<-exp(out2$coefficients +1.96*out2$sigma)
+cbind(OR,lower,upper)
+# for a 10 year-increment
+OR<-exp(10*out2$coefficients)
+lower<-exp(10*(out2$coefficients -1.96*out2$sigma))
+upper<-exp(10*(out2$coefficients +1.96*out2$sigma))
+cbind(OR,lower,upper)
+```
+In patients with arcus, OR=1.04, 95\% CI=(1.00 ; 1.08). This means that for those patients, the odds of CHD increases with age but at a slower rate, i.e the odds is 4\% bigger, 95\% CI=(0\% ; 8\%) per additional year of age. You can also notice on the plot given p. 164 that the probability of CHD occurrence is higher at a younger age. The two lines cross at a later age (around age 50), which means that older patients with arcus are at somewhat lower risk than patients without arcus.
+You can get the OR for a 10-year increment by multiplying everything by 10 before exponentiating. This gives you OR=1.49, OR=(1.05 ; 2.12).
+
+
+
+5) Can we interpret the coefficient of *arcus* alone? How can we get a more meaningful coefficient for *arcus*?
+
+The coefficient for arcus ($\beta_1$) represents the effect of arcus for someone aged 0 (at birth), assuming we can extrapolate back to that age. It makes little sense. One way to overcome the problem is to centre age using a meaninful value e.g. the age sample mean= 46.275
+
+
+```{r, collapse = TRUE}
+wcgs$age_centred<-wcgs$age-mean(wcgs$age,na.rm=TRUE)
+out1<-glm(chd69 ~ arcus*age_centred, family=binomial, data=wcgs)
+summary(out1)
+coef<-summary(out1)$coef[,1]
+SE<-summary(out1)$coef[,2]
+OR=exp(coef[2]) 
+lower=exp(coef[2]-1.96*SE[2])
+upper=exp(coef[2]+1.96*SE[2])
+c(OR,lower,upper)
+```
+Now get get $\hat\beta_1=0.44$ and OR=1.56, 95\% CI=(1.18 ; 2.08). The odds of CHD is  56% bigger, 95\% CI=(18\% ; 108\%) for someone of average age with arcus (compared with someone of the same age without arcus). of course, the association with arcus depends on age by symmetry, as discussed in the examples provided in the textbook.  These interpretation assumes that the model is correct (linearity, no confounding)
+
+
+
+
+#### Investigation - predicted probability \
+
+
+
+The implicit assumption is that we are fitting the same model as in the notes, the response is *Chd69* and the covariates *age*, *bmi*, *chol*, *sbp*, *smoke*, *dibpat* considered previously. We will also delete the outlier in cholesterol (*chol=645*).
+
+
+
+**Stata code and output**
+
+
+1) calculate the predicted probability of CHD occurence for a patient with the following characteristics:  *age=50*, *BMI=27*, *chol=200*, *sbp=150*, *smoke=1*, *dibpat=0*.  Give the 95\% CI.
+
+
+Here we compute the linear predictor, its 95\% CI and transform it to the probability scale using the reciprocal of logit. This is done automatically using the *pr* option in *adjust* or *margins*
+
+
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+
+drop if missing(chd69) | missing(bmi) | missing(age) | missing(sbp) | missing(smoke) | missing(chol) | missing(dibpat)  
+drop if chol ==645 
+** n=3141 observations
+logistic chd69 age chol sbp bmi smoke dibpat, coef
+adjust age=50 bmi=27 chol=200 sbp=150 smoke=1 dibpat=0, ci pr
+```
+
+The predicted CHD probability for that patient's profile is 8.9\%, 95\% CI=(6.5\% ; 12.2\%)
+
+2) Represent the probability of an event as a function of age for a particular patient profile, e.g. use *BMI=27*, *chol=200*, *sbp=150*, *smoke=1*, *dibpat=0* and let *age* free to vary. 
+
+The plot can be produced using the command *marginplot* after running the appropriatw *margins* command
+
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+
+drop if missing(chd69) | missing(bmi) | missing(age) | missing(sbp) | missing(smoke) | missing(chol) | missing(dibpat)  
+drop if chol ==645 
+** n=3141 observations
+logistic chd69 age chol sbp bmi smoke dibpat, coef
+margins,  at(age=(20(5)60) bmi=27 chol=200 sbp=150 smoke=1 dibpat=0)
+marginsplot,  name(temp1)
+```
+
+![](images/proba_vs_age_profile1_smoker.jpg){width="80%"}
+
+3) Contrast with a plot of the CHD probability vs age for *smoke=0*, the other characteristics remaining the same. Draw the 2 plots side-by-side. 
+
+The plot can be produced using the command *marginplot* after running the appropriate *margins* command (twice) amd combining the plots
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+drop if missing(chd69) | missing(bmi) | missing(age) | missing(sbp) | missing(smoke) | missing(chol) | missing(dibpat)  
+drop if chol ==645 
+** n=3141 observations
+logistic chd69 age chol sbp bmi smoke dibpat, coef
+margins,  at(age=(20(5)60) bmi=27 chol=200 sbp=150 smoke=1 dibpat=0)
+marginsplot,  name(temp2)
+
+margins,  at(age=(20(5)60) bmi=27 chol=200 sbp=150 smoke=0 dibpat=0)
+marginsplot,  name(temp3)
+
+graph combine temp2 temp3
+```
+
+
+
+![](images/Proba_CHD_profile1_by_smoke.jpg){width="90%"}
+The CHD probability increases by age and is higher for smokers.
+
+
+
+
+**R code and output**
+
+
+1) calculate the predicted probability of CHD occurence for a patient with the following characteristics:  *age=50*, *BMI=27*, *chol=200*, *sbp=150*, *smoke=1*, *dibpat=0*.  Give the 95\% CI.
+
+
+Here we compute the linear predictor, its 95\% CI and transform it to the probability scale using the reciprocal of logit (called expit).
+
+
+```{r, collapse = TRUE}
+wcgs <- read.csv("wcgs.csv")
+wcgs<-data.frame(wcgs)
+myvars <- c("id","chd69", "age", "bmi", "chol", "sbp", "smoke", "dibpat")
+wcgs1 <- wcgs[myvars]
+wcgs1=wcgs1[wcgs1$chol <645,]
+wcgs1cc=na.omit(wcgs1) # 3141 x 11
+model1<-glm(chd69 ~ age + chol + sbp + bmi + smoke + dibpat, family=binomial, data=wcgs1cc)
+new <- data.frame(age = 50, bmi=27, chol =200, sbp=150, smoke=1, dibpat=0)
+out <- predict(model1, new, type="link",se.fit=TRUE)
+mean<-out$fit
+SE<-out$se.fit
+CI=c(mean-1.96*SE,mean+1.96*SE)
+f.expit<-function(u){exp(u)/(1+exp(u))}
+f.expit(c(mean,CI)) 
+```
+The predicted CHD probability for that patient's profile is 8.9\%, 95\% CI=(6.5\% ; 12.2\%)
+  
+
+
+2) Represent the probability of an event as a function of age for a particular patient profile, e.g. use *BMI=27*, *chol=200*, *sbp=150*, *smoke=1*, *dibpat=0* and let *age* free to vary. 
+
+The plot can be produced using the command *cplot* available in the *margins* library
+
+
+```{r, collapse = TRUE}
+require(margins)
+new <- data.frame(age=seq(20,60,5),bmi=27, chol =200, sbp=150, smoke=1, dibpat=0)
+cplot(model1, what = "prediction", data=new,main = "Predicted proba vs age")
+```
+
+3) Contrast with a plot of the CHD probability vs age for *smoke=0*, the other characteristics remaining the same. Draw the 2 plots side-by-side. 
+
+Again *cplot* can be used to produce these plots. The CHD probability increases by age and is higher for smokers.
+
+
+```{r, collapse = TRUE}
+par(mfrow=c(1,2))
+new <- data.frame(age=seq(20,60,5),bmi=27, chol =200, sbp=150, smoke=1, dibpat=0)
+cplot(model1, what = "prediction", data=new,main = "Smoke=1", ylim=c(0,0.20))
+new <- data.frame(age=seq(20,60,5),bmi=27, chol =200, sbp=150, smoke=0, dibpat=0)
+cplot(model1, what = "prediction", data=new,main = "Smoke=0",ylim=c(0,0.20))
+```
+
+
+
+
+
+
+
+
+
+### Week 11 {.unnumbered}
+
+#### Investigation\
+
+
+**R code and output**
+
+1) initial model with covariates (model0) and AIC
+
+
+```{r,collapse=TRUE}
+library(rms)
+medcare<- read.csv("medcare.csv")
+medcare<-data.frame(medcare)
+medcare$age<-medcare$age*10
+ddist <- datadist(medcare)
+options(datadist='ddist')
+model0 <- lrm(healthpoor  ~  age + male + married + ofp + school, data=medcare)
+plot(Predict(model0, age))
+AIC(model0)
+```
+
+Only *age*, *ofp* and *school* are significant in this model that is the standard model without splines which acts as a starting point. AIC=3095.9 for this model. If you use the *plot(Predict(model0, age))* command after this fit you get a straight line since we did not include
+a spline in age.
+
+2) model with RCS(4) in *ofc* and *school*(model1) and AIC. Are splines necessary?
+
+```{r,collapse=TRUE}
+dist <- datadist(medcare)
+options(datadist='ddist')
+model1 <- lrm(healthpoor  ~  age + male + married + rcs(ofp,4) + rcs(school,4), data=medcare)
+model1
+AIC(model1)
+anova(model1)
+plot(Predict(model1,ofp))
+plot(Predict(model1,school))
+```
+
+A spline in *ofp* is clearly needed (p<0.0001), with the log-odds of being in poor heath increasing markedly from 2 to 10 and less steeply after that. Note that a 1-2 visits to the doctor's don't seem to increase the odds of a poor outcome. A slight downward curvature is observed in the association with *school*, years of education, but there is no evidence that the spline is *school* is needed (p=0.16). Note that the plots have been drawn for other covariates set at their median values (by default) The AIC has been decreased subtantially compared with model0's, AIC=3064.4. We definetely need to keep a spline in *ofp* in the model (we could play around we the number of knots, their location but this would be further refinement). It's not so clear what do do with *school* since there is this apparent curvature. Options are: 1) go back to a simpler model with a linear term in *school*; 2) refine the modelling further to try and capture this curvature.
+
+
+3) model with RCS(4) in *ofc* and a quadratic term in *school* (model2) and AIC. 
+
+```{r,collapse=TRUE}
+##medcare$school2<-medcare$school^2
+dist <- datadist(medcare)
+options(datadist='ddist')
+model2 <- lrm(healthpoor  ~  age + male + married + rcs(ofp,4) + poly(school,2,raw=TRUE), data=medcare)
+model2
+AIC(model2)
+anova(model2)
+```
+
+There is now evidence that the quadratic term is necessary (ANOVA returns p<0.0001) for the global effect of the two ofp terms. You can also get a similar result by defining the quadratic term by hand in the dataset, fitting the model and computing a LRT testing whether these two terms are necessary. It's simpler to use *poly()* and *anova()*. The AIC has decreased further for this model (model2) since AIC=3060.6
+
+
+4) What is the best model fitted so far based on the AIC (or BIC)?
+
+
+Model2 is the better model due its smaller AIC if we consider this statistic to rank models. The command: *BIC(model0, model1, model2)* gives the corresponding BIC values, i.e. 3134.3, 3128.3 and 3118.1
+favouring more neatly model2 (BIC=3118.1 is neatly smaller than the two other BIC's). So there seems to be evidence of small quadratic term as indicated first in the plot.
+
+
+```{r,collapse=TRUE}
+BIC(model0, model1, model2)
+```
+
+
+5) smaller AIC/BIC? further refinements
+
+
+We could try to play with the knots but a simple way to possibly reduce further the AIC/BIC is to remove the non-significant variables e.g. *married* and *male* yielding the following results:
+
+
+```{r,collapse=TRUE}
+dist <- datadist(medcare)
+options(datadist='ddist')
+model3 <- lrm(healthpoor  ~  age + rcs(ofp,4) + poly(school,2,raw=TRUE), data=medcare)
+model3
+AIC(model3)
+BIC(model3)
+anova(model3)
+```
+
+
+AIC=3056.7 and BIC=3101.4 have been further reduced suggesting that this more parsimonious model is preferable (unless there is external evidence to keep *married* and *male*, for instance due to their confounding effect in other studies). Such evidence is lacking so we may be happy to stick with model3 from a purely statistical perspective. We have not formally validated the model but using splines or polynomials is no substitute for validation. Often, we deal with outliers and influential observations prior to this sort of modelling.
+
+6) Conclusions
+
+There is no unique way to describe the different steps but here is one that starts by describing what we are trying to do, the different steps, what we found and describe the final model.
+We investigated the association between poor health (*poorhealth*) and various predictors, i.e. age , male, the number of physician office visits (*ofp*), years of education (*school*) using logistic regression.
+Since associations with continous covariates were not necessary linear (on the log-odds scale), we used restricted cubic splines and polynomials to relax this assumption. There was no enough evidence to suggest that the association with age was not linear but a spline in *ofp* was necessary. The log-odds of being in poor heath increases markedly with *ofp* from 2 to 10 and less steeply after that. The relationship of *poorhealth* with *school* (on the log-odds scale) is better captured by a quadratic polynomial displaying a faster decay with larger values of years of educations. Plots can be referred to to support that claim. The AIC/BIC confirmed that such a model was indeed preferable. A more parsimonious model (i.e. without the non-significant predictors *married* and *age*) is supported by a smaller AIC/BIC. You can also gives some ORs and 95\% CIs for the linear association(s, only age if you keep the latter model. The OR for age is OR=exp(0.0365)=1.037, 95\%CI=(1.023 ; 1.053) i.e. on average the odds increases by about 4%, 95\% CI=(2.3\% ; 5.2\%) per additional year of age.
+
+<!-- model3: age 0.0365 0.0072 5.09 <0.0001 -->
+
+
+**Stata code and output**
+
+1) initial model with covariates (model0) and AIC
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use medcare.dta
+replace age=age*10
+logistic healthpoor age married male ofp school, coef
+estat ic
+```
+Only *age*, *ofp* and *school* are significant in this model that is the standard model without splines which acts as a starting point. AIC=3095.9 for this model. 
+
+
+2)  model with RCS(4) in *ofc* and *school*(model1) and AIC. Are splines necessary?
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+clear
+use medcare.dta
+replace age=age*10
+mkspline2 ofpspl = ofp, cubic nknots(4)
+mkspline2 schoolspl = school, cubic nknots(4)
+logistic healthpoor age married male ofpspl* schoolspl*, coef
+** splines for school) (on the logit scale)
+adjustrcspline, at(age=73 married=1 male=0 ofp=4) custominvlink("xb()") ytitle("log-odds")
+** NB: caution with the scale - default= proba
+** logit scale via the option custominvlink("xb()"
+estat ic
+test ofpspl2 ofpspl3
+test schoolspl2 schoolspl3
+** --------------------------------------
+** to get the second plot refit the model
+** --------------------------------------
+clear
+use medcare.dta
+replace age=age*10
+mkspline2 schoolspl = school, cubic nknots(4)
+mkspline2 ofpspl = ofp, cubic nknots(4)
+quiet logistic healthpoor age married male ofpspl* schoolspl*, coef
+** splines for ofp (on the logit scale)
+adjustrcspline if ofp <=50, at(age=73 married=1 male=0 school=11) custominvlink("xb()") ytitle("log-odds")
+**logit scale via the option custominvlink("xb()")
+**
+** figures will be displayed when you run the code. 
+```
+
+A spline in *ofp* is clearly needed (p<0.0001), with the log-odds of being in poor heath increasing markedly from 2 to 10 and less steeply after that. Note that a 1-2 visits to the doctor's don't seem to increase the odds of a poor outcome. A slight downward curvature is observed in the association with *school*, years of education, but there is no evidence that the spline is *school* is needed (p=0.16). Note that the plots have been drawn for other covariates set at their median values (by default) The AIC has been decreased subtantially compared with model0's, AIC=3064.4. We definetely need to keep a spline in *ofp* in the model (we could play around we the number of knots, their location but this would be further refinement). It's not so clear what do do with *school* since there is this apparent curvature. Options are: 1) go back to a simpler model with a linear term in *school*; 2) refine the modelling further to try and capture this curvature.
+
+
+3) model with RCS(4) in *ofc* and a quadratic term in *school* (model2) and AIC. 
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+clear
+use medcare.dta
+replace age=age*10
+gen school2=school^2
+mkspline2 ofpspl = ofp, cubic nknots(4)
+mkspline2 schoolspl = school, cubic nknots(4)
+logistic healthpoor age married male ofpspl* school school2, coef
+estat ic
+test ofpspl2 ofpspl3
+test school school2
+```
+
+
+
+There is now evidence that the quadratic term is necessary (test 2df returns p<0.0001) for the global effect of the two ofp terms. The AIC has decreased further for this model (model2) since AIC=3060.6
+
+4) What is the best model fitted so far based on the AIC (or BIC)?
+
+
+Model2 is the better model due its smaller AIC if we consider this statistic to rank models. The command: *estat ic* after each model fit gives the corresponding BIC values, i.e. 3134.3, 3128.3 and 3118.1
+favouring more neatly model2 (BIC=3118.1 is neatly smaller than the two other BIC's). So there seems to be evidence of small quadratic term as indicated first in the plot.
+
+
+5) smaller AIC/BIC? further refinements
+
+
+We could try to play with the knots but a simple way to possibly reduce further the AIC/BIC is to remove the non-significant variables e.g. *married* and *male* yielding the following results:
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+clear
+use medcare.dta
+replace age=age*10
+gen school2=school^2
+mkspline2 ofpspl = ofp, cubic nknots(4)
+mkspline2 schoolspl = school, cubic nknots(4)
+logistic healthpoor age  ofpspl* school school2, coef
+estat ic
+test ofpspl2 ofpspl3
+test school school2
+** OR for age 
+lincom age, or
+```
+
+
+AIC=3056.7 and BIC=3101.4 have been further reduced suggesting that this more parsimonious model is preferable (unless there is external evidence to keep *married* and *male*, for instance due to their confounding effect in other studies). Such evidence is lacking so we may be happy to stick with model3 from a purely statistical perspective. We have not formally validated the model but using splines or polynomials is no substitute for validation. Often, we deal with outliers and influential observations prior to this sort of modelling.
+
+6) Conclusions
+
+There is no unique way to describe the different steps but here is one that starts by describing what we are trying to do, the different steps, what we found and describe the final model. We investigated the association between poor health (*poorhealth*) and various predictors, i.e. age , male, the number of physician office visits (*ofp*), years of education (*school*) using logistic regression.
+Since associations with continous covariates were not necessary linear (on the log-odds scale), we used restricted cubic splines and polynomials to relax this assumption. There was no enough evidence to suggest that the association with age was not linear but a spline in *ofp* was necessary. The log-odds of being in poor heath increases markedly with *ofp* from 2 to 10 and less steeply after that. The relationship of *poorhealth* with *school* (on the log-odds scale) is better captured by a quadratic polynomial displaying a faster decay with larger values of years of educations. Plots can be referred to to support that claim. The AIC/BIC confirmed that such a model was indeed preferable. A more parsimonious model (i.e. without the non-significant predictors *married* and *age*) is supported by a smaller AIC/BIC. You can also gives some ORs and 95\% CIs for the linear association(s, only age if you keep the latter model. The OR for age is OR=exp(0.0365)=1.037, 95\%CI=(1.02 ; 1.05) i.e. on average the odds increases by 3.7%, 95\% CI=(2.2\% ; 5.1\%) per additional year of age.
+
+
+
+
+
+
+
+
+
+### Week 12 {.unnumbered}
+
+#### Investigation\
+
+
+**R code and output**
+
+1) Fitting the model, naive AUC and ROC
+
+Clearly all covariates (*age*, *oral* and *smoke*) are important predictors of *mi*. A naive ROC curve can be obtained by computing the predicted probablity of MI for each observation in the dataset and calling the *roc* function from *pROC*
+
+```{r,collapse=TRUE}
+infarct <- read.csv("infarct.csv")
+infarct<-data.frame(infarct)
+require(pROC)
+out0 <- glm(mi ~ oral + age + smoke, family=binomial(link="logit"),data=infarct) 
+summary(out0)
+infarct$pred=predict(out0,infarct,type="response")
+out.roc<- roc(infarct$mi, infarct$pred,plot=TRUE,ci=TRUE)
+out.roc
+```
+
+The naive AUC is 0.84, 95\% CI=(0.78 ; 0.90), which can be classified as *good*. The model predicts well but this estimate is affected by optimism bias. The true AUC is probably a bit lower, how much lower, we are going to discover.
+
+
+2) split sample AUC
+
+
+An AUC free of optimism bias can be obtained using the split sample approach whereby the data is split in two, the model built on the training dataset and the AUC computed on the validation dataset
+
+```{r,collapse=TRUE}
+n=dim(infarct)[1]
+set.seed(1002)
+# set.seed(2002)
+infarct$val=rbinom(n,1,0.5) # val =0 for dvelopment and val=1 for validation
+table(infarct$val)
+
+# NB: we choose here to split the data in two samples of similar sizes but
+#     we could decide to put more patients in the development dataset
+#     (increase the probability 0.5 to 0.6 etc)
+
+# development dataset
+
+infarct.dev=infarct[infarct$val==0,]
+fit.dev<-glm(mi ~  oral + age + smoke, family=binomial, data=infarct.dev)
+summary(fit.dev)
+
+# validation dataset + ROC/AUC 
+
+infarct.val=infarct[infarct$val==1,]
+infarct.val$pred<- predict(fit.dev, infarct.val,type="response")  
+# predictions on the validation dataset using the previous fit
+head(infarct.val)
+require(pROC)
+# ROC + AUC on the validation dataset (suffix .val)
+out<- roc(infarct.val$mi, infarct.val$pred,plot=TRUE,ci=TRUE)
+out
+```
+
+The AUC is lower with a larger CI, i.e. AUC=0.775 with a wider 95\% CI=(0.67 ; 0.88). You may get a different result if you used another the seed or did not specify it. Setting the seed allows you to reproduce your results. The naive AUC=84\% was a bit optimistic. Note that this method is suboptimal and it shows here with a small sample, yielding a large 95\% CI
+
+
+
+3) cross-validated AUC 
+
+A better for to use the data is to perform  cross-validation. Given the data is rather, you may run into trouble with 10-fold crossvalidation depending on the seed. In that case, you can either change the seed or even use a smaller number of groups (e.g. carry out 5-fold CV). I used seed=2002, which seems to be ok.
+
+
+```{r,collapse=TRUE}
+require(cvAUC)
+# reload the data - we don't want the indicator we used before
+infarct <- read.csv("infarct.csv")
+infarct<-data.frame(infarct)
+infarct=data.frame(infarct)
+
+# reformatting the dataset
+colnames(infarct)=c("id", "oral","age", "smoke","Y")
+# remove id (only the variables of interest MUST BE KEPT)
+#            ===========================================
+infarct=infarct[,-c(1)] 
+# only outcome (Y) and covariates in dataset
+head(infarct)
+
+# function doing the CV
+cv_eval <- function(data, V=10){
+  f.cvFolds <- function(Y, V){ #Create CV folds (stratify by outcome)
+    Y0 <- split(sample(which(Y==0)), rep(1:V, length=length(which(Y==0))))
+    Y1 <- split(sample(which(Y==1)), rep(1:V, length=length(which(Y==1))))
+    folds <- vector("list", length=V)
+    for (v in seq(V)) {folds[[v]] <- c(Y0[[v]], Y1[[v]])}
+    return(folds)
+  }
+  f.doFit <- function(v, folds, data){ #Train/test glm for each fold
+    fit <- glm(Y~., data=data[-folds[[v]],], family=binomial)
+    pred <- predict(fit, newdata=data[folds[[v]],], type="response")
+    return(pred)
+  }
+  folds <- f.cvFolds(Y=data$Y, V=V) #Create folds
+  predictions <- unlist(sapply(seq(V), f.doFit, folds=folds, data=data)) #CV train/predict
+  predictions[unlist(folds)] <- predictions #Re-order pred values
+  ci.pooled.cvAUC
+  # Get CV AUC and confidence interval
+  out <- ci.cvAUC(predictions=predictions, labels=data$Y, folds=folds, confidence=0.95)
+  return(out)
+}
+
+set.seed(2002)
+out.cv <- cv_eval(data=infarct, V=10)
+out.cv
+```
+
+
+The 10-fold cross-validated AUC is 0.827, 95\%CI=(0.76 ; 0.89) with seed=2002. It's a bit lower than the naive AUC but not by much, This is indicative of a small optimism bias (a common finding in practice). A slightly larger 95\% CI than the one found with the naive analysis is observed. You may get different results with the seed(s) of your choice and it's perfectly fine. You could also repeat the process a few times and average all the AUC's. 
+
+
+
+
+
+
+**Stata code and output**
+
+Once again the figures will appear when you run the code but are not displayed by Markdown.
+
+
+1) Fitting the model, naive AUC and ROC
+
+Clearly all covariates (*age*, *oral* and *smoke*) are important predictors of *mi*. A naive ROC curve can be obtained by computing the predicted probablity of MI for each observation in the dataset and calling the function *roctab* and using the option *graph*. 
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use infarct.dta
+logistic mi oral age smoke, coef
+predict fitted, pr
+roctab mi fitted
+roctab mi fitted,  graph title("Naive ROC")
+```
+
+The naive AUC is 0.84, 95\% CI=(0.78 ; 0.90), which can be classified as *good*. The model predicts well but this estimate is affected by optimism bias. The true AUC is probably a bit lower, how much lower, we are going to discover.
+
+
+2) split sample AUC
+
+An AUC free of optimism bias can be obtained using the split sample approach whereby the data is split in two, the model built on the training dataset and the AUC computed on the validation dataset
+
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use infarct.dta
+set seed 1001
+gen val = runiform()<.5   
+** Derive a prediction model y-chd69 in the development cohort
+logistic mi oral age smoke  if val==0
+** Generate a new variable containing the predicted probabilities 
+predict fitted, pr
+
+** AUC on the development data (training)
+** roctab mi fitted if  val==0
+** roctab mi fitted if  val==0, graph name(graph0) title("training")
+
+** AUC on the validation data  - THE ONE WE NEED
+roctab mi fitted if  val==1
+roctab mi fitted if  val==1,  graph name(graph1) title("validation")
+
+```
+
+
+The AUC is lower with a larger CI, i.e. AUC=0.81 with a wider 95\% CI=(0.70 ; 0.92). You may get a different result if you used another the seed or did not specify it. Setting the seed allows you to reproduce your results. The naive AUC=84\% was indeed optimistic. Note that this method is suboptimal and it shows here with a small sample, yielding a larger 95\% CI,
+
+
+
+3) cross-validated AUC 
+
+A better for to use the data is to perform  cross-validation. Given the data is rather, you may run into trouble with 10-fold crossvalidation depending on the seed. In that case, you can either change the seed or even use a smaller number of groups (e.g. carry out 5-fold CV). I used seed=2002, which seems to be ok.
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use infarct.dta
+set seed 2002
+xtile group = uniform(), nq(10)
+quietly gen cvfitted = .
+forvalues i = 1/10 {
+
+	* Step 2: estimate model omitting each subset
+	quietly xi: logistic mi oral age smoke if group !=`i'
+	quietly predict cvfittedi, pr
+	
+	* Step 3: save cross-validated statistic for each omitted subset
+	quietly replace cvfitted = cvfittedi if group==`i'
+	quietly drop cvfittedi
+	}
+
+* Step 4: calculate cross-validated area under ROC curve
+roctab mi cvfitted
+roctab mi cvfitted,  graph title("10-fold CV ROC")
+```
+
+
+The 10-fold cross-validated AUC is 0.81, 95\%CI=(0.74 ; 0.88) with seed=2002. It's a bit lower than the naive AUC but not by much, This is indicative of a small optimism bias (a common finding in practice). A slightly larger 95\% CI than the one found with the naive analysis is observed. This is however much better than the one obtained in 2). 
+You may get different results with the seed(s) of your choice and it's perfectly fine. You could also repeat the process a few times and average all the AUC's. 
+
+
+
+
+#### Practice - calibration plot\
+
+
+**R code and output**
+
+
+1) Calibration plot for the final model (Table 5.18) without outlier in cholesterol. Use the split sample approach.
+
+
+```{r,collapse=TRUE}
+require(rms)
+wcgs <- read.csv("wcgs.csv")
+wcgs<-data.frame(wcgs)
+wcgs1=cbind(wcgs$age,wcgs$chol,wcgs$sbp,wcgs$bmi,wcgs$smoke,wcgs$dibpat,wcgs$chd69)
+colnames(wcgs1)=c("age", "chol", "sbp", "bmi", "smoke","dibpat","chd69")
+wcgs1=data.frame(wcgs1)
+wcgs1=na.omit(wcgs1)
+# remove outlier chol=645
+wcgs1=wcgs1[wcgs1$chol <645,]
+wcgs1$age_10<-(wcgs1$age-mean(wcgs1$age))/10
+wcgs1$bmi_10<-(wcgs1$bmi-mean(wcgs1$bmi))/10
+wcgs1$sbp_50<-(wcgs1$sbp-mean(wcgs1$sbp))/50
+wcgs1$chol_50<-(wcgs1$chol-mean(wcgs1$chol,na.rm=T))/50
+
+wcgs1$bmichol<-wcgs1$bmi_10*wcgs1$chol_50
+wcgs1$bmisbp<-wcgs1$bmi_10*wcgs1$sbp_50
+
+
+dim(wcgs1)
+
+# out<-glm(chd69 ~ age_10 + chol_50 + sbp_50 +  bmi_10 + smoke + dibpat + bmichol + bmisbp, family=binomial, data=wcgs1)
+# summary(out)
+
+n=dim(wcgs1)[1]
+set.seed(1001) # choose the same seed as in the notes
+wcgs1$val=rbinom(n,1,0.5) # val =0 for training and val=1 for validation
+table(wcgs1$val)
+
+# training dataset
+wcgs1.dev=wcgs1[wcgs1$val==0,]
+fit.dev<-glm(chd69 ~ age_10 + chol_50 + sbp_50 +  bmi_10 + smoke + dibpat + bmichol + bmisbp, family=binomial, data=wcgs1.dev)
+summary(fit.dev)
+
+# validation dataset 
+wcgs1.val=wcgs1[wcgs1$val==1,]
+wcgs1.val$pred<- predict(fit.dev, wcgs1.val,type="response")  
+
+source("val.prob.ci.R")
+
+val.prob.ci(wcgs1.val$pred,wcgs1.val$chd69, pl=T,smooth=T,logistic.cal=F,
+            g=10)
+
+#val.prob.ci(wcgs1.val$pred,wcgs1.val$chd69, pl=T,smooth=T,logistic.cal=F,
+#            g=20)
+
+```
+
+
+
+2) Has the calibration plot improved compared with the simpler model? 
+
+The calibration plot still displays overestimation of CHD risk for the highest risk category. The plot may look different depending on the seed you used. This is somehow artificial due to the fact that we don't have new data to play with - see also 3).
+
+
+
+3) Repeat with 20 groups and 2/3 in the training dataset
+
+
+Here we simply need to recreat *val* to have 2/3 of observations in the dataset and use *g=20* when running *val.prob.ci*
+
+
+```{r,collapse=TRUE}
+n=dim(wcgs1)[1]
+set.seed(1001) # choose the same seed as in the notes
+wcgs1$val=rbinom(n,1,1/3) # val =0 for dvelopment and val=1 for validation
+table(wcgs1$val)
+
+# development dataset
+wcgs1.dev=wcgs1[wcgs1$val==0,]
+fit.dev<-glm(chd69 ~ age_10 + chol_50 + sbp_50 +  bmi_10 + smoke + dibpat + bmichol + bmisbp, family=binomial, data=wcgs1.dev)
+summary(fit.dev)
+
+# validation dataset + ROC/AUC 
+wcgs1.val=wcgs1[wcgs1$val==1,]
+wcgs1.val$pred<- predict(fit.dev, wcgs1.val,type="response") 
+
+source("val.prob.ci.R")
+
+val.prob.ci(wcgs1.val$pred,wcgs1.val$chd69, pl=T,smooth=T,logistic.cal=F,
+            g=20)
+```
+
+
+We see more points and more variability. Still some overestimation of the CHD risk for the highest category (although now the wider 95\% CI now covers the corresponding point on the 45 degree line0. We have not really fixed the problem with this more complex model. The plot depends on the seed you chose here.  In reality this uncertainty does not exist when carrying out external validation (which is normally the way to go). We use the the data at hand to build the model and the new external data to draw the calibration plot. No need of a seed at any stage.  You can also notice that the plot gives the AUC (on the validation sample) albeit without the 95\% CI.
+
+
+
+**Stata code and output**
+
+
+Once again the figures will appear when you run the code but are not displayed by Markdown.
+
+
+1) Calibration plot for the final model (Table 5.18) without outlier in cholesterol. Use the split sample approach.
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+summarize age
+gen age10=(age-r(mean))/10
+summarize bmi
+gen bmi10=(bmi-r(mean))/10
+summarize sbp
+gen sbp50=(sbp-r(mean))/50
+summarize chol
+gen chol50=(chol-r(mean))/50
+gen bmichol=bmi10*chol50
+gen bmisbp=bmi10*sbp50
+drop ih chol > 645
+
+set seed 1001
+# set.seed 1030
+gen val = runiform()<.5   
+logistic chd69 age10 chol50 sbp50 bmi10 smoke dibpat bmichol  bmisbp if val==0
+predict proba, pr
+pmcalplot proba chd69 if val==1, ci
+** alternatively
+drop if val==0
+pmcalplot proba chd69, ci 
+```
+
+
+2) Has the calibration plot improved compared with the simpler model? 
+
+The calibration plot seems a bit better with this seed but it's also sensitive to the choice of seed. Try seed=1030, you will have a different looking plot, where the situation is  the same as before. This is somehow articial due to the fact that we don't have new data to play with - see also 3).
+
+
+
+3) Repeat with 20 groups and 2/3 in the training dataset
+
+
+```{stata, engine.path=statapath, comment="**", echo=TRUE, collapse = TRUE}
+use wcgs.dta
+summarize age
+gen age10=(age-r(mean))/10
+summarize bmi
+gen bmi10=(bmi-r(mean))/10
+summarize sbp
+gen sbp50=(sbp-r(mean))/50
+summarize chol
+gen chol50=(chol-r(mean))/50
+gen bmichol=bmi10*chol50
+gen bmisbp=bmi10*sbp50
+drop if chol > 645
+
+** set seed 1001
+ set seed 2002
+** set seed 1030
+gen val = runiform()<.33  
+logistic chd69 age10 chol50 sbp50 bmi10 smoke dibpat bmichol  bmisbp if val==0
+predict proba, pr
+pmcalplot proba chd69 if val==1, ci bin(20)
+** alternatively
+drop if val==0
+pmcalplot proba chd69, ci bin(20)
+```
+
+We see more points and more variability. Still some overestimation of the CHD risk for the highest category (although now the wider 95\% CI now covers the corresponding point on the 45 degree line). The plot depends on the seed you chose, see plot with seed 1001 or 1030 (pretty good).  However, in reality, this uncertainty does not exist since typically  external calibration is carried out. We use the the data at hand to build the model and the new external data to draw the calibration plot. No need of a seed at any stage. 
+

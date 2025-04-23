@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- This is a Stata 17.0 generated SVG file (http://www.stata.com) -->
+
+<svg version="1.1" width="5.500in" height="4.000in" viewBox="0 0 3960 2880" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<desc>Stata Graph - Graph</desc>
+	<rect x="0" y="0" width="3960" height="2880" style="fill:#EAF2F3;stroke:none"/>
+	<rect x="0.00" y="0.00" width="3959.88" height="2880.00" style="fill:#EAF2F3"/>
+	<rect x="2.88" y="2.88" width="3954.12" height="2874.24" style="fill:none;stroke:#EAF2F3;stroke-width:5.76"/>
+	<rect x="390.80" y="100.86" width="3468.22" height="2388.33" style="fill:#FFFFFF"/>
+	<rect x="393.68" y="103.74" width="3462.46" height="2382.57" style="fill:none;stroke:#FFFFFF;stroke-width:5.76"/>
+	<line x1="390.80" y1="2425.82" x2="3859.02" y2="2425.82" style="stroke:#EAF2F3;stroke-width:8.64"/>
+	<line x1="390.80" y1="1671.91" x2="3859.02" y2="1671.91" style="stroke:#EAF2F3;stroke-width:8.64"/>
+	<line x1="390.80" y1="918.01" x2="3859.02" y2="918.01" style="stroke:#EAF2F3;stroke-width:8.64"/>
+	<line x1="390.80" y1="164.22" x2="3859.02" y2="164.22" style="stroke:#EAF2F3;stroke-width:8.64"/>
+	<circle cx="507.62" cy="1994.42" r="26.35" style="fill:#1A476F"/>
+	<circle cx="507.62" cy="1994.42" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="549.57" y="2022.43" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">4</text>
+	<circle cx="587.81" cy="2009.52" r="26.35" style="fill:#1A476F"/>
+	<circle cx="587.81" cy="2009.52" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="629.76" y="2037.53" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">10</text>
+	<circle cx="601.18" cy="2295.39" r="26.35" style="fill:#1A476F"/>
+	<circle cx="601.18" cy="2295.39" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="643.13" y="2323.40" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">11</text>
+	<circle cx="627.91" cy="1755.57" r="26.35" style="fill:#1A476F"/>
+	<circle cx="627.91" cy="1755.57" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="669.86" y="1783.58" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">13</text>
+	<circle cx="654.64" cy="1748.02" r="26.35" style="fill:#1A476F"/>
+	<circle cx="654.64" cy="1748.02" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="696.59" y="1776.04" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">15</text>
+	<circle cx="668.00" cy="1824.75" r="26.35" style="fill:#1A476F"/>
+	<circle cx="668.00" cy="1824.75" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="709.95" y="1852.76" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">16</text>
+	<circle cx="681.37" cy="1662.63" r="26.35" style="fill:#1A476F"/>
+	<circle cx="681.37" cy="1662.63" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="723.32" y="1690.64" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">17</text>
+	<circle cx="694.73" cy="1699.51" r="26.35" style="fill:#1A476F"/>
+	<circle cx="694.73" cy="1699.51" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="736.68" y="1727.52" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">18</text>
+	<circle cx="708.10" cy="1698.89" r="26.35" style="fill:#1A476F"/>
+	<circle cx="708.10" cy="1698.89" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="750.05" y="1726.90" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">19</text>
+	<circle cx="721.46" cy="1599.27" r="26.35" style="fill:#1A476F"/>
+	<circle cx="721.46" cy="1599.27" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="763.41" y="1627.28" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">20</text>
+	<circle cx="748.19" cy="1988.35" r="26.35" style="fill:#1A476F"/>
+	<circle cx="748.19" cy="1988.35" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="790.14" y="2016.37" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">22</text>
+	<circle cx="761.56" cy="1548.90" r="26.35" style="fill:#1A476F"/>
+	<circle cx="761.56" cy="1548.90" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="803.51" y="1576.92" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">23</text>
+	<circle cx="774.92" cy="1726.37" r="26.35" style="fill:#1A476F"/>
+	<circle cx="774.92" cy="1726.37" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="816.87" y="1754.38" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">24</text>
+	<circle cx="788.29" cy="1471.19" r="26.35" style="fill:#1A476F"/>
+	<circle cx="788.29" cy="1471.19" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="830.24" y="1499.20" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">25</text>
+	<circle cx="801.65" cy="1724.51" r="26.35" style="fill:#1A476F"/>
+	<circle cx="801.65" cy="1724.51" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="843.60" y="1752.52" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">26</text>
+	<circle cx="815.02" cy="1580.96" r="26.35" style="fill:#1A476F"/>
+	<circle cx="815.02" cy="1580.96" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="856.97" y="1608.97" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">27</text>
+	<circle cx="828.38" cy="1608.31" r="26.35" style="fill:#1A476F"/>
+	<circle cx="828.38" cy="1608.31" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="870.33" y="1636.32" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">28</text>
+	<circle cx="841.75" cy="1694.19" r="26.35" style="fill:#1A476F"/>
+	<circle cx="841.75" cy="1694.19" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="883.70" y="1722.20" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">29</text>
+	<circle cx="855.11" cy="1611.03" r="26.35" style="fill:#1A476F"/>
+	<circle cx="855.11" cy="1611.03" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="897.06" y="1639.04" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">30</text>
+	<circle cx="868.48" cy="1592.84" r="26.35" style="fill:#1A476F"/>
+	<circle cx="868.48" cy="1592.84" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="910.43" y="1620.85" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">31</text>
+	<circle cx="881.84" cy="1718.07" r="26.35" style="fill:#1A476F"/>
+	<circle cx="881.84" cy="1718.07" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="923.79" y="1746.09" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">32</text>
+	<circle cx="895.21" cy="1573.16" r="26.35" style="fill:#1A476F"/>
+	<circle cx="895.21" cy="1573.16" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="937.16" y="1601.17" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">33</text>
+	<circle cx="908.57" cy="1573.41" r="26.35" style="fill:#1A476F"/>
+	<circle cx="908.57" cy="1573.41" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="950.52" y="1601.42" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">34</text>
+	<circle cx="921.94" cy="1742.95" r="26.35" style="fill:#1A476F"/>
+	<circle cx="921.94" cy="1742.95" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="963.89" y="1770.96" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">35</text>
+	<circle cx="935.30" cy="1690.60" r="26.35" style="fill:#1A476F"/>
+	<circle cx="935.30" cy="1690.60" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="977.25" y="1718.61" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">36</text>
+	<circle cx="948.67" cy="1538.14" r="26.35" style="fill:#1A476F"/>
+	<circle cx="948.67" cy="1538.14" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="990.62" y="1566.15" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">37</text>
+	<circle cx="988.76" cy="1599.52" r="26.35" style="fill:#1A476F"/>
+	<circle cx="988.76" cy="1599.52" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1030.71" y="1627.53" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">40</text>
+	<circle cx="1015.49" cy="1645.56" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1015.49" cy="1645.56" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1057.44" y="1673.57" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">42</text>
+	<circle cx="1028.86" cy="1758.91" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1028.86" cy="1758.91" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1070.81" y="1786.93" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">43</text>
+	<circle cx="1042.22" cy="1607.44" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1042.22" cy="1607.44" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1084.17" y="1635.45" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">44</text>
+	<circle cx="1055.59" cy="1556.33" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1055.59" cy="1556.33" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1097.54" y="1584.34" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">45</text>
+	<circle cx="1068.95" cy="1708.67" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1068.95" cy="1708.67" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1110.90" y="1736.68" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">46</text>
+	<circle cx="1082.32" cy="1610.16" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1082.32" cy="1610.16" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1124.27" y="1638.17" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">47</text>
+	<circle cx="1109.05" cy="1581.82" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1109.05" cy="1581.82" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1151.00" y="1609.83" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">49</text>
+	<circle cx="1122.41" cy="1583.93" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1122.41" cy="1583.93" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1164.36" y="1611.94" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">50</text>
+	<circle cx="1135.78" cy="1615.36" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1135.78" cy="1615.36" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1177.73" y="1643.37" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">51</text>
+	<circle cx="1149.14" cy="1632.44" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1149.14" cy="1632.44" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1191.09" y="1660.45" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">52</text>
+	<circle cx="1175.87" cy="1723.77" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1175.87" cy="1723.77" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1217.82" y="1751.78" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">54</text>
+	<circle cx="1202.60" cy="1826.61" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1202.60" cy="1826.61" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1244.55" y="1854.62" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">56</text>
+	<circle cx="1215.97" cy="1554.97" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1215.97" cy="1554.97" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1257.92" y="1582.98" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">57</text>
+	<circle cx="1242.70" cy="1668.08" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1242.70" cy="1668.08" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1284.65" y="1696.09" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">59</text>
+	<circle cx="1256.06" cy="1623.28" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1256.06" cy="1623.28" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1298.01" y="1651.29" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">60</text>
+	<circle cx="1269.43" cy="1684.41" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1269.43" cy="1684.41" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1311.38" y="1712.43" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">61</text>
+	<circle cx="1282.79" cy="1561.65" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1282.79" cy="1561.65" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1324.74" y="1589.66" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">62</text>
+	<circle cx="1296.16" cy="1668.20" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1296.16" cy="1668.20" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1338.11" y="1696.21" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">63</text>
+	<circle cx="1323.01" cy="1792.70" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1323.01" cy="1792.70" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1364.96" y="1820.71" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">65</text>
+	<circle cx="1349.74" cy="1653.60" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1349.74" cy="1653.60" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1391.69" y="1681.61" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">67</text>
+	<circle cx="1363.11" cy="1590.36" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1363.11" cy="1590.36" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1405.06" y="1618.37" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">68</text>
+	<circle cx="1376.47" cy="1668.45" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1376.47" cy="1668.45" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1418.42" y="1696.46" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">69</text>
+	<circle cx="1403.20" cy="1594.69" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1403.20" cy="1594.69" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1445.15" y="1622.70" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">71</text>
+	<circle cx="1456.66" cy="1714.49" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1456.66" cy="1714.49" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1498.61" y="1742.50" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">75</text>
+	<circle cx="1470.03" cy="1629.71" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1470.03" cy="1629.71" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1511.98" y="1657.73" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">76</text>
+	<circle cx="1483.39" cy="1712.51" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1483.39" cy="1712.51" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1525.34" y="1740.52" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">77</text>
+	<circle cx="1496.76" cy="1574.03" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1496.76" cy="1574.03" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1538.71" y="1602.04" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">78</text>
+	<circle cx="1510.12" cy="1745.55" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1510.12" cy="1745.55" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1552.07" y="1773.56" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">79</text>
+	<circle cx="1536.85" cy="1581.82" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1536.85" cy="1581.82" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1578.80" y="1609.83" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">81</text>
+	<circle cx="1550.22" cy="1668.94" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1550.22" cy="1668.94" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1592.17" y="1696.96" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">82</text>
+	<circle cx="1563.58" cy="1604.96" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1563.58" cy="1604.96" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1605.53" y="1632.98" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">83</text>
+	<circle cx="1576.95" cy="1644.94" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1576.95" cy="1644.94" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1618.90" y="1672.95" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">84</text>
+	<circle cx="1590.31" cy="1626.99" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1590.31" cy="1626.99" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1632.26" y="1655.00" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">85</text>
+	<circle cx="1603.68" cy="1818.32" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1603.68" cy="1818.32" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1645.63" y="1846.33" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">86</text>
+	<circle cx="1617.04" cy="1639.74" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1617.04" cy="1639.74" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1658.99" y="1667.75" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">87</text>
+	<circle cx="1630.41" cy="1651.25" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1630.41" cy="1651.25" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1672.36" y="1679.26" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">88</text>
+	<circle cx="1643.77" cy="1629.84" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1643.77" cy="1629.84" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1685.72" y="1657.85" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">89</text>
+	<circle cx="1670.50" cy="1653.10" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1670.50" cy="1653.10" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1712.45" y="1681.12" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">91</text>
+	<circle cx="1683.87" cy="1661.64" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1683.87" cy="1661.64" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1725.82" y="1689.65" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">92</text>
+	<circle cx="1697.23" cy="1630.58" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1697.23" cy="1630.58" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1739.18" y="1658.59" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">93</text>
+	<circle cx="1710.60" cy="1730.45" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1710.60" cy="1730.45" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1752.55" y="1758.46" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">94</text>
+	<circle cx="1723.96" cy="1696.79" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1723.96" cy="1696.79" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1765.91" y="1724.80" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">95</text>
+	<circle cx="1737.33" cy="1651.25" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1737.33" cy="1651.25" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1779.28" y="1679.26" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">96</text>
+	<circle cx="1750.69" cy="1652.61" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1750.69" cy="1652.61" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1792.64" y="1680.62" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">97</text>
+	<circle cx="1764.06" cy="1665.60" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1764.06" cy="1665.60" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1806.01" y="1693.61" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">98</text>
+	<circle cx="1777.42" cy="1726.24" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1777.42" cy="1726.24" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1819.37" y="1754.25" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">99</text>
+	<circle cx="1790.79" cy="1655.21" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1790.79" cy="1655.21" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1832.74" y="1683.22" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">100</text>
+	<circle cx="1804.15" cy="1655.21" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1804.15" cy="1655.21" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1846.10" y="1683.22" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">101</text>
+	<circle cx="1817.52" cy="1656.45" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1817.52" cy="1656.45" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1859.47" y="1684.46" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">102</text>
+	<circle cx="1830.88" cy="1681.20" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1830.88" cy="1681.20" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1872.83" y="1709.21" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">103</text>
+	<circle cx="1844.25" cy="1662.88" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1844.25" cy="1662.88" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1886.20" y="1690.89" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">104</text>
+	<circle cx="1857.61" cy="1696.91" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1857.61" cy="1696.91" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1899.56" y="1724.92" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">105</text>
+	<circle cx="1870.98" cy="1727.36" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1870.98" cy="1727.36" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1912.93" y="1755.37" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">106</text>
+	<circle cx="1884.34" cy="1718.07" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1884.34" cy="1718.07" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1926.29" y="1746.09" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">107</text>
+	<circle cx="1897.71" cy="1772.28" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1897.71" cy="1772.28" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1939.66" y="1800.29" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">108</text>
+	<circle cx="1911.07" cy="1691.22" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1911.07" cy="1691.22" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1953.02" y="1719.23" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">109</text>
+	<circle cx="1937.80" cy="1676.49" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1937.80" cy="1676.49" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1979.75" y="1704.51" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">111</text>
+	<circle cx="1951.17" cy="1689.24" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1951.17" cy="1689.24" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="1993.12" y="1717.25" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">112</text>
+	<circle cx="1964.53" cy="1678.84" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1964.53" cy="1678.84" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2006.48" y="1706.86" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">113</text>
+	<circle cx="1977.90" cy="1687.88" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1977.90" cy="1687.88" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2019.85" y="1715.89" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">114</text>
+	<circle cx="1991.26" cy="1676.62" r="26.35" style="fill:#1A476F"/>
+	<circle cx="1991.26" cy="1676.62" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2033.21" y="1704.63" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">115</text>
+	<circle cx="2004.63" cy="1681.32" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2004.63" cy="1681.32" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2046.58" y="1709.33" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">116</text>
+	<circle cx="2017.99" cy="1681.32" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2017.99" cy="1681.32" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2059.94" y="1709.33" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">117</text>
+	<circle cx="2031.36" cy="1672.04" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2031.36" cy="1672.04" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2073.31" y="1700.05" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">118</text>
+	<circle cx="2044.72" cy="1721.05" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2044.72" cy="1721.05" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2086.67" y="1749.06" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">119</text>
+	<circle cx="2058.09" cy="1671.42" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2058.09" cy="1671.42" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2100.04" y="1699.43" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">120</text>
+	<circle cx="2071.45" cy="1671.42" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2071.45" cy="1671.42" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2113.40" y="1699.43" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">121</text>
+	<circle cx="2098.18" cy="1678.35" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2098.18" cy="1678.35" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2140.13" y="1706.36" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">123</text>
+	<circle cx="2111.55" cy="1682.31" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2111.55" cy="1682.31" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2153.50" y="1710.32" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">124</text>
+	<circle cx="2124.91" cy="1671.91" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2124.91" cy="1671.91" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2166.86" y="1699.93" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">125</text>
+	<circle cx="2138.28" cy="1679.96" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2138.28" cy="1679.96" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2180.23" y="1707.97" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">126</text>
+	<circle cx="2151.64" cy="1681.20" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2151.64" cy="1681.20" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2193.59" y="1709.21" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">127</text>
+	<circle cx="2165.01" cy="1679.96" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2165.01" cy="1679.96" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2206.96" y="1707.97" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">128</text>
+	<circle cx="2178.37" cy="1692.58" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2178.37" cy="1692.58" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2220.32" y="1720.59" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">129</text>
+	<circle cx="2191.74" cy="1672.78" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2191.74" cy="1672.78" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2233.69" y="1700.79" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">130</text>
+	<circle cx="2205.10" cy="1681.20" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2205.10" cy="1681.20" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2247.05" y="1709.21" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">131</text>
+	<circle cx="2218.47" cy="1701.49" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2218.47" cy="1701.49" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2260.42" y="1729.50" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">132</text>
+	<circle cx="2231.83" cy="1701.49" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2231.83" cy="1701.49" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2273.78" y="1729.50" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">133</text>
+	<circle cx="2245.20" cy="1665.11" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2245.20" cy="1665.11" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2287.15" y="1693.12" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">134</text>
+	<circle cx="2258.56" cy="1696.05" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2258.56" cy="1696.05" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2300.51" y="1724.06" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">135</text>
+	<circle cx="2271.93" cy="1668.94" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2271.93" cy="1668.94" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2313.88" y="1696.96" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">136</text>
+	<circle cx="2285.29" cy="1677.61" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2285.29" cy="1677.61" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2327.24" y="1705.62" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">137</text>
+	<circle cx="2298.66" cy="1677.98" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2298.66" cy="1677.98" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2340.61" y="1705.99" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">138</text>
+	<circle cx="2312.02" cy="1673.03" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2312.02" cy="1673.03" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2353.97" y="1701.04" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">139</text>
+	<circle cx="2325.39" cy="1679.09" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2325.39" cy="1679.09" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2367.34" y="1707.10" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">140</text>
+	<circle cx="2338.75" cy="1648.77" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2338.75" cy="1648.77" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2380.70" y="1676.78" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">141</text>
+	<circle cx="2352.12" cy="1706.32" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2352.12" cy="1706.32" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2394.07" y="1734.33" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">142</text>
+	<circle cx="2365.48" cy="1738.87" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2365.48" cy="1738.87" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2407.43" y="1766.88" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">143</text>
+	<circle cx="2378.85" cy="1690.23" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2378.85" cy="1690.23" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2420.80" y="1718.24" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">144</text>
+	<circle cx="2392.21" cy="1637.88" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2392.21" cy="1637.88" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2434.16" y="1665.89" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">145</text>
+	<circle cx="2405.58" cy="1699.64" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2405.58" cy="1699.64" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2447.53" y="1727.65" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">146</text>
+	<circle cx="2418.94" cy="1736.27" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2418.94" cy="1736.27" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2460.89" y="1764.28" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">147</text>
+	<circle cx="2432.31" cy="1736.27" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2432.31" cy="1736.27" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2474.26" y="1764.28" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">148</text>
+	<circle cx="2445.67" cy="1673.89" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2445.67" cy="1673.89" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2487.62" y="1701.91" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">149</text>
+	<circle cx="2459.04" cy="1665.85" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2459.04" cy="1665.85" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2500.99" y="1693.86" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">150</text>
+	<circle cx="2472.40" cy="1640.48" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2472.40" cy="1640.48" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2514.35" y="1668.49" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">151</text>
+	<circle cx="2512.50" cy="1649.76" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2512.50" cy="1649.76" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2554.45" y="1677.77" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">154</text>
+	<circle cx="2525.86" cy="1706.19" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2525.86" cy="1706.19" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2567.81" y="1734.21" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">155</text>
+	<circle cx="2539.23" cy="1664.98" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2539.23" cy="1664.98" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2581.18" y="1693.00" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">156</text>
+	<circle cx="2579.45" cy="1630.95" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2579.45" cy="1630.95" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2621.40" y="1658.96" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">159</text>
+	<circle cx="2592.81" cy="1710.28" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2592.81" cy="1710.28" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2634.76" y="1738.29" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">160</text>
+	<circle cx="2606.18" cy="1685.65" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2606.18" cy="1685.65" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2648.13" y="1713.66" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">161</text>
+	<circle cx="2619.54" cy="1685.65" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2619.54" cy="1685.65" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2661.49" y="1713.66" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">162</text>
+	<circle cx="2632.91" cy="1609.05" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2632.91" cy="1609.05" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2674.86" y="1637.06" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">163</text>
+	<circle cx="2646.27" cy="1674.64" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2646.27" cy="1674.64" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2688.22" y="1702.65" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">164</text>
+	<circle cx="2673.00" cy="1780.57" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2673.00" cy="1780.57" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2714.95" y="1808.58" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">166</text>
+	<circle cx="2686.37" cy="1780.57" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2686.37" cy="1780.57" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2728.32" y="1808.58" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">167</text>
+	<circle cx="2699.73" cy="1750.62" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2699.73" cy="1750.62" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2741.68" y="1778.63" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">168</text>
+	<circle cx="2713.10" cy="1649.27" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2713.10" cy="1649.27" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2755.05" y="1677.28" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">169</text>
+	<circle cx="2726.46" cy="1576.01" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2726.46" cy="1576.01" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2768.41" y="1604.02" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">170</text>
+	<circle cx="2753.19" cy="1722.04" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2753.19" cy="1722.04" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2795.14" y="1750.05" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">172</text>
+	<circle cx="2766.56" cy="1675.50" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2766.56" cy="1675.50" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2808.51" y="1703.52" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">173</text>
+	<circle cx="2779.92" cy="1690.73" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2779.92" cy="1690.73" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2821.87" y="1718.74" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">174</text>
+	<circle cx="2793.29" cy="1565.12" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2793.29" cy="1565.12" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2835.24" y="1593.13" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">175</text>
+	<circle cx="2806.65" cy="1584.79" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2806.65" cy="1584.79" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2848.60" y="1612.80" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">176</text>
+	<circle cx="2820.02" cy="1726.00" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2820.02" cy="1726.00" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2861.97" y="1754.01" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">177</text>
+	<circle cx="2846.75" cy="1676.00" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2846.75" cy="1676.00" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2888.70" y="1704.01" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">179</text>
+	<circle cx="2860.11" cy="1798.76" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2860.11" cy="1798.76" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2902.06" y="1826.77" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">180</text>
+	<circle cx="2873.48" cy="1754.83" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2873.48" cy="1754.83" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2915.43" y="1782.84" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">181</text>
+	<circle cx="2886.84" cy="1676.37" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2886.84" cy="1676.37" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2928.79" y="1704.38" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">182</text>
+	<circle cx="2900.21" cy="1484.43" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2900.21" cy="1484.43" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2942.16" y="1512.44" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">183</text>
+	<circle cx="2913.57" cy="1696.29" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2913.57" cy="1696.29" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2955.52" y="1724.31" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">184</text>
+	<circle cx="2926.94" cy="1657.56" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2926.94" cy="1657.56" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2968.89" y="1685.57" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">185</text>
+	<circle cx="2940.30" cy="1717.70" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2940.30" cy="1717.70" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2982.25" y="1745.72" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">186</text>
+	<circle cx="2953.67" cy="1761.76" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2953.67" cy="1761.76" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="2995.62" y="1789.77" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">187</text>
+	<circle cx="2967.03" cy="1638.13" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2967.03" cy="1638.13" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3008.98" y="1666.14" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">188</text>
+	<circle cx="2980.40" cy="1837.13" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2980.40" cy="1837.13" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3022.35" y="1865.14" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">189</text>
+	<circle cx="2993.76" cy="1566.48" r="26.35" style="fill:#1A476F"/>
+	<circle cx="2993.76" cy="1566.48" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3035.71" y="1594.49" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">190</text>
+	<circle cx="3007.13" cy="1566.48" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3007.13" cy="1566.48" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3049.08" y="1594.49" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">191</text>
+	<circle cx="3020.49" cy="1764.48" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3020.49" cy="1764.48" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3062.44" y="1792.49" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">192</text>
+	<circle cx="3033.86" cy="1764.48" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3033.86" cy="1764.48" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3075.81" y="1792.49" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">193</text>
+	<circle cx="3060.59" cy="1540.86" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3060.59" cy="1540.86" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3102.54" y="1568.87" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">195</text>
+	<circle cx="3073.95" cy="1655.08" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3073.95" cy="1655.08" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3115.90" y="1683.10" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">196</text>
+	<circle cx="3087.32" cy="1777.35" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3087.32" cy="1777.35" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3129.27" y="1805.36" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">197</text>
+	<circle cx="3114.05" cy="1654.09" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3114.05" cy="1654.09" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3156.00" y="1682.11" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">199</text>
+	<circle cx="3127.41" cy="1677.61" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3127.41" cy="1677.61" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3169.36" y="1705.62" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">200</text>
+	<circle cx="3140.78" cy="1752.48" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3140.78" cy="1752.48" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3182.73" y="1780.49" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">201</text>
+	<circle cx="3154.14" cy="1630.33" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3154.14" cy="1630.33" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3196.09" y="1658.35" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">202</text>
+	<circle cx="3167.51" cy="1521.18" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3167.51" cy="1521.18" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3209.46" y="1549.19" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">203</text>
+	<circle cx="3180.87" cy="1703.84" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3180.87" cy="1703.84" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3222.82" y="1731.85" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">204</text>
+	<circle cx="3194.24" cy="1819.55" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3194.24" cy="1819.55" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3236.19" y="1847.56" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">205</text>
+	<circle cx="3207.60" cy="1883.04" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3207.60" cy="1883.04" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3249.55" y="1911.05" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">206</text>
+	<circle cx="3220.97" cy="1466.11" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3220.97" cy="1466.11" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3262.92" y="1494.12" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">207</text>
+	<circle cx="3234.33" cy="1823.88" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3234.33" cy="1823.88" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3276.28" y="1851.90" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">208</text>
+	<circle cx="3247.70" cy="1527.49" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3247.70" cy="1527.49" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3289.65" y="1555.51" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">209</text>
+	<circle cx="3261.06" cy="1430.47" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3261.06" cy="1430.47" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3303.01" y="1458.48" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">210</text>
+	<circle cx="3274.43" cy="1768.44" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3274.43" cy="1768.44" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3316.38" y="1796.45" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">211</text>
+	<circle cx="3287.79" cy="1543.21" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3287.79" cy="1543.21" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3329.74" y="1571.22" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">212</text>
+	<circle cx="3301.16" cy="1971.89" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3301.16" cy="1971.89" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3343.11" y="1999.91" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">213</text>
+	<circle cx="3314.52" cy="1539.37" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3314.52" cy="1539.37" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3356.47" y="1567.39" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">214</text>
+	<circle cx="3327.89" cy="1620.43" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3327.89" cy="1620.43" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3369.84" y="1648.44" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">215</text>
+	<circle cx="3341.25" cy="1912.12" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3341.25" cy="1912.12" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3383.20" y="1940.13" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">216</text>
+	<circle cx="3354.62" cy="1773.89" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3354.62" cy="1773.89" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3396.57" y="1801.90" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">217</text>
+	<circle cx="3367.98" cy="1586.40" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3367.98" cy="1586.40" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3409.93" y="1614.41" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">218</text>
+	<circle cx="3381.35" cy="1745.18" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3381.35" cy="1745.18" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3423.30" y="1773.19" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">219</text>
+	<circle cx="3394.71" cy="1714.11" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3394.71" cy="1714.11" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3436.66" y="1742.13" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">220</text>
+	<circle cx="3408.08" cy="1611.77" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3408.08" cy="1611.77" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3450.03" y="1639.78" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">221</text>
+	<circle cx="3421.44" cy="1417.48" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3421.44" cy="1417.48" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3463.39" y="1445.49" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">222</text>
+	<circle cx="3434.81" cy="1295.33" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3434.81" cy="1295.33" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3476.76" y="1323.34" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">223</text>
+	<circle cx="3448.17" cy="1837.00" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3448.17" cy="1837.00" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3490.12" y="1865.01" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">224</text>
+	<circle cx="3461.54" cy="1635.78" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3461.54" cy="1635.78" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3503.49" y="1663.79" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">225</text>
+	<circle cx="3474.90" cy="435.61" r="26.35" style="fill:#1A476F"/>
+	<circle cx="3474.90" cy="435.61" r="22.03" style="fill:none;stroke:#1A476F;stroke-width:8.64"/>
+	<text x="3516.85" y="463.63" style="font-family:'Helvetica';font-size:79.94px;fill:#1A476f">226</text>
+	<line x1="390.80" y1="2489.19" x2="390.80" y2="100.86" style="stroke:#000000;stroke-width:5.76"/>
+	<line x1="390.80" y1="2425.82" x2="350.83" y2="2425.82" style="stroke:#000000;stroke-width:5.76"/>
+	<text x="300.72" y="2425.82" style="font-family:'Helvetica';font-size:99.99px;fill:#000000" transform="rotate(-90 300.72,2425.82)" text-anchor="middle">-.5</text>
+	<line x1="390.80" y1="1671.91" x2="350.83" y2="1671.91" style="stroke:#000000;stroke-width:5.76"/>
+	<text x="300.72" y="1671.91" style="font-family:'Helvetica';font-size:99.99px;fill:#000000" transform="rotate(-90 300.72,1671.91)" text-anchor="middle">0</text>
+	<line x1="390.80" y1="918.01" x2="350.83" y2="918.01" style="stroke:#000000;stroke-width:5.76"/>
+	<text x="300.72" y="918.01" style="font-family:'Helvetica';font-size:99.99px;fill:#000000" transform="rotate(-90 300.72,918.01)" text-anchor="middle">.5</text>
+	<line x1="390.80" y1="164.22" x2="350.83" y2="164.22" style="stroke:#000000;stroke-width:5.76"/>
+	<text x="300.72" y="164.22" style="font-family:'Helvetica';font-size:99.99px;fill:#000000" transform="rotate(-90 300.72,164.22)" text-anchor="middle">1</text>
+	<text x="190.71" y="1294.96" style="font-family:'Helvetica';font-size:99.99px;fill:#000000" transform="rotate(-90 190.71,1294.96)" text-anchor="middle">DFBETA age</text>
+	<line x1="390.80" y1="2489.19" x2="3859.02" y2="2489.19" style="stroke:#000000;stroke-width:5.76"/>
+	<line x1="454.16" y1="2489.19" x2="454.16" y2="2529.16" style="stroke:#000000;stroke-width:5.76"/>
+	<text x="454.16" y="2619.14" style="font-family:'Helvetica';font-size:99.99px;fill:#000000" text-anchor="middle">0</text>
+	<line x1="1122.41" y1="2489.19" x2="1122.41" y2="2529.16" style="stroke:#000000;stroke-width:5.76"/>
+	<text x="1122.41" y="2619.14" style="font-family:'Helvetica';font-size:99.99px;fill:#000000" text-anchor="middle">50</text>
+	<line x1="1790.79" y1="2489.19" x2="1790.79" y2="2529.16" style="stroke:#000000;stroke-width:5.76"/>
+	<text x="1790.79" y="2619.14" style="font-family:'Helvetica';font-size:99.99px;fill:#000000" text-anchor="middle">100</text>
+	<line x1="2459.04" y1="2489.19" x2="2459.04" y2="2529.16" style="stroke:#000000;stroke-width:5.76"/>
+	<text x="2459.04" y="2619.14" style="font-family:'Helvetica';font-size:99.99px;fill:#000000" text-anchor="middle">150</text>
+	<line x1="3127.41" y1="2489.19" x2="3127.41" y2="2529.16" style="stroke:#000000;stroke-width:5.76"/>
+	<text x="3127.41" y="2619.14" style="font-family:'Helvetica';font-size:99.99px;fill:#000000" text-anchor="middle">200</text>
+	<line x1="3795.66" y1="2489.19" x2="3795.66" y2="2529.16" style="stroke:#000000;stroke-width:5.76"/>
+	<text x="3795.66" y="2619.14" style="font-family:'Helvetica';font-size:99.99px;fill:#000000" text-anchor="middle">250</text>
+	<text x="2124.91" y="2729.16" style="font-family:'Helvetica';font-size:99.99px;fill:#000000" text-anchor="middle">id</text>
+</svg>

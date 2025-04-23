@@ -1,0 +1,114 @@
+---
+title: "Week3-Exercises-Solutions"
+format: 
+  html:
+    self-contained: true
+#  pdf:
+#    documentclass: scrreprt
+#    keep-md: true
+#    keep-tex: true
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(Statamarkdown)
+#stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+#knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+#knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+# Exercise solutions
+
+### Week 3 {.unnumbered}
+
+
+The dataset [lowbwt.csv](https://www.dropbox.com/scl/fi/ljqh7xojwidza0h1e7lg4/lowbwt.csv?rlkey=stg6s90y1aqr4eo9pkxkm73bl&dl=1) was part of a study aiming to identify risk factors associated with giving birth to a low birth weight baby (weighing less than 2500 grams).
+
+#### 1 - Fit a linear model for the variable *bwt* (birth weight) using the covariate *age* (mother's age), evaluate the assumptions and interpret the results.
+
+**R code**
+```{r, ccollapse = TRUE, include=TRUE}
+lowbwt <- read.csv("https://www.dropbox.com/scl/fi/ljqh7xojwidza0h1e7lg4/lowbwt.csv?rlkey=stg6s90y1aqr4eo9pkxkm73bl&dl=1")   
+lm1 <- lm(bwt~age, data=lowbwt)  #fit  the model
+summary(lm1)
+confint(lm1)
+par(mfrow=c(1,2))
+plot(lm1, c(1,2)) #residuals vs fitted and distrib of the residuals
+```
+
+
+**Stata code**
+
+```{stata }
+clear
+import delimited "https://www.dropbox.com/scl/fi/ljqh7xojwidza0h1e7lg4/lowbwt.csv?rlkey=stg6s90y1aqr4eo9pkxkm73bl&dl=1"
+
+reg bwt age
+rvfplot 
+graph export figures/rvplot_w3_1.svg, replace
+predict res_std, residuals 
+qnorm res_std 
+graph export figures/residuals_w3_1.svg, replace
+
+```
+![](figures/rvplot_w3_1.svg)
+![](figures/residuals_w3_1.svg)
+
+
+
+We have fitted a linear regression for birth weight using mother's age.  The first residual plot (residuals vs fitted) does not show evidence of departure from the linearity assumption or violation of the homoscedasticity assumption as the dispersion seems constant along the x-axis.  The q-q plot indicates that the residuals appear to follow a normal distribution (a bit of departure at one of the tails).  
+
+From the regression output, the intercept 2657, which is the expected birth weight for a mother with an age of zero. The coefficient for age is 12, which means that for every one year increase in the mother's age, the birth weight is expected to increase 12 grams in average (95%CI: [-7, 32]). The R-squared value for this model is 0.008. This means that 0.8% of the variability in birth weight can be explained by the mother's age.  This result does not provide evidence of a linear relation between birth weight and mother's age.
+
+
+#### 2 - Evaluate potential outliers and influential observations. How would the results change if you excluded this/these observation(s)?
+
+```{r, include=T, eval=T}
+plot(lowbwt$age, lowbwt$bwt)
+text(lowbwt$age, lowbwt$bwt, labels = lowbwt$id, pos = 1) #adds ids
+```
+
+From the scatter plot, we can recognise the observation with id=226 has a value for age far from the other observations.  Let's look at some plots with influence measures:
+
+```{r, include=T, eval=T}
+
+#Cook's distance
+#the option labels.id shows the label from 
+#the variable id rather than the row number
+plot(lm1, c(4,5), labels.id=lowbwt$id)  
+
+#Plotting the change in the beta for age
+#when each observation is removed
+inf <- influence.measures(lm1)
+plot(lowbwt$id, inf$infmat[,2], xlab="ID", ylab="mother's age")
+text(lowbwt$id, inf$infmat[,2], labels = lowbwt$id, pos = 1, cex=.7) #adds ids
+title("beta_age with ID removed")
+```
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+import delimited "https://www.dropbox.com/scl/fi/ljqh7xojwidza0h1e7lg4/lowbwt.csv?rlkey=stg6s90y1aqr4eo9pkxkm73bl&dl=1"
+reg bwt age
+dfbeta
+
+*leverage plot 
+ lvr2plot 
+graph export figures/lvr2plot_wk3_3.svg 
+
+ 
+*plotting the change in the beta for age  (dfbeta) 
+*when each observation is removed*/
+twoway (scatter _dfbeta_1 id, sort mlabel(id)) 
+graph export figures/scatter_wk3_3.svg 
+```
+
+![](figures/lvr2plot_wk3_3.svg) 
+![](figures/scatter_wk3_3.svg)
+
+
+
+After reviewing the plots above, it appears that both observation 11 and 226 have a significant impact on the estimation. As a general rule, it is not advisable to remove observations from the analysis without a strong justification, and any such decision should be well-justified. However, in this instance, observation 226 was made on a mother who is nearly 10 years older than the older mothers in the remaining cohort. This factor may suggest that this mother belongs to a different cohort, and we could argue for her exclusion from the analysis. Regardless, it would have been preferable to anticipate this issue during the study's design phase, for instance, by setting age<40 years old as an inclusion criterion.
+

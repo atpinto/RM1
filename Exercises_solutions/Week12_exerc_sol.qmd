@@ -1,0 +1,395 @@
+---
+title: "Week 11 - Exercises-Solutions"
+format:
+  pdf:
+    documentclass: scrreprt
+    keep-md: true
+    keep-tex: true
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(tidyverse)
+library(gtsummary)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+# Exercise solutions
+
+
+### Week 12 {.unnumbered}
+
+#### Investigation\
+
+
+**R code and output**
+
+1) Fitting the model, naive AUC and ROC
+
+Clearly all covariates (*age*, *oral* and *smoke*) are important predictors of *mi*. A naive ROC curve can be obtained by computing the predicted probablity of MI for each observation in the dataset and calling the *roc* function from *pROC*
+
+```{r,collapse=TRUE}
+infarct <- read.csv("infarct.csv")
+infarct<-data.frame(infarct)
+require(pROC)
+out0 <- glm(mi ~ oral + age + smoke, family=binomial(link="logit"),data=infarct) 
+summary(out0)
+infarct$pred=predict(out0,infarct,type="response")
+out.roc<- roc(infarct$mi, infarct$pred,plot=TRUE,ci=TRUE)
+out.roc
+```
+
+The naive AUC is 0.84, 95\% CI=(0.78 ; 0.90), which can be classified as *good*. The model predicts well but this estimate is affected by optimism bias. The true AUC is probably a bit lower, how much lower, we are going to discover.
+
+
+2) split sample AUC
+
+
+An AUC free of optimism bias can be obtained using the split sample approach whereby the data is split in two, the model built on the training dataset and the AUC computed on the validation dataset
+
+```{r,collapse=TRUE}
+n=dim(infarct)[1]
+set.seed(1002)
+# set.seed(2002)
+infarct$val=rbinom(n,1,0.5) # val =0 for dvelopment and val=1 for validation
+table(infarct$val)
+
+# NB: we choose here to split the data in two samples of similar sizes but
+#     we could decide to put more patients in the development dataset
+#     (increase the probability 0.5 to 0.6 etc)
+
+# development dataset
+
+infarct.dev=infarct[infarct$val==0,]
+fit.dev<-glm(mi ~  oral + age + smoke, family=binomial, data=infarct.dev)
+summary(fit.dev)
+
+# validation dataset + ROC/AUC 
+
+infarct.val=infarct[infarct$val==1,]
+infarct.val$pred<- predict(fit.dev, infarct.val,type="response")  
+# predictions on the validation dataset using the previous fit
+head(infarct.val)
+require(pROC)
+# ROC + AUC on the validation dataset (suffix .val)
+out<- roc(infarct.val$mi, infarct.val$pred,plot=TRUE,ci=TRUE)
+out
+```
+
+The AUC is lower with a larger CI, i.e. AUC=0.775 with a wider 95\% CI=(0.67 ; 0.88). You may get a different result if you used another the seed or did not specify it. Setting the seed allows you to reproduce your results. The naive AUC=84\% was a bit optimistic. Note that this method is suboptimal and it shows here with a small sample, yielding a large 95\% CI
+
+
+
+3) cross-validated AUC 
+
+A better for to use the data is to perform  cross-validation. Given the data is rather, you may run into trouble with 10-fold crossvalidation depending on the seed. In that case, you can either change the seed or even use a smaller number of groups (e.g. carry out 5-fold CV). I used seed=2002, which seems to be ok.
+
+
+```{r,collapse=TRUE}
+require(cvAUC)
+# reload the data - we don't want the indicator we used before
+infarct <- read.csv("infarct.csv")
+infarct<-data.frame(infarct)
+infarct=data.frame(infarct)
+
+# reformatting the dataset
+colnames(infarct)=c("id", "oral","age", "smoke","Y")
+# remove id (only the variables of interest MUST BE KEPT)
+#            ===========================================
+infarct=infarct[,-c(1)] 
+# only outcome (Y) and covariates in dataset
+head(infarct)
+
+# function doing the CV
+cv_eval <- function(data, V=10){
+  f.cvFolds <- function(Y, V){ #Create CV folds (stratify by outcome)
+    Y0 <- split(sample(which(Y==0)), rep(1:V, length=length(which(Y==0))))
+    Y1 <- split(sample(which(Y==1)), rep(1:V, length=length(which(Y==1))))
+    folds <- vector("list", length=V)
+    for (v in seq(V)) {folds[[v]] <- c(Y0[[v]], Y1[[v]])}
+    return(folds)
+  }
+  f.doFit <- function(v, folds, data){ #Train/test glm for each fold
+    fit <- glm(Y~., data=data[-folds[[v]],], family=binomial)
+    pred <- predict(fit, newdata=data[folds[[v]],], type="response")
+    return(pred)
+  }
+  folds <- f.cvFolds(Y=data$Y, V=V) #Create folds
+  predictions <- unlist(sapply(seq(V), f.doFit, folds=folds, data=data)) #CV train/predict
+  predictions[unlist(folds)] <- predictions #Re-order pred values
+  ci.pooled.cvAUC
+  # Get CV AUC and confidence interval
+  out <- ci.cvAUC(predictions=predictions, labels=data$Y, folds=folds, confidence=0.95)
+  return(out)
+}
+
+set.seed(2002)
+out.cv <- cv_eval(data=infarct, V=10)
+out.cv
+```
+
+
+The 10-fold cross-validated AUC is 0.827, 95\%CI=(0.76 ; 0.89) with seed=2002. It's a bit lower than the naive AUC but not by much, This is indicative of a small optimism bias (a common finding in practice). A slightly larger 95\% CI than the one found with the naive analysis is observed. You may get different results with the seed(s) of your choice and it's perfectly fine. You could also repeat the process a few times and average all the AUC's. 
+
+
+
+
+
+
+**Stata code and output**
+
+Once again the figures will appear when you run the code but are not displayed by Markdown.
+
+
+1) Fitting the model, naive AUC and ROC
+
+Clearly all covariates (*age*, *oral* and *smoke*) are important predictors of *mi*. A naive ROC curve can be obtained by computing the predicted probablity of MI for each observation in the dataset and calling the function *roctab* and using the option *graph*. 
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use infarct.dta
+logistic mi oral age smoke, coef
+predict fitted, pr
+roctab mi fitted
+roctab mi fitted,  graph title("Naive ROC")
+```
+
+The naive AUC is 0.84, 95\% CI=(0.78 ; 0.90), which can be classified as *good*. The model predicts well but this estimate is affected by optimism bias. The true AUC is probably a bit lower, how much lower, we are going to discover.
+
+
+2) split sample AUC
+
+An AUC free of optimism bias can be obtained using the split sample approach whereby the data is split in two, the model built on the training dataset and the AUC computed on the validation dataset
+
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use infarct.dta
+set seed 1001
+gen val = runiform()<.5   
+** Derive a prediction model y-chd69 in the development cohort
+logistic mi oral age smoke  if val==0
+** Generate a new variable containing the predicted probabilities 
+predict fitted, pr
+
+** AUC on the development data (training)
+** roctab mi fitted if  val==0
+** roctab mi fitted if  val==0, graph name(graph0) title("training")
+
+** AUC on the validation data  - THE ONE WE NEED
+roctab mi fitted if  val==1
+roctab mi fitted if  val==1,  graph name(graph1) title("validation")
+
+```
+
+
+The AUC is lower with a larger CI, i.e. AUC=0.81 with a wider 95\% CI=(0.70 ; 0.92). You may get a different result if you used another the seed or did not specify it. Setting the seed allows you to reproduce your results. The naive AUC=84\% was indeed optimistic. Note that this method is suboptimal and it shows here with a small sample, yielding a larger 95\% CI,
+
+
+
+3) cross-validated AUC 
+
+A better for to use the data is to perform  cross-validation. Given the data is rather, you may run into trouble with 10-fold crossvalidation depending on the seed. In that case, you can either change the seed or even use a smaller number of groups (e.g. carry out 5-fold CV). I used seed=2002, which seems to be ok.
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use infarct.dta
+set seed 2002
+xtile group = uniform(), nq(10)
+quietly gen cvfitted = .
+forvalues i = 1/10 {
+
+	* Step 2: estimate model omitting each subset
+	quietly xi: logistic mi oral age smoke if group !=`i'
+	quietly predict cvfittedi, pr
+	
+	* Step 3: save cross-validated statistic for each omitted subset
+	quietly replace cvfitted = cvfittedi if group==`i'
+	quietly drop cvfittedi
+	}
+
+* Step 4: calculate cross-validated area under ROC curve
+roctab mi cvfitted
+roctab mi cvfitted,  graph title("10-fold CV ROC")
+```
+
+
+The 10-fold cross-validated AUC is 0.81, 95\%CI=(0.74 ; 0.88) with seed=2002. It's a bit lower than the naive AUC but not by much, This is indicative of a small optimism bias (a common finding in practice). A slightly larger 95\% CI than the one found with the naive analysis is observed. This is however much better than the one obtained in 2). 
+You may get different results with the seed(s) of your choice and it's perfectly fine. You could also repeat the process a few times and average all the AUC's. 
+
+
+
+
+#### Practice - calibration plot\
+
+
+**R code and output**
+
+
+1) Calibration plot for the final model (Table 5.18) without outlier in cholesterol. Use the split sample approach.
+
+
+```{r,collapse=TRUE}
+require(rms)
+wcgs <- read.csv("wcgs.csv")
+wcgs<-data.frame(wcgs)
+wcgs1=cbind(wcgs$age,wcgs$chol,wcgs$sbp,wcgs$bmi,wcgs$smoke,wcgs$dibpat,wcgs$chd69)
+colnames(wcgs1)=c("age", "chol", "sbp", "bmi", "smoke","dibpat","chd69")
+wcgs1=data.frame(wcgs1)
+wcgs1=na.omit(wcgs1)
+# remove outlier chol=645
+wcgs1=wcgs1[wcgs1$chol <645,]
+wcgs1$age_10<-(wcgs1$age-mean(wcgs1$age))/10
+wcgs1$bmi_10<-(wcgs1$bmi-mean(wcgs1$bmi))/10
+wcgs1$sbp_50<-(wcgs1$sbp-mean(wcgs1$sbp))/50
+wcgs1$chol_50<-(wcgs1$chol-mean(wcgs1$chol,na.rm=T))/50
+
+wcgs1$bmichol<-wcgs1$bmi_10*wcgs1$chol_50
+wcgs1$bmisbp<-wcgs1$bmi_10*wcgs1$sbp_50
+
+
+dim(wcgs1)
+
+# out<-glm(chd69 ~ age_10 + chol_50 + sbp_50 +  bmi_10 + smoke + dibpat + bmichol + bmisbp, family=binomial, data=wcgs1)
+# summary(out)
+
+n=dim(wcgs1)[1]
+set.seed(1001) # choose the same seed as in the notes
+wcgs1$val=rbinom(n,1,0.5) # val =0 for training and val=1 for validation
+table(wcgs1$val)
+
+# training dataset
+wcgs1.dev=wcgs1[wcgs1$val==0,]
+fit.dev<-glm(chd69 ~ age_10 + chol_50 + sbp_50 +  bmi_10 + smoke + dibpat + bmichol + bmisbp, family=binomial, data=wcgs1.dev)
+summary(fit.dev)
+
+# validation dataset 
+wcgs1.val=wcgs1[wcgs1$val==1,]
+wcgs1.val$pred<- predict(fit.dev, wcgs1.val,type="response")  
+
+source("val.prob.ci.R")
+
+val.prob.ci(wcgs1.val$pred,wcgs1.val$chd69, pl=T,smooth=T,logistic.cal=F,
+            g=10)
+
+#val.prob.ci(wcgs1.val$pred,wcgs1.val$chd69, pl=T,smooth=T,logistic.cal=F,
+#            g=20)
+
+```
+
+
+
+2) Has the calibration plot improved compared with the simpler model? 
+
+The calibration plot still displays overestimation of CHD risk for the highest risk category. The plot may look different depending on the seed you used. This is somehow artificial due to the fact that we don't have new data to play with - see also 3).
+
+
+
+3) Repeat with 20 groups and 2/3 in the training dataset
+
+
+Here we simply need to recreat *val* to have 2/3 of observations in the dataset and use *g=20* when running *val.prob.ci*
+
+
+```{r,collapse=TRUE}
+n=dim(wcgs1)[1]
+set.seed(1001) # choose the same seed as in the notes
+wcgs1$val=rbinom(n,1,1/3) # val =0 for dvelopment and val=1 for validation
+table(wcgs1$val)
+
+# development dataset
+wcgs1.dev=wcgs1[wcgs1$val==0,]
+fit.dev<-glm(chd69 ~ age_10 + chol_50 + sbp_50 +  bmi_10 + smoke + dibpat + bmichol + bmisbp, family=binomial, data=wcgs1.dev)
+summary(fit.dev)
+
+# validation dataset + ROC/AUC 
+wcgs1.val=wcgs1[wcgs1$val==1,]
+wcgs1.val$pred<- predict(fit.dev, wcgs1.val,type="response") 
+
+source("val.prob.ci.R")
+
+val.prob.ci(wcgs1.val$pred,wcgs1.val$chd69, pl=T,smooth=T,logistic.cal=F,
+            g=20)
+```
+
+
+We see more points and more variability. Still some overestimation of the CHD risk for the highest category (although now the wider 95\% CI now covers the corresponding point on the 45 degree line0. We have not really fixed the problem with this more complex model. The plot depends on the seed you chose here.  In reality this uncertainty does not exist when carrying out external validation (which is normally the way to go). We use the the data at hand to build the model and the new external data to draw the calibration plot. No need of a seed at any stage.  You can also notice that the plot gives the AUC (on the validation sample) albeit without the 95\% CI.
+
+
+
+**Stata code and output**
+
+
+Once again the figures will appear when you run the code but are not displayed by Markdown.
+
+
+1) Calibration plot for the final model (Table 5.18) without outlier in cholesterol. Use the split sample approach.
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+summarize age
+gen age10=(age-r(mean))/10
+summarize bmi
+gen bmi10=(bmi-r(mean))/10
+summarize sbp
+gen sbp50=(sbp-r(mean))/50
+summarize chol
+gen chol50=(chol-r(mean))/50
+gen bmichol=bmi10*chol50
+gen bmisbp=bmi10*sbp50
+drop ih chol > 645
+
+set seed 1001
+# set.seed 1030
+gen val = runiform()<.5   
+logistic chd69 age10 chol50 sbp50 bmi10 smoke dibpat bmichol  bmisbp if val==0
+predict proba, pr
+pmcalplot proba chd69 if val==1, ci
+** alternatively
+drop if val==0
+pmcalplot proba chd69, ci 
+```
+
+
+2) Has the calibration plot improved compared with the simpler model? 
+
+The calibration plot seems a bit better with this seed but it's also sensitive to the choice of seed. Try seed=1030, you will have a different looking plot, where the situation is  the same as before. This is somehow articial due to the fact that we don't have new data to play with - see also 3).
+
+
+
+3) Repeat with 20 groups and 2/3 in the training dataset
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+summarize age
+gen age10=(age-r(mean))/10
+summarize bmi
+gen bmi10=(bmi-r(mean))/10
+summarize sbp
+gen sbp50=(sbp-r(mean))/50
+summarize chol
+gen chol50=(chol-r(mean))/50
+gen bmichol=bmi10*chol50
+gen bmisbp=bmi10*sbp50
+drop if chol > 645
+
+** set seed 1001
+ set seed 2002
+** set seed 1030
+gen val = runiform()<.33  
+logistic chd69 age10 chol50 sbp50 bmi10 smoke dibpat bmichol  bmisbp if val==0
+predict proba, pr
+pmcalplot proba chd69 if val==1, ci bin(20)
+** alternatively
+drop if val==0
+pmcalplot proba chd69, ci bin(20)
+```
+
+We see more points and more variability. Still some overestimation of the CHD risk for the highest category (although now the wider 95\% CI now covers the corresponding point on the 45 degree line). The plot depends on the seed you chose, see plot with seed 1001 or 1030 (pretty good).  However, in reality, this uncertainty does not exist since typically  external calibration is carried out. We use the the data at hand to build the model and the new external data to draw the calibration plot. No need of a seed at any stage. 
+

@@ -1,0 +1,323 @@
+---
+title: "Week 10 - Exercises-Solutions"
+format:
+  pdf:
+    documentclass: scrreprt
+    keep-md: true
+    keep-tex: true
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r, setup, include=FALSE}
+library(ggplot2)
+library(tidyverse)
+library(gtsummary)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+# Exercise solutions
+
+### Week 10 {.unnumbered}
+
+#### Investigation - interaction
+
+**Stata code and output**
+
+1) Compulsory reading: (Section 5.2.4. p 163-165)
+
+This reading explains how to introduce a possible interaction the between *age* seen this time as a continuous variable and *arcus*  (coded 0/1). 
+
+2) Reproduce the output
+
+Perhaps it helps to write down the model first i.e. \begin{equation} log(p/(1-p))=\beta_0 + \beta_1 arcus+ \beta_2 age + \beta_3 age*arcus \end{equation} where is the probability of CHD over the course of the study given the covariates. This model can be rewritten separately for patients without arcus   \begin{equation}log(p/(1-p))=\beta_0 + \beta_2 age\end{equation} 
+and patients with arcus \begin{equation}log(p/(1-p))=(\beta_0 + \beta_1) + (\beta_2 + \beta_3) age\end{equation} 
+We clearly see that the slope of the association with age (i.e. the log-OR) is not the same in the two arcus groups ($\beta_2$ vs $\beta_2+\beta_3$)
+
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+logistic chd69 i.arcus##c.age, coef
+```
+
+Note that you need to specify the type of variable you are using here. The default in Stata is *categorical* covariates. A code like *logistic chd69 arcus\#\#age, coef* would return an ugly output will all different age values considered as categories (except the reference). The *c.age* option is absolutely necessary. You may forget the *i.* before *arcus* because it's coded 0/1 but in general it's safer to write the command as indicated in the textbook.
+
+The analysis with age as a continuous variable confirms what we found with the dichotomised version of age at baseline; we have a significant interaction between *age* and *arcus*.
+
+
+3) Association between *chd69* and *age* in patients without arcus? OR and 95\% CI 
+
+The fitted model is   $log(p/(1-p))=-6.788+0.09 age$ (up to rounding) with the association being described by $\hat\beta_2=0.09$. To get the OR you can refit the model without the option coeff and get the OR for age (only) i.e. OR=1.09, 95\% CI=(1.06 ; 1. 13). This means that for patients *without arcus* the odds of CHD is 9\% bigger, 95\% CI=(6\% ; 13\%) per additional year of age. If you wanted to describe the association for a 10-year age increment, you can 1) use the trick Vittinghof et al (2012) described, rescale age by dividing by 10 and repeat the procedure; 2) use lincom and type lincom 10*age, or. This gives you OR=2.45, OR=(1.83 ; 3.28) as indicated below
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+logistic chd69 i.arcus##c.age
+lincom age*10, or
+```
+
+4) Association between *chd69* and *age* in patients with arcus? OR and 95\% CI.
+
+The fitted model is   $log(p/(1-p))=(-6.788+ 2.754) + (0.090-0.050) age = -4.034 + 0.04 age$
+Now the association of CHD with age is described by: $\hat\beta_2 +\beta_3=0.04$ (on the log-odds scale). To get an OR and its 95\% we need to use *lincom* again as follows:
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+logistic chd69 i.arcus##c.age, coef
+lincom age + 1.arcus#c.age, or
+```
+In patients with arcus, OR=1.04, 95\% CI=(1.00 ; 1.08). This means that for those patients, the odds of CHD increases with age but at a slower rate, i.e the odds is 4\% bigger, 95\% CI=(0\% ; 8\%) per additional year of age. You can also notice on the plot given p. 164 that the probability of CHD occurrence is higher at a younger age. The two lines cross at a later age (around age 50), which means that older patients with arcus are at somewhat lower risk than patients without arcus. You can also get the OR for a 10-year increment by multiplying everything by 10 in the *lincom* command.
+
+
+5) Can we interpret the coefficient of *arcus* alone? How can we get a more meaningful coefficient for *arcus*?
+
+The coefficient for arcus ($\beta_1$) represents the effect of arcus for someone aged 0 (at birth), assuming we can extrapolate back to that age. It makes little sense. One way to overcome the problem is to centre age using a meaninful value e.g. the age sample mean= 46.275
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+sum age
+gen age_centred=age-46.3
+logistic chd69 i.arcus##c.age_centred, coef
+logistic chd69 i.arcus##c.age_centred
+```
+Now get get $\hat\beta_1=0.44$ and OR=1.56, 95\% CI=(1.18 ; 2.08). The odds of CHD is  56% bigger, 95\% CI=(18\% ; 108\%) for someone of average age with arcus (compared with someone of the same age without arcus). of course, the association with arcus depends on age by symmetry, as discussed in the examples provided in the textbook.  These interpretation assumes that the model is correct (linearity, no confounding)
+
+
+
+**R code and output**
+
+
+1) Compulsory reading: (Section 5.2.4. p 163-165)
+
+This reading explains how to introduce a possible interaction the between *age* seen this time as a continuous variable and *arcus*  (coded 0/1). 
+
+2) Reproduce the output
+
+Perhaps it helps to write down the model first i.e. 
+\begin{equation} log(p/(1-p))=\beta_0 + \beta_1 arcus+ \beta_2 age + \beta_3 age*arcus \end{equation} 
+where is the probability of CHD over the course of the study given the covariates. This model can be rewritten separately for patients without arcus   
+\begin{equation}log(p/(1-p))=\beta_0 + \beta_2 age\end{equation} 
+and patients with arcus 
+\begin{equation}log(p/(1-p))=(\beta_0 + \beta_1) + (\beta_2 + \beta_3) age\end{equation} 
+We clearly see that the slope of the association with age (i.e. the log-OR) is not the same in the two arcus groups ($\beta_2$ vs $\beta_2+\beta_3$)
+
+
+```{r, collapse = TRUE}
+wcgs <- read.csv("https://www.dropbox.com/s/uc29ddv337zcxk6/wcgs.csv?dl=1")
+out<-glm(chd69 ~ arcus*age, family=binomial, data=wcgs)
+
+ 
+
+```
+
+Note that you need to we assume that arcus is coded 0/1; otherwise you will have to define arcus as a factor or use *factor(arcus)* in the model. specify the type of variable you are using here. The default in Stata is *categorical* covariates. The analysis with age as a continuous variable confirms what we found with the dichotomised version of age at baseline; we have a significant interaction between *age* and *arcus*.
+
+
+3) Association between *chd69* and *age* in patients without arcus? OR and 95\% CI 
+
+The fitted model is   $log(p/(1-p))=-6.788+0.09 age$ (up to rounding) with the association being described by $\hat\beta_2=0.09$. To get the OR you can simply take the exponential of the age coefficient $\hat\beta_1$ and do something similar for the 95\% CI, yielding OR=1.09, 95\% CI=(1.06 ; 1. 13). This means that for patients *without arcus* the odds of CHD is 9\% bigger, 95\% CI=(6\% ; 13\%) per additional year of age. If you wanted to describe the association for a 10-year age increment, you can 1) use the trick Vittinghof et al (2012) described, rescale age by dividing by 10 and repeat the procedure; 2) mutiply everything by 10 before exponentiting. This gives you OR=2.45, OR=(1.83 ; 3.28) as indicated below
+
+
+```{r, collapse = TRUE}
+out<-glm(chd69 ~ arcus*age, family=binomial, data=wcgs)
+coef<-summary(out)$coef[,1]
+SE<-summary(out)$coef[,2]
+OR=exp(coef[3]) 
+# 3rd element (3rd row of the table)
+lower=exp(coef[3]-1.96*SE[3])
+upper=exp(coef[3]+1.96*SE[3])
+c(OR, lower, upper)
+# for a 10 year increment
+OR=exp(10*coef[3])
+lower=exp(10*(coef[3]-1.96*SE[3]))
+upper=exp(10*(coef[3]+1.96*SE[3]))
+c(OR, lower, upper)
+```
+
+
+
+4) Association between *chd69* and *age* in patients with arcus? OR and 95\% CI.
+
+The fitted model is   $log(p/(1-p))=(-6.788+ 2.754) + (0.090-0.050) age = -4.034 + 0.04 age$
+Now the association of CHD with age is described by: $\hat\beta_2 +\beta_3=0.04$ (on the log-odds scale). To get an oR and its 95\% we need to use the command *glht* of *lincomp* as follows:
+
+
+```{r, collapse = TRUE}
+library(multcomp)
+lincom <- glht(out,linfct=c("age+arcus:age=0"))
+lincom
+out2<-summary(lincom)$test
+OR<-exp(out2$coefficients)
+lower<-exp(out2$coefficients -1.96*out2$sigma)
+upper<-exp(out2$coefficients +1.96*out2$sigma)
+cbind(OR,lower,upper)
+# for a 10 year-increment
+OR<-exp(10*out2$coefficients)
+lower<-exp(10*(out2$coefficients -1.96*out2$sigma))
+upper<-exp(10*(out2$coefficients +1.96*out2$sigma))
+cbind(OR,lower,upper)
+```
+In patients with arcus, OR=1.04, 95\% CI=(1.00 ; 1.08). This means that for those patients, the odds of CHD increases with age but at a slower rate, i.e the odds is 4\% bigger, 95\% CI=(0\% ; 8\%) per additional year of age. You can also notice on the plot given p. 164 that the probability of CHD occurrence is higher at a younger age. The two lines cross at a later age (around age 50), which means that older patients with arcus are at somewhat lower risk than patients without arcus.
+You can get the OR for a 10-year increment by multiplying everything by 10 before exponentiating. This gives you OR=1.49, OR=(1.05 ; 2.12).
+
+
+
+5) Can we interpret the coefficient of *arcus* alone? How can we get a more meaningful coefficient for *arcus*?
+
+The coefficient for arcus ($\beta_1$) represents the effect of arcus for someone aged 0 (at birth), assuming we can extrapolate back to that age. It makes little sense. One way to overcome the problem is to centre age using a meaningful value e.g. the age sample mean= 46.275
+
+
+```{r, collapse = TRUE}
+wcgs$age_centred<-wcgs$age-mean(wcgs$age,na.rm=TRUE)
+out1<-glm(chd69 ~ arcus*age_centred, family=binomial, data=wcgs)
+summary(out1)
+coef<-summary(out1)$coef[,1]
+SE<-summary(out1)$coef[,2]
+OR=exp(coef[2]) 
+lower=exp(coef[2]-1.96*SE[2])
+upper=exp(coef[2]+1.96*SE[2])
+c(OR,lower,upper)
+```
+Now get get $\hat\beta_1=0.44$ and OR=1.56, 95\% CI=(1.18 ; 2.08). The odds of CHD is  56% bigger, 95\% CI=(18\% ; 108\%) for someone of average age with arcus (compared with someone of the same age without arcus). of course, the association with arcus depends on age by symmetry, as discussed in the examples provided in the textbook.  These interpretation assumes that the model is correct (linearity, no confounding)
+
+
+
+
+#### Investigation - predicted probability \
+
+
+
+The implicit assumption is that we are fitting the same model as in the notes, the response is *Chd69* and the covariates *age*, *bmi*, *chol*, *sbp*, *smoke*, *dibpat* considered previously. We will also delete the outlier in cholesterol (*chol=645*).
+
+
+
+**Stata code and output**
+
+
+1) calculate the predicted probability of CHD occurrence for a patient with the following characteristics:  *age=50*, *BMI=27*, *chol=200*, *sbp=150*, *smoke=1*, *dibpat=0*.  Give the 95\% CI.
+
+
+Here we compute the linear predictor, its 95\% CI and transform it to the probability scale using the reciprocal of logit. This is done automatically using the *pr* option in *adjust* or *margins*
+
+
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+
+drop if missing(chd69) | missing(bmi) | missing(age) | missing(sbp) | missing(smoke) | missing(chol) | missing(dibpat)  
+drop if chol ==645 
+** n=3141 observations
+logistic chd69 age chol sbp bmi smoke dibpat, coef
+adjust age=50 bmi=27 chol=200 sbp=150 smoke=1 dibpat=0, ci pr
+```
+
+The predicted CHD probability for that patient's profile is 8.9\%, 95\% CI=(6.5\% ; 12.2\%)
+
+2) Represent the probability of an event as a function of age for a particular patient profile, e.g. use *BMI=27*, *chol=200*, *sbp=150*, *smoke=1*, *dibpat=0* and let *age* free to vary. 
+
+The plot can be produced using the command *marginplot* after running the appropriate *margins* command
+
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+
+drop if missing(chd69) | missing(bmi) | missing(age) | missing(sbp) | missing(smoke) | missing(chol) | missing(dibpat)  
+drop if chol ==645 
+** n=3141 observations
+logistic chd69 age chol sbp bmi smoke dibpat, coef
+margins,  at(age=(20(5)60) bmi=27 chol=200 sbp=150 smoke=1 dibpat=0)
+marginsplot,  name(temp1)
+```
+
+[](images/proba_vs_age_profile1_smoker.jpg){width="80%"}
+
+3) Contrast with a plot of the CHD probability vs age for *smoke=0*, the other characteristics remaining the same. Draw the 2 plots side-by-side. 
+
+The plot can be produced using the command *marginplot* after running the appropriate *margins* command (twice) amd combining the plots
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+use wcgs.dta
+drop if missing(chd69) | missing(bmi) | missing(age) | missing(sbp) | missing(smoke) | missing(chol) | missing(dibpat)  
+drop if chol ==645 
+** n=3141 observations
+logistic chd69 age chol sbp bmi smoke dibpat, coef
+margins,  at(age=(20(5)60) bmi=27 chol=200 sbp=150 smoke=1 dibpat=0)
+marginsplot,  name(temp2)
+
+margins,  at(age=(20(5)60) bmi=27 chol=200 sbp=150 smoke=0 dibpat=0)
+marginsplot,  name(temp3)
+
+graph combine temp2 temp3
+```
+
+
+
+[](images/Proba_CHD_profile1_by_smoke.jpg){width="90%"}
+The CHD probability increases by age and is higher for smokers.
+
+
+
+
+**R code and output**
+
+
+1) calculate the predicted probability of CHD occurence for a patient with the following characteristics:  *age=50*, *BMI=27*, *chol=200*, *sbp=150*, *smoke=1*, *dibpat=0*.  Give the 95\% CI.
+
+
+Here we compute the linear predictor, its 95\% CI and transform it to the probability scale using the reciprocal of logit (called expit).
+
+
+```{r, collapse = TRUE}
+myvars <- c("id","chd69", "age", "bmi", "chol", "sbp", "smoke", "dibpat")
+wcgs1 <- wcgs[myvars]
+wcgs1 <- wcgs1[wcgs1$chol <645,]
+wcgs1cc <- na.omit(wcgs1) # 3141 x 11
+model1 <- glm(chd69 ~ age + chol + sbp + bmi + smoke + dibpat, family=binomial, data=wcgs1cc)
+new <- data.frame(age = 50, bmi=27, chol =200, sbp=150, smoke=1, dibpat=0)
+out <- predict(model1, new, type="link",se.fit=TRUE)
+mean<-out$fit
+SE<-out$se.fit
+CI=c(mean-1.96*SE,mean+1.96*SE)
+f.expit<-function(u){exp(u)/(1+exp(u))}
+f.expit(c(mean,CI)) 
+```
+The predicted CHD probability for that patient's profile is 8.9\%, 95\% CI=(6.5\% ; 12.2\%)
+  
+
+
+2) Represent the probability of an event as a function of age for a particular patient profile, e.g. use *BMI=27*, *chol=200*, *sbp=150*, *smoke=1*, *dibpat=0* and let *age* free to vary. 
+
+The plot can be produced using the command *cplot* available in the *margins* library
+
+
+```{r, collapse = TRUE}
+require(margins)
+new <- data.frame(age=seq(20,60,5),bmi=27, chol =200, sbp=150, smoke=1, dibpat=0)
+cplot(model1, what = "prediction", data=new,main = "Predicted proba vs age")
+```
+
+3) Contrast with a plot of the CHD probability vs age for *smoke=0*, the other characteristics remaining the same. Draw the 2 plots side-by-side. 
+
+Again *cplot* can be used to produce these plots. The CHD probability increases by age and is higher for smokers.
+
+
+```{r, collapse = TRUE}
+par(mfrow=c(1,2))
+new <- data.frame(age=seq(20,60,5),bmi=27, chol =200, sbp=150, smoke=1, dibpat=0)
+cplot(model1, what = "prediction", data=new,main = "Smoke=1", ylim=c(0,0.20))
+new <- data.frame(age=seq(20,60,5),bmi=27, chol =200, sbp=150, smoke=0, dibpat=0)
+cplot(model1, what = "prediction", data=new,main = "Smoke=0",ylim=c(0,0.20))
+```
+
+
+
+
+

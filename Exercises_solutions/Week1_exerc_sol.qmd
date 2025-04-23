@@ -1,0 +1,134 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+|                                  |
+|----------------------------------|
+| tle: "Week1-Exercises-Solutions" |
+| rmat:                            |
+| html:                            |
+| self-contained: true             |
+| pdf:                             |
+| documentclass: scrreprt          |
+| keep-md: true                    |
+| keep-tex: true                   |
+| itor_options:                    |
+| chunk_output_type: inline        |
+
+```{r, setup, include=FALSE}
+#THIS CANNOT BE RENDERED INSIDE THE DROPBOX FOLDER! THERE IS A BUG WITH (I THINK) PATHNAMES WITH SPACES
+
+library(ggplot2)
+library(Statamarkdown)
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+```
+
+# Exercise solutions
+
+### Week 1 {.unnumbered}
+
+The following exercise will allow you to test yourself against what you have learned so far. The solutions will be released at the end of the week.
+
+Using the dataset [hers_subset.csv](https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1) dataset, use simple linear regression in R or Stata to measure the association between diastolic blood pressure (DBP - the outcome) and body mass index (BMI - the exposure).
+
+#### a) Summarise the important findings by interpreting the relevant parameter values, associated P-values and confidence intervals, and $R^2$ value. Three to four sentences is usually enough here. & b) From your regression output, calculate by how much the mean DBP changes for a 5kgm^-2^ increase in BMI? Can you verify this by modifying your data and re-running your regression? {.unnumbered}
+
+**Stata code and output**
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+/* Part a */
+import delimited "https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1", clear
+
+reg dbp bmi
+/* Part b*/
+gen bmi5 = bmi / 5
+reg dbp bmi5
+```
+
+**R code and output**
+
+```{r, collapse = TRUE}
+# Part a
+hers_subset <- read.csv("https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1")
+lm.hers <- lm(DBP ~ BMI, data = hers_subset)
+summary(lm.hers)
+confint(lm.hers)
+
+# Part b
+hers_subset$BMI5 <- hers_subset$BMI / 5
+lm.hers <- lm(DBP ~ BMI5, data = hers_subset)
+summary(lm.hers)
+```
+
+We find evidence that diastolic blood pressure increases as body mass index increases (P = 0.029). For every one kg/m^-2^ increase in BMI, the mean diastolic blood pressure increases by 0.22mmHg, and we are 95% confident the true increase lies between 0.023 and 0.42mmHg. BMI accounts for 1.7% of the overall variability in diastolic blood pressure.
+
+If a one kg/m^-2^ increase in BMI accounts for a 0.22mmHg increase in DBP, then a 5kg/m^-2^ increase in BMI accounts for a `5x0.22 = 1.1`mmHg increase in DBP. We can confirm this in Stata or R by creating a new covariate `BMI5` which is BMI scaled by a factor of 1/5 (so that a 1 increase in BMI5 corresponds to a 5 increase in BMI).
+
+#### c) Manually calculate the $\beta_1$ standard error, the t-value, p-value and $R^2$ {.unnumbered}
+
+From 3.3.7 of the textbook, the standard error of the regression coefficient is as follows:
+
+$$ \hat{\text{se}}(\hat\beta_1) = \frac{\text{Root mean squared error}}{\hat\sigma_x \sqrt{(n-1)} } $$ We can use R or Stata to calculate $\hat \sigma_x = 5.5879$. Substituting this in we obtain $\hat{\text{se}}(\hat \beta_1) = 9.357/(5.5879 \sqrt{275}) = 0.101$ in agreement with the Stata and R output.
+
+The t-value is the regression coefficient divided by it's standard error $t = 0.222 / 0.101 = 2.2$, and the P-value can be calculated by looking up a corresponding t-table with $n-2 = 276-2 = 274$ degrees of freedom:
+
+Stata code and output for the p-value
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+/*Compute*/
+  disp tprob(274,2.2)
+```
+
+R code and output
+
+```{r, echo=TRUE, collapse = TRUE}
+(1-pt(2.2,274))*2
+```
+
+$R^2$ is the fraction of the total variance explained by the model so is equal to $R^{2} = 423.88/24412.77 = 0.017$. These two variances are default output in Stata. In R the model sum of squares and residual sum of squares can be obtained using `anova(lm.hers)`, after which the $R^2$ can be calculated.
+
+#### d) Based on your regression, make a prediction for the mean diastolic blood pressure of people with a BMI of 28kgm^-2^ & e) Calculate and interpret a confidence interval for this prediction. & f) Calculate and interpret a prediction interval for this prediction.
+
+Stata code and output
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+import delimited "https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1"
+reg dbp bmi
+
+lincom _cons + 28*bmi
+
+set obs 277
+replace bmi = 28 in 277
+predict fitDBP
+predict seprDBP, stdf
+gen upper = fitDBP + 1.96*seprDBP in 277
+gen lower = fitDBP -1.96*seprDBP in 277
+
+list bmi fitDBP lower upper in 277
+
+```
+
+R code and output
+
+```{r, collapse = TRUE}
+hers_subset <- read.csv("https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1")
+lm.hers <- lm(DBP ~ BMI, data = hers_subset)
+
+new_observation <- data.frame(BMI = 28)
+
+predict(lm.hers, 
+        newdata = new_observation, 
+        interval="confidence")
+
+predict(lm.hers, 
+        newdata = new_observation, 
+        interval="prediction")
+```
+
+We predict that the mean diastolic blood pressure for those with a BMI of 28kgm^-2^ to be 74mmHg. We are 95% confident the true mean lies between 72.9mmHg and 75.2mmHg. We expect that 95% of women with that BMI will have a diastolic blood pressure between 55.6mmHg and 92.5mmHg.
+
+
+

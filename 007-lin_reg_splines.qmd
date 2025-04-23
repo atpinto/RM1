@@ -447,6 +447,14 @@ RCS are not the only approach we could use to model nonlinearities. Other types 
 [Download video here](https://www.dropbox.com/s/ydo0x77b7d3sa2o/RM1_week7_lecture2_Stata.mp4?dl=1)
 
 
+You can use the interactive simulation below using an hypothetical example of a non-linear association between systolic blood pressure and body mass index, and see how different models fit a complet non-linear effect. 
+
+<iframe src="https://atpinto.github.io/MultipleLinearRegression/nonlineareffects.html" width="100%" height="800" title = "Fitting nonlinear effects">
+</iframe>
+
+
+
+
 ## Other issues {.unnumbered}
 
 ### Bootstrapping {.unnumbered}
