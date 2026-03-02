@@ -265,12 +265,10 @@ window.Quarto = {
    
   <ul>
   <li><a href="#learn_obj_wk01" id="toc-learn_obj_wk01" class="nav-link active" data-scroll-target="#learn_obj_wk01">Learning objectives</a></li>
-  <li><a href="#learn_act_wk01" id="toc-learn_act_wk01" class="nav-link" data-scroll-target="#learn_act_wk01">Learning activities</a>
-  <ul class="collapse">
-  <li><a href="#preperation-for-week-2" id="toc-preperation-for-week-2" class="nav-link" data-scroll-target="#preperation-for-week-2">Preperation for week 2</a></li>
-  </ul></li>
+  <li><a href="#learn_act_wk01" id="toc-learn_act_wk01" class="nav-link" data-scroll-target="#learn_act_wk01">Learning activities</a></li>
   <li><a href="#video_wk01_into" id="toc-video_wk01_into" class="nav-link" data-scroll-target="#video_wk01_into">Introduction to regression</a>
   <ul class="collapse">
+  <li><a href="#wk01_intro_lin_Reg" id="toc-wk01_intro_lin_Reg" class="nav-link" data-scroll-target="#wk01_intro_lin_Reg">Introduction to Simple Linear Regression</a></li>
   <li><a href="#reading_wk01_intro" id="toc-reading_wk01_intro" class="nav-link" data-scroll-target="#reading_wk01_intro">Book Chapter 1. Introduction to section 1.3.3 (pages 1-4).</a></li>
   <li><a href="#reading_wk01_sec3_3" id="toc-reading_wk01_sec3_3" class="nav-link" data-scroll-target="#reading_wk01_sec3_3">Book Chapter 3. Section 3.3 to 3.3.3 (pages 35-38).</a></li>
   <li><a href="#reading_wk01_sec3_3_5" id="toc-reading_wk01_sec3_3_5" class="nav-link" data-scroll-target="#reading_wk01_sec3_3_5">Chapter 3. Section 3.3.5 to 3.3.9 (pages 39-42).</a></li>
@@ -327,48 +325,34 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Preparation for week 2</td>
-<td></td>
-</tr>
-<tr class="even">
 <td>Video 1</td>
 <td>1, 2, 3</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Readings</td>
 <td>1, 2, 3, 4</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Video 2</td>
 <td>4, 5</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Independent exercises</td>
 <td>2, 4, 5</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Live tutorial/discussion</td>
 <td>2, 4, 5</td>
 </tr>
 </tbody>
 </table>
-<section id="preperation-for-week-2" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="preperation-for-week-2">Preperation for week 2</h3>
-<div class="orange-box">
-<p>In week 2 you will be required to collaboratively complete some exercises. To do this, in week 1 you will be allocated into groups of 3-4 and you are encouraged to meet with your group in week 2 by zoom at a mutually beneficial time. Each group has their own discussion board, which you can use to help organise a meet up time. Interacting, discussing, and working through problems with your peers is an important skill for any biostatistician. This is also nice activity to get to know your peers in this online course.</p>
-</div>
-</section>
+<p>In the notes below when we mention “Book Chapter”, the “Book” we are referring to is: <strong>Regression Methods in Biostatistics: Linear, Logistics, Survival, and Repeated Measures Models</strong>, by Vittinghoff et al.&nbsp;(Second Edition). You should be able to obtain a digital copy of the book from the library of your University.</p>
 </section>
 <section id="video_wk01_into" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="video_wk01_into">Introduction to regression</h2>
-<div class="grid">
-<div class="g-col-9">
-<p>This lecture introduces you to the purpose of regression models to answer three types of research questions: prediction; isolating the effect of a single predictor; and understanding multiple predictors. You will also learn what a simple linear regression looks like and learn about the method used to estimate it’s parameters.</p>
-</div>
-<div class="g-col-3">
-<p><a href="https://www.youtube.com/embed/xxqLq69THAQ" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> <img src="https://img.youtube.com/vi/xxqLq69THAQ/hqdefault.jpg" width="200"> </a></p>
-</div>
-</div>
+<p>Regression modelling is one of the key tools that statisticians use to understand and quantify the relationship between an outcome variable, <span class="math inline">\(Y\)</span>, (also known as the “dependent” or “response” variable) and one or more covariates, <span class="math inline">\(\mathbf{x}\)</span> (also known as the “predictor”, “independent” or “explanatory” variables). It involves constructing a mathematical equation to describe the relationship between these variables, and aims to find the “best fit” to describe how the outcome variable <span class="math inline">\(Y\)</span> changes as a covariate <span class="math inline">\(x\)</span> changes in value. For example, we might be interested in studying how systolic blood pressure changes for every 1kg increase in body weight, or we might want to know how the average haemoglobin levels differ between males and females. Regression models are an extremely useful tool that can be used to answer a variety of research questions and for different purposes (outlined in the video below).</p>
+<p>The aim of this unit is to lay the foundation of “regression models” to analyse data from randomised or observational studies. “Regression” is a general term for measuring relationships between an outcome and one or multiple covariates at once, allowing adjustment for confounding (Week/Module 4) and examination of effect modification (Week/Module 6). Regression models are commonly used in health research and being able to implement these methods appropriately and interpret their results are vital skills for you to master to be an effective practitioner of biostatistics . A suite of common regression models will be taught across this unit (Regression Modelling 1 (RM1)) and in the subsequent Regression Modelling 2 (RM2) unit. The skills taught in this unit (and in RM2) will be used for the remainder of your BCA studies (and career in biostatistics).</p>
+<p>In RM1 we will be focussing on regression models where the outcome variables are either continuously distributed (linear regression models), or are binary (logistic regression models). RM2 will then expand the logistic regression concepts introduced in RM1 for multinomial and ordinal categorical data, and also include other regression models for count and rate data, and survival models in the framework of generalised linear models.</p>
 <!-- 
 
 In future use the following code to embed videos.
@@ -377,13 +361,30 @@ In future use the following code to embed videos.
     <source src="videos/RM1 Week 1 Lecture 1.mp4" type="video/mp4">
 </video>
 -->
+<section id="wk01_intro_lin_Reg" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="wk01_intro_lin_Reg">Introduction to Simple Linear Regression</h3>
+<div class="grid">
+<div class="g-col-9">
+<p>This lecture introduces you to the purpose of regression models, which can be used to answer three types of research questions: prediction; isolating the effect of a single predictor; and understanding multiple predictors. You will also learn what a simple linear regression looks like, how to interpret the parameters in the model, and learn about the method used to estimate its parameters.</p>
+</div>
+<div class="g-col-3">
+<p><a href="https://www.youtube.com/embed/xxqLq69THAQ" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> <img src="https://img.youtube.com/vi/xxqLq69THAQ/hqdefault.jpg" width="200"> </a></p>
+</div>
+</div>
+</section>
 <section id="reading_wk01_intro" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="reading_wk01_intro">Book Chapter 1. Introduction to section 1.3.3 (pages 1-4).</h3>
-<p>This reading supplements lecture 1 with a similar motivation for the need for regression models (which they refer to as multipredictor regression models) to answer three types of research questions: prediction; isolating the effect of a single predictor; and understanding multiple predictors. Nothing new is introduced in this reading, so its purpose is to allow you to become familiar with the writing style of the textbook that we follow in this course.</p>
+<p>This reading (pages 1-4 of the textbook) supplements Lecture 1 with a similar motivation for the need for regression models (which they refer to as “multipredictor regression models”) to answer three types of research questions:</p>
+<ol type="1">
+<li><p>Prediction - when we want to use certain variables to predict a certain outcome</p></li>
+<li><p>Isolating the effect of a single predictor/exposure on the outcome (with or without the presence of confounders)</p></li>
+<li><p>Understanding the effect of multiple predictors/covariates on an outcome</p></li>
+</ol>
+<p>Nothing new is introduced in this reading, but it provides some further examples and its purpose is to allow you to become familiar with the writing style of the textbook that we follow in this course.</p>
 </section>
 <section id="reading_wk01_sec3_3" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="reading_wk01_sec3_3">Book Chapter 3. Section 3.3 to 3.3.3 (pages 35-38).</h3>
-<p>This reading introduces the simple linear regression model and describes how to interpret each parameter of the model. This will be further explored in lecture 2. It also describes the error term between individual observations and the mean behaviour of the population – which is important as the assumptions of linear regression are all about the error term. Stata and R code corresponding to the output in this reading can be found below</p>
+<p>This reading (pages 35-38 of the textbook) introduces the simple linear regression model and describes how to interpret each parameter of the model. This will be further explored in Lecture 2. It also describes the error term between individual observations and the mean behaviour of the population – which is important as the <u>assumptions of linear regression are all about the error term</u> (you will learn more about this over the coming weeks). Stata and R code corresponding to the output in this reading can be found below.</p>
 <p><strong>Stata code and output</strong></p>
 <div class="cell" data-collectcode="true">
 <details class="code-fold">
@@ -451,8 +452,25 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This table does not use the complete HERS dataset, rather it takes a random sample of 10% of the data. In Stata this is achieved by using <code>set seed 90896</code> and <code>sample 10</code>.</p>
+<p>Here we do not use the complete HERS dataset; rather we take a random sample of 10% of the data. In Stata this is achieved by using <code>set seed 90896</code> and <code>sample 10</code>.</p>
 <p>Here the <code>set seed 90896</code> ensures that the random sample is reproducible. i.e.&nbsp;we draw the same random sample each time. As random sampling is hard to replicate across statistical programs, to get the same output in R we needed to take the random sample in Stata and then import this subset of the data into R. A copy of this subset is provided in the data resources titled <code>hers_subset.csv</code></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interpretation of results
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Based on the regression output above, we can see that among women with heart disease, for every one-year increase in age the mean SBP increases by 0.64 mmHg (95%CI: 0.27, 1.01).</p>
+<p>(See the video lectures below for a more detailed interpretation)</p>
+</div>
 </div>
 </div>
 <section id="notes_wk_01_notation" class="level4 unnumbered">
@@ -637,7 +655,13 @@ Var}}(\varepsilon)\)</span>, <span class="math inline">\(s^2\)</span></td>
         };
     </script>
 
-<p>Linear regression uses least squares to estimate parameters because when regression assumptions are met (more on this later) the estimator is BLUE: <em>Best Linear Unbiased Estimator</em>. Unbiased means that over many repetitions of sampling and fitting a model, the estimated parameter values average out to equal the true “population” parameter value (i.e.&nbsp;<span class="math inline">\(\text{E}[\hat{\beta}_1]=\beta_1\)</span>). Unbiasedness does not mean that all parameter estimates are close to the true value—in fact it says nothing about the sample-to-sample variability in the parameter estimates, since that is a precision issue. The “linear” means that the class of estimators are those that can be written as linear combinations of the observations <span class="math inline">\(Y\)</span>. More specifically, any linear unbiased estimator of the slope parameter <span class="math inline">\(\beta_1\)</span> can be written as <span class="math inline">\(\sum_{i=1}^n a_iY_i\)</span> where the values of <span class="math inline">\((a_1,...a_n)\)</span> must be such that <span class="math inline">\(\text{E}(\sum_{i=1}^n a_iY_i)=\beta_1\)</span>. This was important when computational power was limited as linear estimators can be easily computed. The “best” component of BLUE says that least squares estimators are best in the sense of having the smallest variance of all linear unbiased estimators. That is, they have the best precision or they are the most efficient.</p>
+<p>Linear regression uses least squares to estimate parameters because when regression assumptions are met (more on this later) the estimator is the BLUE: the <em>Best Linear Unbiased Estimator</em>.</p>
+<ul>
+<li><p>Unbiased means that over many repetitions of sampling and fitting a model, the estimated parameter values average out to equal the true “population” parameter value (i.e.&nbsp;<span class="math inline">\(\text{E}[\hat{\beta}_1]=\beta_1\)</span>). Having an unbiased estimator does not mean that all parameter estimates are close to the true value—in fact it says nothing about the sample-to-sample variability in the parameter estimates, since that is a precision issue.</p></li>
+<li><p>The “linear” means that the class of estimators are those that can be written as linear combinations of the observations <span class="math inline">\(Y\)</span>. More specifically, any linear unbiased estimator of the slope parameter <span class="math inline">\(\beta_1\)</span> can be written as <span class="math inline">\(\sum_{i=1}^n a_iY_i\)</span> where the values of <span class="math inline">\((a_1,...a_n)\)</span> must be such that <span class="math inline">\(\text{E}(\sum_{i=1}^n a_iY_i)=\beta_1\)</span>. This was important when computational power was limited as linear estimators can be easily computed.</p></li>
+<li><p>The “best” component of BLUE says that least squares estimators are best in the sense of having the smallest variance of all linear unbiased estimators. That is, they have the best precision or they are the most efficient.</p></li>
+</ul>
+<p>The mathematical theorem and proof that the least squares estimator is the best linear unbiased estimator (BLUE) is called the <em>Gauss-Markov theorem</em>. The least squares estimator is also identical to the maximum likelihood estimator when the regression assumptions are met.</p>
 <p>The mathematical theorem and proof that the least squares estimator is the best linear unbiased estimator (BLUE) is called the <em>Gauss-Markov theorem</em>. The least squares estimator also identical to the maximum likelihood estimator when the regression assumptions are met.</p>
 </section>
 </section>
@@ -659,6 +683,24 @@ Var}}(\varepsilon)\)</span>, <span class="math inline">\(s^2\)</span></td>
 <p><a href="https://sydney.instructuremedia.com/embed/8d25c66e-8446-42aa-8794-444b9438d115" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> <img src="images/RM1_video.png" width="300"> </a></p>
 </section>
 </div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interpretation of results
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Based on the regression output above, we can see that among this sample of post-menopausal women with coronary heart disease, there was strong evidence that age was significantly associated with systolic blood pressure (SBP) (p=0.0007). For every one-year increase in age, the mean SBP increases by 0.64 mmHg (95%CI: 0.27, 1.01 mmHg). However, age only accounts for a small proportion of the overall variability observed in SBP (<span class="math inline">\(R^2=0.04\)</span>)</p>
+<p>For a person aged 60 years, we expect the <strong>mean</strong> SBP to be 132mmHg (95%CI: 129.11, 135.58).</p>
+<p>We expect that, for a 60 year-old, their <strong>individual</strong> SBP measurement will fall between 93.19 to 171.50mmHg with 95% confidence.</p>
+</div>
+</div>
+</div>
 </section>
 <section id="exercise_wk_01_01" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="exercise_wk_01_01">Exercises</h2>
@@ -679,7 +721,7 @@ Var}}(\varepsilon)\)</span>, <span class="math inline">\(s^2\)</span></td>
 </section>
 <section id="summary_wk01" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="summary_wk01">Summary</h2>
-<div class="callout callout-style-default callout-note callout-titled" title="This week’s key concepts are:">
+<div class="callout callout-style-default callout-tip callout-titled" title="This week’s key concepts are:">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -691,14 +733,14 @@ This week’s key concepts are:
 <div class="callout-body-container callout-body">
 <ul>
 <li>Regression models have three main purposes: prediction; isolating the effect of a single exposure; and understanding multiple predictors. The purpose of a regression model will influence the procedures you follow to build a regression model, and this will be explored more in week 8.</li>
-<li>Simple linear regression measures the association between a continuous outcome and a single exposure. This exposure can be continuous, or binary (in which case simple linear regression is equivalent to a two-sample students t-test).</li>
-<li>The relevant output to interpret and report from a simple linear regression includes:</li>
+<li>Simple linear regression measures the association between a continuous outcome and a single exposure. This exposure can be continuous, or binary (in which case simple linear regression is equivalent to a two-sample students t-test; See Week 3 notes).</li>
+<li>The relevant output to interpret and report from a simple linear regression includes:
+<ul>
 <li>The p-value for the exposure’s regression coefficient (slope)</li>
 <li>The effect size of the exposure regression coefficient and 95% confidence interval</li>
-<li>The amount of variation in the outcome explained by the exposure (<span class="math inline">\(R^2\)</span>)
-<ul>
-<li>The confidence interval for a prediction represents the uncertainty associated with an estimated predicted mean. Conversely, the prediction interval represents the uncertainty associated with the spread of observations around the predicted mean.</li>
+<li>The amount of variation in the outcome explained by the exposure (<span class="math inline">\(R^2\)</span>)</li>
 </ul></li>
+<li>The confidence interval for a prediction represents the uncertainty associated with an estimated predicted mean. Conversely, the prediction interval represents the uncertainty associated with the spread of observations around the predicted mean.</li>
 </ul>
 </div>
 </div>
