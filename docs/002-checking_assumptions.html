@@ -265,27 +265,27 @@ window.Quarto = {
    
   <ul>
   <li><a href="#learn_obj_wk02" id="toc-learn_obj_wk02" class="nav-link active" data-scroll-target="#learn_obj_wk02">Learning objectives</a></li>
-  <li><a href="#learn_act_wk02" id="toc-learn_act_wk02" class="nav-link" data-scroll-target="#learn_act_wk02">Learning activities</a>
-  <ul class="collapse">
-  <li><a href="#collaborative-exercise-reminder" id="toc-collaborative-exercise-reminder" class="nav-link" data-scroll-target="#collaborative-exercise-reminder">Collaborative exercise reminder</a></li>
-  </ul></li>
+  <li><a href="#learn_act_wk02" id="toc-learn_act_wk02" class="nav-link" data-scroll-target="#learn_act_wk02">Learning activities</a></li>
   <li><a href="#video_wk02_resid" id="toc-video_wk02_resid" class="nav-link" data-scroll-target="#video_wk02_resid">Assumptions of linear regression</a>
   <ul class="collapse">
   <li><a href="#linearity" id="toc-linearity" class="nav-link" data-scroll-target="#linearity">Linearity</a></li>
-  <li><a href="#normalitiy" id="toc-normalitiy" class="nav-link" data-scroll-target="#normalitiy">Normalitiy</a></li>
   <li><a href="#homoscedasticity-constant-variance" id="toc-homoscedasticity-constant-variance" class="nav-link" data-scroll-target="#homoscedasticity-constant-variance">Homoscedasticity (constant variance)</a></li>
+  <li><a href="#normalitiy" id="toc-normalitiy" class="nav-link" data-scroll-target="#normalitiy">Normalitiy</a></li>
+  <li><a href="#independence-of-observations" id="toc-independence-of-observations" class="nav-link" data-scroll-target="#independence-of-observations">Independence of Observations</a></li>
   </ul></li>
   <li><a href="#worked-example" id="toc-worked-example" class="nav-link" data-scroll-target="#worked-example">Worked example</a></li>
   <li><a href="#transformations" id="toc-transformations" class="nav-link" data-scroll-target="#transformations">Transformations</a>
   <ul class="collapse">
   <li><a href="#log-transformations-of-the-outcome" id="toc-log-transformations-of-the-outcome" class="nav-link" data-scroll-target="#log-transformations-of-the-outcome">Log transformations of the outcome</a></li>
+  <li><a href="#log-transformations-of-the-outcome-1" id="toc-log-transformations-of-the-outcome-1" class="nav-link" data-scroll-target="#log-transformations-of-the-outcome-1">Log transformations of the outcome</a></li>
   <li><a href="#log-transformations-of-the-outcome-and-covariates" id="toc-log-transformations-of-the-outcome-and-covariates" class="nav-link" data-scroll-target="#log-transformations-of-the-outcome-and-covariates">Log transformations of the outcome and covariates</a></li>
+  <li><a href="#reading_wk02_transfo" id="toc-reading_wk02_transfo" class="nav-link" data-scroll-target="#reading_wk02_transfo">Optional Reading - Book Chapter 4: Section 4.7.5-4.7.6 (pages 128-130).</a></li>
   </ul></li>
   <li><a href="#other-methods-for-handling-non-constant-variance" id="toc-other-methods-for-handling-non-constant-variance" class="nav-link" data-scroll-target="#other-methods-for-handling-non-constant-variance">Other methods for handling non-constant variance</a>
   <ul class="collapse">
   <li><a href="#weighted-least-squares" id="toc-weighted-least-squares" class="nav-link" data-scroll-target="#weighted-least-squares">Weighted least squares</a></li>
   </ul></li>
-  <li><a href="#collaborative-exercise" id="toc-collaborative-exercise" class="nav-link" data-scroll-target="#collaborative-exercise">Collaborative exercise</a></li>
+  <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
 </nav>
@@ -346,27 +346,9 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<section id="collaborative-exercise-reminder" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="collaborative-exercise-reminder">Collaborative exercise reminder</h3>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>In <mar> week 1  you were allocated into small groups to discuss the exercise at the end of this week. You should have already organised a time with your group to meet up by zoom and either discuss your solutions to this exercise, or help and guide each other to complete the task.</mar></p>
-</div>
-</div>
-</section>
 </section>
 <section id="video_wk02_resid" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="video_wk02_resid">Assumptions of linear regression</h2>
-<div class="grid">
-<div class="g-col-9">
 <p>In this section we introduce some simple methods for assessing the underlying assumptions of the simple regression model. For regression analysis we should always perform a reality check that the model we are fitting is at least approximately appropriate for the problem at hand. The assumptions of linear regression fitted by ordinary least squares are:</p>
 <ol type="1">
 <li><p>Linearity of the relationship</p></li>
@@ -374,7 +356,11 @@ Important
 <li><p>Normality of the residuals</p></li>
 <li><p>Independence of observations.</p></li>
 </ol>
-<p>As shown below, assumptions (1) - (3) can be defined in terms of the random part of the regression model - the residuals. The residuals are the observed minus the predicted Y’s, i.e.&nbsp;<span class="math inline">\(e_i = Y_i-\hat{Y}_i=Y_i-(b_0+b_1x_i)\)</span>. Assumption (4) however is usually an assessment of the study design rather than assessed with a diagnostic analysis of the data.</p>
+<p>As shown below, assumptions (1) - (3) can be defined in terms of the random part of the regression model - the residuals. The residuals are the observed minus the predicted Y’s, i.e.&nbsp;<span class="math inline">\(e_i = Y_i-\hat{Y}_i=Y_i-(b_0+b_1x_i)\)</span>.</p>
+<div class="grid">
+<div class="g-col-7">
+<p>Assumption (4) however is usually an assessment of the study design rather than assessed with a diagnostic analysis of the data. (<strong>Note</strong>: students have often forgotten about assumption 4 in the past, so make sure you don’t forget this assumption when assessing the underlying assumptions of the linear regression model.)</p>
+<p>These assumptions are explained using the HERS dataset (from last week) in the video.</p>
 </div>
 <div class="g-col-3">
 <p><a href="https://youtu.be/hFMqIA65Wkg" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> <img src="https://img.youtube.com/vi/hFMqIA65Wkg/hqdefault.jpg" width="200"> </a></p>
@@ -384,19 +370,13 @@ Important
 <h3 class="unnumbered anchored" data-anchor-id="linearity">Linearity</h3>
 <p>This assumption requires that the relationship between the outcome and predictor is in fact linear, i.e., can be approximated by a straight line. The plot below shows the effect of a non-linear relationship on the residuals.</p>
 <p><img src="images/Linearity_plots.jpg" class="img-fluid" style="width:100.0%"></p>
-<p>In the first figure, the true relationship is curved upwards (quadratic) and so when fitting a straight line through the data, the outcome value (<span class="math inline">\(Y\)</span>) is frequently above the regression line for small and large values of <span class="math inline">\(x\)</span>, and below the regression line in the middle. Although this is reasonably obvious in the scatter plot above, it is helpful to plot the actual residual values instead of the outcome as per the plot below.</p>
+<p>In the first figure, the relationship is curved upwards and so when fitting a straight line through the data, the outcome value (<span class="math inline">\(Y\)</span>) is frequently above the regression line for small and large values of <span class="math inline">\(x\)</span>, and below the regression line in the middle. Although this is reasonably obvious in the scatter plot above, it is helpful to plot the actual residual values instead of the outcome as per the plot below.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/resid_1.jpg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%"></p>
 </figure>
 </div>
-<p>Note in this figure we plot the residuals against the <em>predicted</em> values of the regression line instead of the <span class="math inline">\(x\)</span>-values themselves. When there is just one predictor variable, as the regression line is linear this is equivalent to plotting against <span class="math inline">\(x\)</span>. The advantage to plotting against the fitted value is that this extends naturally into multivariable models. From this <em>residual vs.&nbsp;fitted</em> plot, we can also see that the linearity assumption could be rewritten in terms of the residuals. E.g. the residuals have a mean of zero for all values of <span class="math inline">\(x\)</span>.</p>
-</section>
-<section id="normalitiy" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="normalitiy">Normalitiy</h3>
-<p>This assumption requires that the residuals be normally distributed. Note that this is an assumption about the distribution of the residuals, not about the distribution of <span class="math inline">\(Y\)</span> or <span class="math inline">\(x\)</span>. We can plot the residuals on a histogram or normal quantile plot to assess the normality of residuals assumption – which has clearly been met in the figures below.</p>
-<p><img src="images/normality.jpg" class="img-fluid" style="width:100.0%"></p>
-<p>A well-known formal method for assessing non-normality is the Shapiro-Wilk test. It is based approximately on the correlation between the observed and expected residuals. The null hypothesis is that the residuals are normally distributed, so small p-values indicate evidence against a normal distribution. However, for small samples this test has low power for realistic non-normal alternatives, so it is difficult to use a non-statistically-significant result as evidence to support an assumption of normality in a small sample. Conversely, for large samples, small but unimportant deviations from normality may be declared statistically. <strong>Therefore we do not recommend this (or other) formal statistical tests of normality. Rather a visual assessment of a histogram or normal quantile plot is recommended.</strong></p>
+<p>Note in this figure we plot the residuals against the <em>predicted</em> values (or <em>fitted</em> values) of the regression line instead of the <span class="math inline">\(x\)</span>-values themselves. When there is just one predictor variable, as the regression line is linear this is equivalent to plotting against <span class="math inline">\(x\)</span>. The advantage to plotting against the fitted value is that this extends naturally into multivariable models. From this <em>residual vs.&nbsp;fitted</em> plot, we can also see that the linearity assumption could be rewritten in terms of the residuals. E.g. the residuals have a mean of zero for all values of <span class="math inline">\(x\)</span>.</p>
 </section>
 <section id="homoscedasticity-constant-variance" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="homoscedasticity-constant-variance">Homoscedasticity (constant variance)</h3>
@@ -405,6 +385,17 @@ Important
 <p>Here, we can see that as <span class="math inline">\(x\)</span> increases, so does the variance of the residuals. This leads to a fanning out pattern in the residual vs fitted plot.</p>
 <p>To contrast these plots, the below figures demonstrate what these plots look like when both the linearity and homoscedasticity assumptions are met.</p>
 <p><img src="images/assumptions_met.jpg" class="img-fluid" style="width:100.0%"></p>
+</section>
+<section id="normalitiy" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="normalitiy">Normalitiy</h3>
+<p>This assumption requires that the residuals be normally distributed. Note that this is an assumption about the distribution of the residuals, not about the distribution of <span class="math inline">\(Y\)</span> or <span class="math inline">\(x\)</span>. We can plot the residuals on a histogram or normal quantile plot to assess the normality of residuals assumption – which has clearly been met in the figures below.</p>
+<p><img src="images/normality.jpg" class="img-fluid" style="width:100.0%"></p>
+<p>A well-known formal method for assessing non-normality is the Shapiro-Wilk test. It is based approximately on the correlation between the observed and expected residuals. The null hypothesis is that the residuals are normally distributed, so small p-values indicate evidence against a normal distribution. However, for small samples this test has low power for realistic non-normal alternatives, so it is difficult to use a non-statistically-significant result as evidence to support an assumption of normality in a small sample. Conversely, for large samples, small but unimportant deviations from normality may be declared statistically. <strong>Therefore we do not recommend this (or other) formal statistical tests of normality. Rather a visual assessment of a histogram or normal quantile plot is recommended.</strong></p>
+</section>
+<section id="independence-of-observations" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="independence-of-observations">Independence of Observations</h3>
+<p>This is usually an assessment of the study design rather than assessed with a diagnostic analysis of the data. This assumption can be violated, for example, if the study subjects have repeated measures taken (e.g.&nbsp;over time, or under different conditions (under the new study drug and then under the placebo)), or if there’s some spatial relationship between the observations (e.g.&nbsp;individuals treated in the same hospital might have more similar outcomes compared to individuals treated in a different hospital).</p>
+<p>More advanced statistical models are needed if this assumption is violated (outside the scope of RM1, but you might encounter these models in future units, such as “Longitudinal and Correlated Data” (LCD).)</p>
 </section>
 </section>
 <section id="worked-example" class="level2 unnumbered">
@@ -419,8 +410,8 @@ Important
 <p><a href="https://sydney.instructuremedia.com/embed/eac8eebe-7b75-4e48-bb97-02a33d9677c4" onclick="window.open(this.href, 'videoPopup', 'width=800,height=600'); return false;"> <img src="images/RM1_video.png" width="300"> </a></p>
 </section>
 </div>
-<p>Let’s check the assumptions of the regression the <a href="001-simple_linear_regression.html#exercise_wk_01_01">week 1 exercise</a> where we use <a href="https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1" target="_blank">hers_subset.csv</a> data to measure the association between diastolic blood pressure (DBP - the outcome) and body mass index (BMI - the exposure). The first plot shows the residual versus fitted plot. This shows an even scatter around zero with no fanning present for the majority of the plot. Towards the end of the plot, the residuals do seem to be a bit more negative than positive - but the sparsity of the data here makes this difficult to confirm. I would conclude here is no evidence against linearity or homoscedasticity and we can accept these assumptions as true. I would also like to see more data at higher fitted values levels to better confirm this. In the second plot, we see that the residuals are normally distributed as they follow a reasonably straight line on the normal quantile plot. Therefore we conclude the assumption of normality of residuals is true. Without further context of the study design that collected this data, we cannot draw any conclusions about the indepdence of observations - so we will assume this has been met. Therefore all the assumptions have been met and we conclude that a linear regression is appropriate for this data.</p>
-<p>Stata code and output</p>
+<p>Let’s check the assumptions of the regression the <a href="001-simple_linear_regression.html#exercise_wk_01_01">week 1 exercise</a> where we use <a href="https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1" target="_blank">hers_subset.csv</a> data to measure the association between diastolic blood pressure (DBP - the outcome) and body mass index (BMI - the exposure). The first plot shows the residual versus fitted plot. This shows an even scatter around zero with no fanning present for the majority of the plot. Towards the end of the plot, the residuals do seem to be a bit more negative than positive - but the sparsity of the data here makes this difficult to confirm. I would conclude here is no evidence against linearity or homoscedasticity and we can accept these assumptions as true. I would also like to see more data at higher fitted values levels to better confirm this. In the second plot, we see that the residuals are normally distributed as they follow a reasonably straight line on the normal quantile plot. Therefore we conclude the assumption of normality of residuals is true. Without further context of the study design that collected this data, we cannot draw any conclusions about the Independence of observations - so we will assume this has been met. Therefore all the assumptions have been met and we conclude that a linear regression is appropriate for this data.</p>
+<p><strong>Stata code and output</strong></p>
 <div class="cell" data-collectcode="true">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -445,7 +436,7 @@ Important
 </details>
 </div>
 <p><img src="images/Stata_resid.jpg" class="img-fluid" style="width:90.0%"></p>
-<p>R code and output</p>
+<p><strong>R code and output</strong></p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -480,7 +471,7 @@ Important
 <p>We can immediately see a number of problems that would deter us from fitting a linear regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(x\)</span>. First, there is no clear linear relationship between <span class="math inline">\(Y\)</span> and <span class="math inline">\(x\)</span>. Secondly, the variability of the <span class="math inline">\(Y\)</span>-values increases with <span class="math inline">\(x\)</span>. Thirdly, the residuals of a linear regression are clearly non-normal, and heavily right-skewed. Indeed a histogram of <span class="math inline">\(Y\)</span> shows that the outcome is heavily right skewed.</p>
 <section id="log-transformations-of-the-outcome" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="log-transformations-of-the-outcome">Log transformations of the outcome</h3>
-<p>The scatter plot above is an example where the skew in the outcome (<span class="math inline">\(Y\)</span>) variable has caused problems in the linear regression. A common transformation to reduce skew is the <em>Log</em> transformation. Indeed log-transforming <span class="math inline">\(Y\)</span> eliminates this skew, and produces a scatter plot where linear regression would be appropriate, but this time with <span class="math inline">\(\text{log}(Y)\)</span> as the outcome variable.</p>
+<p>The scatter plot above is an example where the skew in the outcome (<span class="math inline">\(Y\)</span>) variable has caused problems in the linear regression. A common transformation to reduce skew (and make the data more “normally distributed”) is the <em>Log</em> transformation. Indeed log-transforming <span class="math inline">\(Y\)</span> eliminates this skew, and produces a scatter plot where linear regression would be appropriate, but this time with <span class="math inline">\(\text{log}(Y)\)</span> as the outcome variable.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -499,9 +490,9 @@ Important
   =\frac{e^{\beta_0} e^{\beta_1x} e^{\beta_1}} {e^{\beta_0} e^{\beta_1x}}
   =e^{\beta_1}.\]</span> Therefore increasing <span class="math inline">\(x\)</span> by 1 is associated with a <em>proportionate</em> (multiplicative) increase of <span class="math inline">\(e^{\beta_1}\)</span> in the geometric mean of <span class="math inline">\(Y\)</span>.</p>
 </section>
-<section id="log-transformations-of-the-outcome-and-covariates" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="log-transformations-of-the-outcome-and-covariates">Log transformations of the outcome and covariates</h3>
-<p>Consider the following scatterplot of brain weight (in grams) versus body weight (in kg) for 62 different mammal species (Allison and Cicchetti, <em>Science</em>, 1976).</p>
+<section id="log-transformations-of-the-outcome-1" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="log-transformations-of-the-outcome-1">Log transformations of the outcome</h3>
+<p>The scatter plot above is an example where the skew in the outcome (<span class="math inline">\(Y\)</span>) variable has caused problems in the linear regression. A common transformation to reduce skew (and make the data more “normally distributed”) is the <em>Log</em> transformation. Indeed log-transforming <span class="math inline">\(Y\)</span> eliminates this skew, and produces a scatter plot where linear regression would be appropriate, but this time with <span class="math inline">\(\text{log}(Y)\)</span> as the outcome variable.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -511,14 +502,82 @@ Important
 </div>
 </div>
 </div>
-<p>As almost all the data are bunched up in the bottom left hand corner. However, a logarithmic transformation of both brain and body weight reins in the extreme values on both axes and produce a scatterplot worth pursuing with linear regression.</p>
-<p>The regression model that would be fitted is <span class="math inline">\(\log Y_i=\beta_0+\beta_1\log x_i+\varepsilon_i\)</span>. The parameter <span class="math inline">\(\beta_1\)</span> reflects the effect on <span class="math inline">\(\text{E}[\log Y\)</span>] of additive changes in <span class="math inline">\(\log(x)\)</span>, which correspond to multiplicative changes in <span class="math inline">\(x\)</span>. Therefore let us examine the proportionate change in GM(<span class="math inline">\(Y\)</span>) for a <em>doubling</em> of covariate <span class="math inline">\(x\)</span>.</p>
+<p>Hence, by performing the log transformation, we can then use a more standard technique like linear regression to analyse the data.</p>
+<p>The log transformation is a very natural and useful tool for many biological measures because it converts <em>multiplicative</em> relationships (such as those observed in processes such as cell division and successive dilution of assays) into <em>additive</em> relationships - which by the central limit theorem are more likely to be normally distributed. The regression equations that we’ve shown you so far have had <em>additive</em> relationships, e.g.&nbsp;<span class="math inline">\(\text{E}(Y) =\beta_0 + \beta_1 x\)</span> (note the <span class="math inline">\(+\)</span> sign for the additive relationship).</p>
+<p>So on its original scale, an outcome variable might have a multiplicative relationship with a covariate, but once a log transformation is applied to the outcome variable, it then has an additive relationship with the covariate. For example, on a logarithmic scale the values 0.1, 1 and 10 equal <span class="math inline">\(log(0.1) = -2.30\)</span>, <span class="math inline">\(log(1) = 0\)</span> and <span class="math inline">\(log(10) = 2.30\)</span>, which are all equally spaced (with a difference of 2.3), whereas the original numbers (0.1, 1 and 10) all differ by a multiplicative factor of 10. Thus the log transformation created an additive relationship.</p>
+<p><strong>Note</strong> that in this course “Log” is used to designate the natural logarithm (<span class="math inline">\(log_e\)</span> or <span class="math inline">\(ln\)</span>). But logarithms to any base will work equally well as this corresponds to rescaling the logged values.</p>
+<p>In the example above the variable <span class="math inline">\(Y\)</span> is said to have a <em>log-normal</em> distribution as it is normally distributed after taking a log transformation. i.e.&nbsp;<span class="math inline">\(\text{log}(Y) \sim N(\mu,\sigma^2)\)</span>. Performing a linear regression on an outcome variable that has been log-transformed, i.e.&nbsp;<span class="math inline">\(log(Y)\)</span> does require some care when interpreting the results on the original scale, as we outline below.</p>
+<p>It is important to highlight some definitions of different types of “means”, which you may have previously been unaware of (see the box below).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p>The <em>arithmetic mean</em> is the “standard average” that you will be used to calculating, where you sum the data values and divide by the count, i.e., <span class="math inline">\(\frac{1}{n} \sum_{i=1}^{n} Y_i\)</span></p></li>
+<li><p>The <em>geometric mean</em> (GM) is a different way of calculating an average in which you multiply the data values together and take the <span class="math inline">\(n\)</span>-th root, i.e., <span class="math inline">\(\sqrt[n]{Y_1 \cdot Y_2 \cdot \cdots \cdot Y_n}\)</span></p></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Additional details (optional)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Assuming that the distribution of the log-transformed values (<span class="math inline">\(logY_1, logY_2,..., logY_n\)</span>) is approximately symmetric, a natural measure of location on the log scale is the sample mean of (<span class="math inline">\(logY_1, logY_2,..., logY_n\)</span>), i.e., <span class="math inline">\(\frac{1}{n}\sum_{i=1}^{n} logY_i\)</span>. Back-transforming to the original scale then gives the (sample) geometric mean: <span class="math display">\[
+e^{\frac{1}{n} \sum_{i=1}^{n} \log Y_i} = \left( \prod_{i=1}^{n} Y_i \right)^{\frac{1}{n}}
+\]</span> Also, if the distribution of values of (<span class="math inline">\(logY_1, logY_2,..., logY_n\)</span>) is approximately symmetric, then the sample geometric mean is close in value to the sample median.</p>
+</div>
+</div>
+</div>
+<p>For log-normally distributed variables, the <strong>geometric mean</strong> as defined by <span class="math inline">\(GM(Y) = e^{\text{E}[log(Y)]} = e^{\mu}\)</span> (i.e.&nbsp;by exponentiating the mean on the logarithmic scale), is a more suitable summary statistic than the arithmetic mean (that we normally use). We use the geometric mean for interpreting the results of a linear regression on its original scale when the outcome has been log-transformed (to fit the model) as we see below.</p>
+<p>After taking a log transformation of <span class="math inline">\(Y\)</span>, the regression model is now <span class="math inline">\(\log Y_i=\beta_0+\beta_1 x_i+\varepsilon_i\)</span>, where <span class="math inline">\(\varepsilon_i \sim N(0,\sigma^2)\)</span> and therefore <span class="math inline">\(\text{E}[\log (Y)]=\beta_0+\beta_1 x\)</span>. We would then fit the model and check our model assumptions and hopefully the log transformation of <span class="math inline">\(Y\)</span> has ensured that the residuals are normally distributed etc. Now, how do we interpret the results?</p>
+<p>Exponentiating both sides of the above equation (to get back to the original scale), and recalling that <span class="math inline">\(GM(Y)=e^{\text{E}[\log (Y)]}\)</span>, we can obtain an interpretation of the parameter <span class="math inline">\(\beta_1\)</span> in terms of the <strong>geometric mean</strong> of <span class="math inline">\(Y\)</span>. i.e., <span class="math inline">\(e^{\text{E}[\log (Y)]}=e^{\beta_0+\beta_1 x} = GM(Y)\)</span>.</p>
+<p>Thus, if we were to interpret the linear regression results on the <em>original scale</em> (back-transformed), we would need to interpret the exponentiated regression parameters (e.g.&nbsp;<span class="math inline">\(e^{\beta_1}\)</span>) in terms of their effect on the <strong>geometric mean</strong> of <span class="math inline">\(Y\)</span>.</p>
+<p>Introducing the notation <span class="math inline">\(GM(Y|x)\)</span> to denote the geometric mean of <span class="math inline">\(Y\)</span> at a given value of the covariate <span class="math inline">\(x\)</span>, we now examine the effect on <span class="math inline">\(GM(Y|x)\)</span> for a change of 1 unit in <span class="math inline">\(x\)</span>: <span class="math display">\[\frac{\mbox{GM}(Y \mid x+1)}{\mbox{GM}(Y \mid x)}
+  =\frac{e^{\text{E}[\log Y \mid x+1]}} {e^{\text{E}[\log Y \mid x]}}
+  =\frac{e^{\beta_0+\beta_1(x+1)}} {e^{\beta_0+\beta_1x}}
+  =\frac{e^{\beta_0} e^{\beta_1x} e^{\beta_1}} {e^{\beta_0} e^{\beta_1x}}
+  =e^{\beta_1}.\]</span> Therefore increasing <span class="math inline">\(x\)</span> by 1 unit is associated with a <em>proportionate</em> (multiplicative) increase of <span class="math inline">\(e^{\beta_1}\)</span> in the geometric mean of <span class="math inline">\(Y\)</span>.</p>
+<p>Example interpretation based on the above: For every 1 unit increase in <span class="math inline">\(x\)</span> there is a multiplicative increase in the geometric mean of <span class="math inline">\(Y\)</span> of <span class="math inline">\(e^{\beta_1}\)</span>.</p>
+</section>
+<section id="log-transformations-of-the-outcome-and-covariates" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="log-transformations-of-the-outcome-and-covariates">Log transformations of the outcome and covariates</h3>
+<p>Consider the following scatterplot of brain weight (in grams) versus body weight (in kg) for 62 different mammal species (Allison and Cicchetti, <em>Science</em>, 1976).</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="002-checking_assumptions_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Almost all the data are bunched up in the bottom left hand corner (left plot). However, a logarithmic transformation of both brain and body weight (right plot) reins in the extreme values on both axes and based on the scatterplot is worth pursuing with linear regression.</p>
+<p>The regression model that would be fitted is <span class="math inline">\(\log Y_i=\beta_0+\beta_1\log x_i+\varepsilon_i\)</span>. The parameter <span class="math inline">\(\beta_1\)</span> reflects the effect on <span class="math inline">\(\text{E}[\log Y\)</span>] of <u>additive</u> changes in <span class="math inline">\(\log(x)\)</span>, which corresponds to <u>multiplicative</u> changes in <span class="math inline">\(x\)</span>. Therefore let us examine the proportionate change in <span class="math inline">\(GM(Y)\)</span> for a <em>doubling</em> (i.e.&nbsp;multiplying by a factor of 2) of covariate <span class="math inline">\(x\)</span>.</p>
 <p><span class="math display">\[\frac{\mbox{GM}(Y \mid 2x)}{\mbox{GM}(Y \mid x)}
   =\frac{e^{\text{E}[\log Y \mid 2x]}}{e^{\text{E}[\log Y \mid x]}}
   =\frac{e^{\beta_0+\beta_1\log(2x)}}{e^{\beta_0+\beta_1\log(x)}}
   = \frac{e^{\beta_0}(2x)^{\beta_1}}{e^{\beta_0}x^{\beta_1}}=2^{\beta_1}.\]</span></p>
-<p>The estimated slope for this regression is 0.752, and so <span class="math inline">\(2^{0.752}\)</span> = 1.68. Therefore, we estimate the geometric mean brain weight to increase 1.68-fold or by 68% for each doubling in weight of mammals. The 95% confidence interval for <span class="math inline">\(2^{\beta_1}\)</span> is obtained from the 95% confidence interval for <span class="math inline">\(\beta_1\)</span> (say (L,U) ) by raising 2 to the power of the endpoints, namely (<span class="math inline">\(2^{L}, 2^{U}\)</span>), producing (1.62, 1.75) for this example.</p>
-<p>This example is a rather extreme case with respect to the distribution of the covariate and it is probably fair to say that transformations of <span class="math inline">\(x\)</span> are not usually as important to consider as transformations of the outcome. Since the linear model takes the values of <span class="math inline">\(x\)</span> as given, so there is no modelling of their distribution, there is no formal need to obtain a “nice” symmetric distribution of the independent variable. However, when we discuss the concept of leverage in week 3 we will see that highly skewed <span class="math inline">\(x\)</span> distributions are undesirable because they may lead to just one or two observations having an unduly large influence on the estimated regression model.</p>
+<p>The estimated slope for this regression is 0.752 (regression output not shown here), and so <span class="math inline">\(2^{0.752}\)</span> = 1.68. Therefore, we estimate the geometric mean brain weight to increase 1.68-fold or by 68% for each doubling in weight of mammals. The 95% confidence interval for <span class="math inline">\(2^{\beta_1}\)</span> is obtained from the 95% confidence interval for <span class="math inline">\(\beta_1\)</span> (say (L,U) ) by raising 2 to the power of the endpoints, namely (<span class="math inline">\(2^{L}, 2^{U}\)</span>), producing (1.62, 1.75) for this example.</p>
+<p>This example is a rather extreme case with respect to the distribution of the covariate and it is probably fair to say that transformations of <span class="math inline">\(x\)</span> are not usually as important to consider as transformations of the outcome. Since the linear model takes the values of <span class="math inline">\(x\)</span> as given, so there is no modelling of their distribution, there is no formal need to obtain a “nice” symmetric distribution of the independent variable/covariate. However, when we discuss the concept of leverage in Module 3 we will see that highly skewed <span class="math inline">\(x\)</span> distributions are undesirable because they may lead to just one or two observations having an unduly large influence on the estimated regression model.</p>
+<p>Note that although we have focused on log-transformations here, other transformations are possible, such as square root, square (or other powers), logit - some of which we will use later in this unit.</p>
+</section>
+<section id="reading_wk02_transfo" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="reading_wk02_transfo">Optional Reading - Book Chapter 4: Section 4.7.5-4.7.6 (pages 128-130).</h3>
+<p>You may wish to read p128-130 of the textbook for alternative explanations of how to interpret log-transformed data (in terms of percentage increases/decreases).</p>
 </section>
 </section>
 <section id="other-methods-for-handling-non-constant-variance" class="level2 unnumbered">
@@ -549,16 +608,17 @@ Important
 <section id="weighted-least-squares" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="weighted-least-squares">Weighted least squares</h3>
 <p>Weighted least squares is an alternative linear regression fitting algorithm to ordinary least squares which is suitable when the variance is non-constant. Here, instead of minimising the sum of square error <span class="math display">\[ \sum(Y_i - \bar{Y}_i)^2\]</span> we instead minimise the weighted sum of square error <span class="math display">\[ \sum w_i(Y_i - \bar{Y}_i)^2\]</span> where <span class="math inline">\(w_i = \frac{1}{\text{var}(Y_i)}\)</span>. That is, the error for each observation is scaled by it’s predicted variance. When the predicted variance is unknown iterative procedures exist to progressively improve homoscedasticity in weighted linear regression.</p>
+<p>Note that this method is outside the scope of RM1 - we just mention it here for your interest.</p>
 </section>
 </section>
-<section id="collaborative-exercise" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="collaborative-exercise">Collaborative exercise</h2>
-<p><a href="https://www.dropbox.com/s/qgoekz6ol2vnpw6/assumptions.csv?dl=1" target="_blank">assumptions.csv</a> consists of simulated data for you to practice checking the assumptions of simple linear regression. It contains 4 continuous outcome variables <code>y1</code>, <code>y2</code>, <code>y3</code> and <code>y4</code>. It has two explanatory variables <code>x1</code> and <code>x2</code>. Your task is to investigate the assumptions of any or all of the possible different simple linear regressions between the outcome variables and the explanatory variables. There are 8 possible regressions to check in total (4 choices for outcome variable, and 2 choices for explanatory variable. <span class="math inline">\(4\times2=8\)</span>). You can either investigate all 8, or however many you have time for - but the more practice the better!</p>
-<p>Discuss your analysis of the assumptions with your group in a self organised zoom meeting, or on your groups dedicated discussion board. If you need help with setting up a zoom meeting, please contact the unit coordinator for assistance.</p>
+<section id="exercise" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="exercise">Exercise</h2>
+<p><a href="https://www.dropbox.com/s/qgoekz6ol2vnpw6/assumptions.csv?dl=1" target="_blank">assumptions.csv</a> consists of simulated data for you to practice checking the assumptions of simple linear regression. It contains 4 continuous outcome variables <code>y1</code>, <code>y2</code>, <code>y3</code> and <code>y4</code>. It has two explanatory variables <code>x1</code> and <code>x2</code>. Your task is to investigate the assumptions of any or all of the possible different simple linear regressions between the outcome variables and the explanatory variables. There are 8 possible regressions to check in total (4 choices for outcome variable, and 2 choices for explanatory variable. <span class="math inline">\(4\times2=8\)</span>).</p>
+<p>Discuss your answers in the discussion board.</p>
 </section>
 <section id="summary" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="summary">Summary</h2>
-<div class="callout callout-style-default callout-note callout-titled" title="This week’s key concepts are:">
+<div class="callout callout-style-default callout-tip callout-titled" title="This week’s key concepts are:">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -568,17 +628,17 @@ This week’s key concepts are:
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<ol type="1">
+<li><p>Linear regression has four key assumptions that should be investigated:</p>
 <ul>
-<li>Linear regression has four key assumptions that should be investigated:
-<ul>
-<li>Linearity - investigated with a residual versus fitted plot. An even scatter around zero indicates this assumption has been met</li>
-<li>Homoscedasticity (constant variance) - investigated with a residual versus fitted plot. An even scatter around zero with no “fanning” indicates this assumption has been met</li>
-<li>Normality of residuals - investigated with a normal quantile plot, or a histogram, of the residuals. For large sample sizes, moderate deviations to this assumption are ok.</li>
-<li>Independence of observations. This is usually investigated by reviewing the study design. However sometimes there can be warning flags present in the data (e.g.&nbsp;a participant identifier column with duplicate entries).</li>
+<li><p>Linearity - investigated with a residual versus fitted plot. An even scatter around zero indicates this assumption has been met</p></li>
+<li><p>Homoscedasticity (constant variance) - investigated with a residual versus fitted plot. An even scatter around zero with no “fanning” indicates this assumption has been met</p></li>
+<li><p>Normality of residuals - investigated with a normal quantile plot, or a histogram, of the residuals. For large sample sizes, moderate deviations to this assumption are ok.</p></li>
+<li><p>Independence of observations. This is usually investigated by reviewing the study design. However sometimes there can be warning flags present in the data (e.g.&nbsp;a participant identifier column with duplicate entries).</p></li>
 </ul></li>
-<li>Violations of any of the assumptions above will result in regression results that are biased, have incorrect interpretations, or have inflated type 1 errors. The greater the violation to the assumption, the greater the consequence</li>
-<li>Log transformations are a useful tool that can often improve assumption violations. However, the interpretation of regression coefficients will change with a log transformation.</li>
-</ul>
+<li><p>Violations of any of the assumptions above will result in regression results that are biased, have incorrect interpretations, or have inflated type 1 errors. The greater the violation to the assumption, the greater the consequence</p></li>
+<li><p>Log transformations are a useful tool that can often improve assumption violations. However, the interpretation of regression coefficients will change with a log transformation.</p></li>
+</ol>
 </div>
 </div>
 
