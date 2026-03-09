@@ -6,7 +6,7 @@ knitr::opts_chunk$set(engine.path=list(stata=stataexe))
 #knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
 ```
 
-# Binary Covariates, Outliers, and Influential Observations {#binary_outliers}
+# Binary Covariates in Linear Regression, Outliers, and Influential Observations {#binary_outliers}
 
 ## Learning objectives {#learn_obj_wk03 .unnumbered}
 
@@ -41,7 +41,7 @@ So far we have limited our analysis to continuous independent variables (e.g. ag
 
 ## Outliers and influential observations {.unnumbered}
 
-An outlier is a point with a large residual. Sometimes an outlier can have a large impact on the estimates of the regression parameter. If you move some of the points in the scatter so they become outliers (far from other points), you can see this will affect the estimated regression line. However, not all outliers are the same. Try moving up and down one of the points at the beginning or the end of the X scale. The impact in the regression line is much stronger than if you do the same with a point in the mid range of X.
+An **outlier** is a data point (observation) with a **large residual** (i.e., points that are a long distance on the y-axis from the fitted line). Sometimes an outlier can have a large impact on the estimates of the regression parameters. If you move some of the points in the scatterplot below so that they become outliers (far from the other points on the y-axis / the regression line), you can see this will affect the estimated regression line. However, not all outliers are the same. Try moving up and down one of the points at the beginning or the end of the $X$ scale. The impact in the regression line is much stronger than if you do the same with a point in the mid range of $X$.
 
 ```{=html}
 <head>
@@ -168,20 +168,31 @@ An outlier is a point with a large residual. Sometimes an outlier can have a lar
 ```
 ::::: grid
 ::: g-col-7
-Conversely, a data point may not have a large residual but still have an important influence in the estimated regression line. Below, you can see that the data point in the left does not appear to have a large residual but it strongly affects the regression line. In the figure on the right, we can see that despite the main cloud of points not suggesting any trend, the extreme left point has a high influence in the final regression line.
+
+A **leverage point** is an observation with an unusually high or low value for a predictor variable (i.e. lies far away from the other values for that predictor variable). Such points may be considered "outliers" (using the lay meaning of "outlier", rather than our definition above) in terms of the predictor values because they fall well outside the typical range of the other observations for that variable (unusual in the x-direction). These points also have the potential to affect the regression line.
 :::
 ::: g-col-5
 ![](images/image-1341453037.png){fig-align="center"}
 :::
 :::::
 
-There are several statistics to measure and explore outliers and influential points. We will discuss some here:
+A data point may not have a large residual but still have an important influence in the estimated regression line. Below, you can see that the data point on the left does not appear to have a large residual but it strongly affects the regression line. 
+
+An **influential observation/point** is one that has a large impact on the regression analysis. e.g. if we were to remove the point then the regression coefficient estimates might change and/or the significance (p-values) of some of the terms in the model might change. Outliers and leverage points have the *potential* to be influential points, but we usually need to do some investigations to see whether they are influential.
+
+(Note that the terminology for these types of points can vary and not everyone agrees on a formal definition (e.g., some use the term "outlier" to describe observations that are unusual in the $X$ or the $Y$ direction). For RM1, we will use the above-definitions.)
+
+There are several statistics to measure and explore outliers, leverage and influential points. We will discuss some here.
+
+### Leverage {.unnumbered}
 
 ::::: grid
-::: g-col-9
-**Leverage**: measures of how far away each value of the independent variable is from the others. Data with high-leverage points, if any, are outliers with respect to the independent variables. The levarage ($L$) varies between 0 and 1.
+::: g-col-8
+
+Leverage is a measure of how far away each value of the independent variable is from the others. Data points with high-leverage, if any, lie some distance away from the other values for the independent variables. The leverage ($L$) values range between 0 and 1.
+
 :::
-::: {.g-col-3 .border .p-3}
+::: {.g-col-4 .border .p-3}
 **Formula** 
 $L = \frac{1}{n} + \frac{(x_i-\bar{x})^2}{\sum{(x_i - \bar{x})^2}}$ 
 :::
@@ -264,7 +275,9 @@ influence(lmodel)$hat     #leverage
   list lev, lev_manual
 ```
 
-**DFBETA**: We can also compute how the coefficients change if each observation is removed from the data. This will produce a vector for $\beta_0$ and $\beta_1$ corresponding to $n$ regressions fitted by deleting each observation at a time. The difference between the full data estimates and the estimates by removing each data point is called *DFBETA*. In the example of the small simulated dataset set above, the dfbeta can also be obtained from the `influence()` function in r.
+### DFBETA {.unnumbered}
+
+We can also compute how the coefficients change if each observation is removed from the dataset. This will produce a vector for $\beta_0$ and $\beta_1$ corresponding to $n$ regressions fitted by deleting each observation one-at-a-time. The difference between the full dataset estimates and the estimates obtained by removing each data point is called *DFBETA*. In the example of the small simulated dataset above, the dfbeta can also be obtained from the `influence()` function in R.
 
 **R code**
 
@@ -277,11 +290,12 @@ coef(lm(y~x)) - coef(lm(y[-10]~x[-10]))
 ```
 
 **Stata code**
+We are not aware of a function in Stata to compute the unstandardised version of DFBETA (mentioned above); you would have to write your own code to do this - see below.
 
 ```{stata, collectcode=TRUE, collapse=TRUE }
-*I am not aware of a function in Stata to compute 
+*We are not aware of a function in Stata to compute 
 *the unstandardised version of DFBETA.
-*This script computes de unstandardise DFBETA "manually"
+*This script computes the unstandardised DFBETA "manually"
 
 	clear
 	set seed 1011
@@ -295,8 +309,8 @@ coef(lm(y~x)) - coef(lm(y[-10]~x[-10]))
 	replace x = 5 in 10
 	* Note: In Stata the typical way to generate a normal variable with mean mu and sd sigma is:
 	*       generate y = (0.5+2*x) + sigma*rnormal()
-	* Here we mimic the provided code.
-	generate y = (0.5+2*x) + rnormal()
+	
+  generate y = rnormal(0.5+2*x,1)
 
 	*----------------------------
 	* Estimate the full model and save coefficients
@@ -337,20 +351,19 @@ coef(lm(y~x)) - coef(lm(y[-10]~x[-10]))
 
 ```
 
-Note that the *DFBETA* above are computed in the original scale of the data. Thus, the magnitude of the difference is dependent on this scale. An alternative is to standardise the *DFBETA* using the standard errors. This will give as deviance from the original estimate in standard errors. A common cut-off for a very strong influence in the results is the value $2$.
 
-```{r, ccollapse = TRUE, include=TRUE}
- #computes the standardised dfbeta. 
-#note that there is also a 
-#dfbeta() function that computes the non-stantandardised dfbeta
-dfbetas(lmodel)                   
-```
 
-**Stata code**
+
+Note that the *DFBETA* above are computed in the *original scale* of the data. Thus, the magnitude of the difference is dependent on this scale. An alternative is to standardise the *DFBETA* by dividing them by the standard error of the corresponding coefficient estimate. This expresses the influence of an observation as the number of standard errors by which the coefficient changes when that observation is excluded. Large *DFBETA* values indicate that an observation has a significant impact on the estimated regression coefficient. A common cut-off for a very strong influence in the results is the value $2$.
+We are not aware of a function in Stata to compute the unstandardised version of DFBETA (mentioned above); you would have to write your own code to do this - see below.
 
 ```{stata, collectcode=TRUE, collapse=TRUE }
-  clear
-  set seed 1011
+*We are not aware of a function in Stata to compute 
+*the unstandardised version of DFBETA.
+*This script computes the unstandardised DFBETA "manually"
+
+	clear
+	set seed 1011
 
 	*----------------------------
 	* Generate the data
@@ -361,17 +374,79 @@ dfbetas(lmodel)
 	replace x = 5 in 10
 	* Note: In Stata the typical way to generate a normal variable with mean mu and sd sigma is:
 	*       generate y = (0.5+2*x) + sigma*rnormal()
-	* Here we mimic the provided code.
-	generate y = (0.5+2*x) + rnormal()
-
- 	*----------------------------
-	* Estimate the full model 
-	*---------------------------- 
-  regress y x
+	
+  generate y = rnormal(0.5+2*x,1)
 
 	*----------------------------
-	* Standardised DFBETA 
-	*---------------------------- 
+	* Estimate the full model and save coefficients
+	*----------------------------
+	regress y x
+	scalar b0_full = _b[_cons]
+	scalar b1_full = _b[x]
+
+	*----------------------------
+	* Loop over each observation to compute DFBETA
+	*----------------------------
+	* We will use a postfile to collect the results.
+	tempname results
+	tempfile dfbeta
+
+	postfile `results' id dfb0 dfb1 using "`dfbeta'", replace
+
+	forvalues i = 1/`=_N' {
+		preserve
+		drop if id == `i'
+		quietly regress y x
+		scalar dfb0 = _b[_cons] - b0_full   // change in intercept
+		scalar dfb1 = _b[x] - b1_full        // change in slope for x
+		post `results' (`i') (dfb0) (dfb1)
+		restore
+	}
+
+	postclose `results'
+
+	*----------------------------
+	* Merge the DFBETA results back into the original dataset and list
+	*----------------------------
+	merge 1:1 id using "`dfbeta'", nogen
+	sort id
+	
+	
+	list dfb0 dfb1, sep(0)
+
+```
+
+
+Note that the *DFBETA* above are computed in the *original scale* of the data. Thus, the magnitude of the difference is dependent on this scale. An alternative is to standardise the *DFBETA* by dividing them by the standard error of the corresponding coefficient estimate. This expresses the influence of an observation as the number of standard errors by which the coefficient changes when that observation is excluded. Large *DFBETA* values indicate that an observation has a significant impact on the estimated regression coefficient. A common cut-off for a very strong influence in the results is the value $2$.
+
+**R code**
+
+The code below is for computing the standardised DFBETA in R.
+
+```{r, ccollapse = TRUE, include=TRUE}
+ #computes the standardised dfbeta. 
+#note that there is also a 
+#dfbeta() function that computes the non-stantandardised dfbeta
+dfbetas(lmodel)                   
+```
+
+**Stata code**
+
+
+The code below is for computing the standardised DFBETA in Stata.
+
+
+```{stata, collectcode=TRUE, collapse=TRUE }
+clear
+set seed 1011
+*generate the data
+  set obs 10
+  generate x = rnormal()
+  replace x = 5 in 10
+  generate y = rnormal(0.5+2*x,1)
+  
+  regress y x
+
   dfbeta
   list 
 
@@ -379,18 +454,22 @@ dfbetas(lmodel)
 
 In the example above, the 10th observation seems to haves reasonable impact in the estimates.
 
+In the example above, the 10th observation seems to have reasonable impact in the estimates.
+
+### Cook's distance {.unnumbered}
 
 ::::: grid
-::: g-col-9
-**Cook's distance** - This is another measure of influence that combines the leverage of the data point and its residual. It summarizes how much all the values in the regression model change when each observation is removed. 
+::: g-col-8
+This is another measure of influence that combines the leverage of the data point and its residual. The **Cook's distance ($D_j$)** summarises how much all the values in the regression model change when the $j-th$ observation is removed. 
 :::
-::: {.g-col-3 .border .p-3}
+
+::: {.g-col-4 .border .p-3}
 **Formula**
 $D_j = \frac{\sum(\hat Y_i-\hat Y_{(-j)})^2}{2\sigma^2}$
 :::
 :::::
+A general rule of thumb is that a point with  $D_j > 4/n$ is considered to be an influential point.
 
-A general rule of thumb is that a point with a Cook's Distance ($D_j$) above $4/n$ is considered to be an outlier.
 
 **R code**
 
@@ -433,7 +512,10 @@ influence.measures(lmodel)
 
 With the example using the simulated sample with 10 observations, the rule of thumb would be $4/10$. Again, the 10th observation is above this threshold and would requires some consideration.
 
-**Plots:** The above mesaures are commonly represented in a graphical way. There are many variations of these plots. Below are some examples of these plots but many other plots are available in different packages.
+### Plots {.unnumbered}
+
+The above measures are commonly represented in a graphical way. There are many variations of these plots. Below are some examples of these plots but many other plots are available in different packages.
+
 
 **R code**
 
@@ -483,16 +565,16 @@ plot(lmodel,6)
 
 ### Book Chapter 4. Outlying, High Leverage, and Influential Poitns 4.7.4 (pages 124-128).  {.unnumbered}
 
-This reading supplements the notes above with emphasis in the DFBETA plots. Note that this subchapter appears in the book after the extension of simple linear regression to the use of multiple independent variables (covariates) in the regression model, which we did not yet cover. However, there are only a few references to the multiple linear regression case.
+This reading supplements the notes above with emphasis on the DFBETA plots. Note that this sub chapter appears in the book after the extension of simple linear regression to the use of multiple independent variables (covariates) in the regression model, which we have not yet covered (Module 4). However, there are only a few references to the multiple linear regression case.
 
 ## Exercises: {.unnumbered}
 
-The dataset [lowbwt.csv](https://www.dropbox.com/s/r06u1l1cjrvcpl1/lowbwt.csv?dl=1) was part of a study aiming to identify risk factors associated with giving birth to a low birth weight baby (weighing less than 2500 grams).
+The dataset [lowbwt.csv](https://raw.githubusercontent.com/atpinto/RM1/bdb2b60a471ce0d99c359c4b5283eb2cf6cb2883/Data/lowbwt.csv) was part of a study aiming to identify risk factors associated with giving birth to a low birth weight baby (weighing less than 2500 grams).
 
 1 - Fit a linear model for the variable *bwt* (birth weight) using the covariate *age* (mother's age), evaluate the assumptions and interpret the results.
 
 ```{r, include=F, eval=F}
-lowbwt <- read.csv("https://www.dropbox.com/s/r06u1l1cjrvcpl1/lowbwt.csv?dl=1")   
+lowbwt <- read.csv("https://raw.githubusercontent.com/atpinto/RM1/bdb2b60a471ce0d99c359c4b5283eb2cf6cb2883/Data/lowbwt.csv")   
 lm1 <- lm(bwt~age, data=lowbwt)
 ```
 
@@ -509,17 +591,21 @@ boxplot(inf$infmat[,1],inf$infmat[,2])
 
 ## Summary {.unnumbered}
 
-This weeks key concepts are:
+::: {.callout-tip title="This week’s key concepts are:"}
 
-::: {#box1 .green-box}
-- The key concepts around binary variables will be added here after you have had a chance to finish your independent investigation.
+1. Linear regression with a binary covariate is equivalent to a t-test (that assumes equal variance).
 
-- Outliers are observations with a very large absolute residual value. That is, we normally refer to outliers as observations with extreme values in the outcome variable $Y$. Outliers in the covariate $x$ are observations with high *leverage*. The precise formula for leverage is less important than understanding how high leverage observations can impact your regression.
+2.  **Outliers** are observations with a very large absolute residual value. That is, we normally refer to "outliers" as observations with extreme values in the outcome variable $Y$ (i.e. are "unusual" in the $Y$-axis).
 
-- A residual versus leverage plot is a very useful diagnostic to see which observations may be highly influential
-  - Observations that are outliers (in the outcome) and that have low leverage, may influence the intercept of your regression model
-  - Observations that are not outliers, but have high leverage might artificially inflate the precision of your regression model
-  - Observations that are outliers AND have high leverage may influence the intercept and slope of your regression model
+3. **Leverage points** are observations with unusual covariate $x$ values (have high "leverage"). The precise formula for leverage is less important than understanding how high leverage observations can impact your regression.
 
-- When potentially highly influential observations are detected, a sensitivity analysis where the results are compared with and without those observations is a useful tool for measuring influence.
+4.  A residual versus leverage plot is a very useful diagnostic to see which observations may be highly influential
+
+    -   Observations that are outliers (in the outcome) and that have low leverage, may influence the intercept of your regression model
+
+    -   Observations that are not outliers, but have high leverage might artificially inflate the precision of your regression model
+
+    -   Observations that are outliers AND have high leverage may influence the intercept and slope of your regression model
+
+5.  When potentially highly influential observations are detected, a sensitivity analysis where the results are compared with and without those observations is a useful tool for measuring influence.
 :::

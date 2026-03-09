@@ -6,7 +6,7 @@ knitr::opts_chunk$set(engine.path=list(stata=stataexe))
 knitr::opts_knit$set(root.dir = 'Data') # Changes the working director to the Data folder
 ```
 
-# Multiple Linear Regression - Application {#mlr_application}
+# Multiple Linear Regression Application {#mlr_application}
 
 ## Learning objectives {.unnumbered}
 
@@ -14,7 +14,7 @@ By the end of this week you should be able to:
 
 1.  Understand and explain the effects of uncontrolled confounding, and the concept of its control by holding extraneous factors constant
 
-2.  Formulate a multiple linear regression model and interpret it's parameters
+2.  Formulate a multiple linear regression model and interpret its parameters
 
 3.  Formulate and test hypothesis based on linear combinations of regression parameters
 
@@ -34,15 +34,16 @@ This week's learning activities include:
 
 ## Introduction to confounding {.unnumbered}
 
-Until this week we have focussed on regression between an outcome and a single covariate and called this *simple linear regression*. This week we introduce the concept of *multiple linear regression* where the outcome is regressed on more than one covariate. The motivating reason for multiple linear regression we will present here is for the adjustment of confounding by other factors. However as we will discover in subsequent weeks multiple covariates is a powerful tool that allows regression analysis to be much more adaptable, and have greater predictive power.
+Until this week we have focussed on regression between an outcome and a single covariate and called this *simple linear regression*. This week we introduce the concept of *multiple linear regression* where the outcome is regressed on more than one covariate. The motivating reason for multiple linear regression that we will present here is for the adjustment of confounding by other factors. However as we will discover in subsequent weeks that multiple linear regression is a powerful tool that allows regression analysis to be much more adaptable, and have greater predictive power.
 
-This week begins with a brief recap on confounding in the lecture below.
+This week begins with a brief recap on the topic of confounding in the lecture below.
 
 <iframe width="740" height="416" allowfullscreen="true" allow="autoplay *" src="https://sydney.instructuremedia.com/embed/cb97015d-c2ca-4cb1-a646-a2ffc9a5e485" frameborder="0">
 
 </iframe>
 
-[Download video](https://www.dropbox.com/s/eysvkbkbvp5mm9c/RM1_Week_4_video_1.mp4?dl=1)
+<!-- [Download video](https://www.dropbox.com/s/eysvkbkbvp5mm9c/RM1_Week_4_video_1.mp4?dl=1) -->
+
 
 ## Introduction to multiple linear regression {.unnumbered}
 
@@ -54,7 +55,7 @@ In this video we introduce the multiple linear regression model, where multiple 
 
 </iframe>
 
-[Download video](https://www.dropbox.com/s/tysysdd5960dgjr/RM1_Week_4_video_2_Stata.mp4?dl=1)
+<!--[Download video](https://www.dropbox.com/s/tysysdd5960dgjr/RM1_Week_4_video_2_Stata.mp4?dl=1)-->
 
 **R instructions**
 
@@ -62,42 +63,74 @@ In this video we introduce the multiple linear regression model, where multiple 
 
 </iframe>
 
-[Download video](https://www.dropbox.com/s/9gzpybo8betqrvb/RM1_Week_4_video_2_R.mp4?dl=1)
+::: {.callout-note}
+Just a general note for R users, care must be taken when using the *anova* command.
 
-### Chapter 4. Linear regression to 4.2.1.1 (pages 69-73). {.unnumbered}
 
-This reading supplements the above two lectures by providing some examples of confounding, and how this adjusted for in multiple linear regression
+If a multiple linear regression model has been fitted using the *lm* command, then we can't then apply *anova* to just that model as it will use the wrong types of sums of squares and give the wrong p-values, e.g.
 
-### Chapter 4. 4.2.2 to 4.2.3 (pages 73-75). {.unnumbered}
 
-This reading reinforces the content from lecture 2 on important output generated from multiple linear regressions including: the variance of regression coefficients, confidence intervals, and measures of goodness of fit with R squared.
+```{r, collapse = FALSE, eval = FALSE}
+lm.multiple<- lm(SBP ~ age + BMI + drinkany + physact, data = hers_subset)
+anova(lm.multiple)
+```
 
-### Chapter 4. 4.3 to 4.3.2 (pages 76-81). {.unnumbered}
+In this situation, we would need to use the "Anova" command from the car package
 
-This reading supplements the lecture video by describing how categorical variables are included in multiple linear regression - particularrly when those categorical variables have more than 2 categories.
+```{r, collapse = FALSE, eval = FALSE}
+library(car)
+lm.multiple<- lm(SBP ~ age + BMI + drinkany + physact, data = hers_subset)
+Anova(lm.multiple, type="III")
+```
+
+and this will give you the correct result. The type = "III" argument refers to the types of sums of squares. (There are three types: Type I, Type II, Type III).
+
+You can only use *anova* with a lowercase "a" for models fitted using the *lm* command if you are using *anova* to compare two models, *anova(model1, model2)*.
+
+
+:::
+
+### Book Chapter 4. Linear regression to 4.2.1.1 (pages 69-73). {.unnumbered}
+
+This reading supplements the above two lectures by providing some examples of confounding, and how this is adjusted for in multiple linear regression.
+
+### Book Chapter 4. 4.2.2 to 4.2.3 (pages 73-75). {.unnumbered}
+
+This reading reinforces the content from Lecture 2 on the important output generated from multiple linear regressions including: the variance of regression coefficients, confidence intervals, and measures of goodness of fit with R squared.
+
+### Book Chapter 4. 4.3 to 4.3.2 (pages 76-81). {.unnumbered}
+
+This reading supplements the lecture video by describing how categorical variables are included in multiple linear regression - particularly when those categorical variables have more than 2 categories.
 
 ## Linear combinations of regression coefficients {.unnumbered}
 
-Particularly with categorical variables of more than one category, we frequently wish to make inferences on linear combinations of regression coefficients. For example, with categorical variables, the regression coefficients represent the mean difference between one of the groups and the reference category. In this section we learn how to make different comparisons - any comparison that is a linear combination of the regression coefficients. Let us return to the regression for the recorded video earlier, using the `hers_subset` data from the Heart and Estrogen/progestin study (HERS). In the video we looked at a regression on systolic blood pressure (sbp) against age, BMI, alcohol consumption (drinkany), and physical activity (physact). With the following regression results:
+We frequently wish to make inferences on linear combinations of regression coefficients, particularly when dealing with categorical variables with multiple categories/levels. For categorical variables, the regression coefficients represent the mean difference between one of the groups and the [reference category]{.underline}. In this section we learn how to make different comparisons (i.e., not just with the reference category) - any comparison that is a linear combination of the regression coefficients. 
+
+Let us return to the regression from the video above, using the `hers_subset` data from the Heart and Estrogen/progestin study (HERS). In the video we looked at a regression on systolic blood pressure (SBP) against age, BMI, alcohol consumption (drinkany), and physical activity (physact). We obtain the following regression results:
 
 **Stata code**
 
+<!--  check this section of code - not sure which is needed and need to make sure correct data set is being used. I think Armando's version has a different reference level--> 
+
 ```{stata, collectcode=TRUE, collapse=TRUE }
-use hersdata, clear
-set seed 90896
-sample 10
+import delimited "https://raw.githubusercontent.com/atpinto/RM1/refs/heads/main/Data/hers_subset.csv", clear varnames(1)
+encode drinkany, generate(drink_fact)
+encode physact, generate(phys_fact)
+codebook phys_fact
   
-reg SBP age BMI i.drink i.physact
+reg sbp age bmi i.drink_fact i.phys_fact
 ```
 
 **R code**
 
 ```{r, echo=TRUE, collapse=TRUE}
-hers_subset <- read.csv("hers_subset.csv")
+hers_subset <- read.csv("https://raw.githubusercontent.com/atpinto/RM1/refs/heads/main/Data/hers_subset.csv")
 lm.multiple <- lm(SBP ~ age + BMI + drinkany + physact, data = hers_subset)
 summary(lm.multiple)
 confint(lm.multiple)
 ```
+Note that the physical activity variable consists of 5 categories (About as active, Much less active, Much more active, Somewhat less active, Somewhat more active). Here our reference category (in both Stata and R) is the "About as active" category. The regression coefficients for each of the other 4 physical activity categories represent the mean difference from that category (e.g. "Much less active") to the reference category ("About as active"), after adjusting for other covariates.
+
 
 Now suppose we wish to make some specific pairwise comparisons that are not captured by the comparison between the reference category. For example, perhaps we wish to compare the difference between the means of the "much less" category, and the "much more" category. Let's think about what this comparison would be from the regression coefficients of this regression equation using the following acroynms:
 
@@ -109,9 +142,11 @@ Now suppose we wish to make some specific pairwise comparisons that are not capt
 
 -   SMA - Somewhat more active
 
+Here out regression equation is:
+
 $$ SBP = \beta_0 + \beta_1 \text{age} + \beta_2 \text{BMI} + \beta_3 \text{drinkany} + \beta_4 \text{MLA} + \beta_5 \text{MMA} + \beta_6 \text{SLA} + \beta_7 \text{SMA}$$
 
-Given that
+Now, given that
 
 $$\beta_4 = \text{mean of MLA} - \text{mean of reference category}$$
 
@@ -125,25 +160,32 @@ $$\beta_4 - \beta_5 = \text{mean of MLA} - \text{mean of MMA}$$
 
 Therefore a calculation of $\beta_4 - \beta_5$ will give us the desired mean difference between the much less active group and the much more active group - after adjusting for age, bmi and alcohol consumption. We can of course do this manually from the regression output, however we save a lot of time if we do this in Stata or R, as those packages will also automatically calulate P-values and confidence intervals for the associated comparison.
 
+
+**Stata code**
+
 In Stata, we do this with the "lincom" command, and specify the levels of the physical activity category with a numeral followed by a ".". i.e. for the comparison above the much less active group is level 2 of the physical activity variable, and the much more active group is level 3. So the Stata code and output would be
 
 ```{stata, collectcode=TRUE, collapse=TRUE }
-use hersdata, clear
-set seed 90896
-sample 10
+import delimited "https://raw.githubusercontent.com/atpinto/RM1/refs/heads/main/Data/hers_subset.csv", clear varnames(1)
+encode drinkany, generate(drink_fact)
+encode physact, generate(phys_fact)
+codebook phys_fact
   
-reg SBP age BMI i.drink i.physact
-lincom 2.physact - 3.physact
-
+reg sbp age bmi i.drink_fact i.phys_fact
+lincom 2.phys_fact - 3.phys_fact
 ```
 
-In R, we do this calculation by first specifying a matrix which designates the comparison we would like to make. The matrix here must have the same number of columns as the number of regression coefficients in our regression equation - in this example 8 ($\beta_0$ to $\beta_7$). We would like to make a subtraction between the $\beta_4$ and $\beta_5$ corresponding to the fifth and sixth regression coefficients. So our matrix comparison is defined as `comparison <- matrix(c(0,0,0,0,1,-1,0,0), nrow=1)`. We then use the `glht` command from the `multcomp` library to calculate this linear combination, and use the `summary` and `confint` commands to output the P-value and confidence intervals.
+**R code**
+
+In R, we do this calculation by first specifying a matrix which designates the comparison we would like to make (this is known as the "contrast matrix"). The matrix here must have the same number of columns as the number of regression coefficients in our regression equation - in this example there are 8 ($\beta_0$ to $\beta_7$). We would like to make a subtraction between $\beta_4$ and $\beta_5$ corresponding to the fifth and sixth regression coefficients (i.e., the 5th and 6th columns of our matrix). 
+
+So our matrix comparison is defined as `comparison <- matrix(c(0,0,0,0,1,-1,0,0), nrow=1)` (the 1s represent the columns we are interested in, and the "-" represents the subtraction). We then use the `glht` command from the `multcomp` library to calculate this linear combination, and use the `summary` and `confint` commands to output the P-value and confidence intervals.
 
 ```{r, echo=FALSE, include=FALSE}
 
 library(multcomp) #for the glht() function
 
-hers_subset <- read.csv("https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1")
+hers_subset <- read.csv("https://raw.githubusercontent.com/atpinto/RM1/refs/heads/main/Data/hers_subset.csv")
 lm.multiple <- lm(SBP ~ age + BMI + drinkany + physact, data = hers_subset)
 comparison <- matrix(c(0,0,0,0,1,-1,0,0), nrow=1)
 lincom <- glht(lm.multiple, linfct = comparison)
@@ -155,7 +197,7 @@ In both Stata and R, we observe that the much more group has a lower SBP mean of
 
 ## Model checking for multiple linear regression {.unnumbered}
 
-In week 2 we investigated how residuals can be used to check assumptions 1-3 of linear regression. These tests are already fit for purpose for multiple linear regression as described below
+In Week 2 we investigated how residuals can be used to check assumptions 1-3 of linear regression. These tests are already fit for purpose for multiple linear regression as described below
 
 1.  Linearity. A residual versus fitted plot is still an excellent tool for assessing linearity in multiple linear regression. If there are concerns with this plot, the assumption can be further investigated with a residual versus predictor plot for each covariate in the regression. Remember, this is only useful for continuous covariates and does not need checking for categorical covariates
 
@@ -165,9 +207,9 @@ In week 2 we investigated how residuals can be used to check assumptions 1-3 of 
 
 ## Independent exercise {.unnumbered}
 
-Continuing on with the `hers_subset` example. Write down the regression equation for a regression with an outcome of body mass index, and with age and physical activity (physact) as covariates. Interpret each parameter in this equation.
+Continuing on with the `hers_subset` example. Write down the regression equation for a regression with an outcome of body mass index  (BMI), and with age and physical activity (physact) as covariates. Interpret each parameter in this equation. 
 
-Carry out this regression and report on the key findings.
+Carry out this regression and report on the key findings. Make sure you write a paragraph interpreting the regression coefficients, give the 95%CI and p-values (use the "Introduction to multiple linear regression" Stata or R demonstration to help with the interpretation).
 
 Finally, express the following comparisons in terms of the regression coefficients of your equation above, and calculate these using Stata or R
 
@@ -175,21 +217,19 @@ Finally, express the following comparisons in terms of the regression coefficien
 
 -   The mean difference between much more active, and somewhat more active
 
--   \[Challenge question\] The mean difference between the more active groups (somewhat and much more active combined), and the less active groups (somewhat and less active combined).
+-   \[Challenge question\] The mean difference between the more active groups (somewhat and much more active combined), and the less active groups (somewhat and less active combined). Hint: we would like you to use contrasts here (rather than creating any new variables for physact).
 
 ## Summary {.unnumbered}
 
-This weeks key concepts are:
-
-::: {#box1 .green-box}
+::: {.callout-tip title="This week’s key concepts are:"}
 1.  Multiple linear regression is the natural extension to simple linear regression where more than one covariate is included as an independent variable. The formula for a multiple linear regression is $$Y_i = \beta_0 + \beta_1 x_{1,i} + \beta_2 x_{2,i} + \beta_3 x_{3,i} + \dots \epsilon_i$$
 
 -   $\beta_0$ still represents the *intercept*, the estimated mean outcome when all covariates ($x$'s) equal zero.
--   $\beta_i$ still represents the mean change in the outcome for a one unit increase in $x_i$. For categorical variables, this represents the mean change from group $x_i$ to the reference category
+-   $\beta_i$ still represents the mean change in the outcome for a one unit increase in $x_i$. For categorical variables, this represents the mean change from group $x_{j,i}$ to the reference category
 
-2.  The statistical evidence (P-value) for a group of regression coefficients can be calculated with an F test or likelihood ratio test. This is important for categorical variables of more than 2 categories as it provides a single P-value for that categorical variable that does not depend on the reference category
+2.  The P-value for a group of regression coefficients can be calculated with an F test or likelihood ratio test. **This is important for categorical variables of more than 2 categories as it provides a single P-value for that categorical variable that does not depend on the reference category**
 
-3.  Linear combinations of regression coefficients can be calculated with the *lincom* command in Stata and the *glht* command from the *multcomp* package in R.
+3.  Linear combinations of regression coefficients can be calculated with the *lincom* command in Stata and the *glht* command from the *multcomp* package in R (using the contrast matrix).
 
-4.  Checking model assumptions can be done in largely the same was for multiple linear regresssion as for simple linear regression. Residual versus predictor plots are an additional plot you can use to investigate deviations to linearity or homoscedasticity.
+4.  Checking model assumptions can be done in largely the same way for multiple linear regression as for simple linear regression. Residual versus predictor plots are an additional plot you can use to investigate deviations from linearity or homoscedasticity.
 :::
