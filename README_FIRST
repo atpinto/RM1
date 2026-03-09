@@ -1,0 +1,18 @@
+1. The index.qmd file indicates the path to Stata. Update this path accordingly.
+
+```{r}
+#| label: setup
+#| include: false
+
+library(ggplot2)
+library(Statamarkdown)
+
+#Use the correct path to Stata
+#stataexe <- "C:/Program Files/Stata18/StataSE-64"
+stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
+
+knitr::opts_chunk$set(engine.path=list(stata=stataexe))
+knitr::opts_knit$set(root.dir = "Data")
+```
+
+2. 

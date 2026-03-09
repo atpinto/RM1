@@ -1,11 +1,6 @@
 ```{r, setup, include=FALSE}
-library(ggplot2)
-library(Statamarkdown)
-stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
-knitr::opts_chunk$set(engine.path=list(stata=stataexe))
-#knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
+source("setup.R")
 ```
-
 # Binary Covariates in Linear Regression, Outliers, and Influential Observations {#binary_outliers}
 
 ## Learning objectives {#learn_obj_wk03 .unnumbered}
