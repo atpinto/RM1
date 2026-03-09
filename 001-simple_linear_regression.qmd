@@ -321,7 +321,7 @@ We expect that, for a 60 year-old, their **individual** SBP measurement will fal
 
 The following exercise will allow you to test yourself against what you have learned so far. The solutions will be released at the end of the week.
 
-Using the dataset [hers_subset.csv](https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1 "These data are a simple random sample of n=276 observations (10%) from the HERS study. The HERS study was a randomized clinical trial of hormone therapy (estrogen plus progestin) for the reduction of cardiovascular disease risk in post-menopausal women with established coronary disease. Study participants were n=2,763 post-menopausal women with coronary disease and with an intact uterus") dataset, use simple linear regression in R or Stata to measure the association between diastolic blood pressure (DBP - the outcome) and body mass index (BMI - the exposure).
+Using the dataset [hers_subset.csv](https://raw.githubusercontent.com/atpinto/RM1/refs/heads/main/Data/hers_subset.csv") These data are a simple random sample of n=276 observations (10%) from the HERS study. The HERS study was a randomized clinical trial of hormone therapy (estrogen plus progestin) for the reduction of cardiovascular disease risk in post-menopausal women with established coronary disease. Study participants were n=2,763 post-menopausal women with coronary disease and with an intact uterus") dataset, use simple linear regression in R or Stata to measure the association between diastolic blood pressure (DBP - the outcome) and body mass index (BMI - the exposure).
 
 a)  Summarise the important findings by interpreting the relevant parameter values, associated P-values and confidence intervals, and $R^2$ value. Three to four sentences is usually enough here.
 
@@ -340,7 +340,6 @@ f)  Calculate and interpret a prediction interval for this prediction.
 The final learning activity for this week is the live tutorial and discussion. This tutorial is an opportunity for you to to interact with your teachers, ask questions about the course, and learn about biostatistics in practice. You are expected to attend these tutorials when possible for you to do so. For those that cannot attend, the tutorial will be recorded and made available on Canvas. We hope to see you there!
 
 ## Summary {#summary_wk01 .unnumbered}
-
 
 ::: {.callout-tip title="This week’s key concepts are:"}
  -   Regression models have three main purposes: prediction; isolating the effect of a single exposure; and understanding multiple predictors. The purpose of a regression model will influence the procedures you follow to build a regression model, and this will be explored more in week 8.

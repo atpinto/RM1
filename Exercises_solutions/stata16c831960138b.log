@@ -1,0 +1,6 @@
+
+
+Running /Users/ateixeirapinto/Documents/RM1_Notes_2026/RM1/Exercises_solutions/profile.do ...
+
+
+. import delimited "https://www.dropbox.com/s/t0ml83xesaaazd0/hers_subset.csv?dl=1"
