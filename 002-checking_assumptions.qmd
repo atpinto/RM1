@@ -313,7 +313,7 @@ Note that this method is outside the scope of RM1 - we just mention it here for 
 
 ## Exercise {.unnumbered}
 
-[assumptions.csv](https://www.dropbox.com/s/qgoekz6ol2vnpw6/assumptions.csv?dl=1){target="_blank"} consists of simulated data for you to practice checking the assumptions of simple linear regression. It contains 4 continuous outcome variables `y1`, `y2`, `y3` and `y4`. It has two explanatory variables `x1` and `x2`. Your task is to investigate the assumptions of any or all of the possible different simple linear regressions between the outcome variables and the explanatory variables. There are 8 possible regressions to check in total (4 choices for outcome variable, and 2 choices for explanatory variable. $4\times2=8$).
+[assumptions.csv](https://raw.githubusercontent.com/atpinto/RM1/refs/heads/main/Data/assumptions.csv){target="_blank"} consists of simulated data for you to practice checking the assumptions of simple linear regression. It contains 4 continuous outcome variables `y1`, `y2`, `y3` and `y4`. It has two explanatory variables `x1` and `x2`. Your task is to investigate the assumptions of any or all of the possible different simple linear regressions between the outcome variables and the explanatory variables. There are 8 possible regressions to check in total (4 choices for outcome variable, and 2 choices for explanatory variable. $4\times2=8$).
 
 Discuss your answers in the discussion board. 
 
