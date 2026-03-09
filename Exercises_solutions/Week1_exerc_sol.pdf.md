@@ -9,9 +9,7 @@ editor_options:
   chunk_output_type: inline
 ---
 
-```{r, setup, include=FALSE}
-source("setup_solution.R")
-```
+
 
 # Exercise solutions
 
@@ -26,7 +24,9 @@ Using the dataset [hers_subset.csv](https://raw.githubusercontent.com/atpinto/RM
 
 **Stata code and output**
 
-```{stata, collectcode=TRUE, collapse=TRUE }
+::: {.cell collectcode='true'}
+
+```{.stata .cell-code}
 /* Part a */
 import delimited "https://raw.githubusercontent.com/atpinto/RM1/refs/heads/main/Data/hers_subset.csv", clear
 reg dbp bmi
@@ -34,22 +34,98 @@ reg dbp bmi
 /* Part b*/
 gen bmi5 = bmi / 5
 reg dbp bmi5
+## (encoding automatically selected: ISO-8859-1)
+## (38 vars, 276 obs)
+## 
+## 
+##       Source |       SS           df       MS      Number of obs   =       276
+## -------------+----------------------------------   F(1, 274)       =      4.84
+##        Model |  423.883938         1  423.883938   Prob > F        =    0.0286
+##     Residual |  23988.8842       274  87.5506722   R-squared       =    0.0174
+## -------------+----------------------------------   Adj R-squared   =    0.0138
+##        Total |  24412.7681       275  88.7737022   Root MSE        =    9.3569
+## 
+## ------------------------------------------------------------------------------
+##          dbp | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+## -------------+----------------------------------------------------------------
+##          bmi |   .2221827   .1009756     2.20   0.029     .0233961    .4209693
+##        _cons |   67.82592   2.923282    23.20   0.000     62.07097    73.58087
+## ------------------------------------------------------------------------------
+## 
+## 
+## 
+##       Source |       SS           df       MS      Number of obs   =       276
+## -------------+----------------------------------   F(1, 274)       =      4.84
+##        Model |  423.883889         1  423.883889   Prob > F        =    0.0286
+##     Residual |  23988.8842       274  87.5506724   R-squared       =    0.0174
+## -------------+----------------------------------   Adj R-squared   =    0.0138
+##        Total |  24412.7681       275  88.7737022   Root MSE        =    9.3569
+## 
+## ------------------------------------------------------------------------------
+##          dbp | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+## -------------+----------------------------------------------------------------
+##         bmi5 |   1.110913   .5048781     2.20   0.029     .1169804    2.104847
+##        _cons |   67.82592   2.923282    23.20   0.000     62.07097    73.58087
+## ------------------------------------------------------------------------------
 ```
+:::
 
 **R code and output**
 
-```{r, collapse = TRUE}
+::: {.cell}
+
+```{.r .cell-code}
 # Part a
 hers_subset <- read.csv("https://raw.githubusercontent.com/atpinto/RM1/refs/heads/main/Data/hers_subset.csv")
 lm.hers <- lm(DBP ~ BMI, data = hers_subset)
 summary(lm.hers)
+## 
+## Call:
+## lm(formula = DBP ~ BMI, data = hers_subset)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -26.6420  -6.4584  -0.7538   5.8199  27.0639 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  67.8259     2.9233    23.2   <2e-16 ***
+## BMI           0.2222     0.1010     2.2   0.0286 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.357 on 274 degrees of freedom
+## Multiple R-squared:  0.01736,	Adjusted R-squared:  0.01378 
+## F-statistic: 4.842 on 1 and 274 DF,  p-value: 0.02862
 confint(lm.hers)
+##                   2.5 %     97.5 %
+## (Intercept) 62.07097446 73.5808680
+## BMI          0.02339609  0.4209693
 
 # Part b
 hers_subset$BMI5 <- hers_subset$BMI / 5
 lm.hers <- lm(DBP ~ BMI5, data = hers_subset)
 summary(lm.hers)
+## 
+## Call:
+## lm(formula = DBP ~ BMI5, data = hers_subset)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -26.6420  -6.4584  -0.7538   5.8199  27.0639 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  67.8259     2.9233    23.2   <2e-16 ***
+## BMI5          1.1109     0.5049     2.2   0.0286 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 9.357 on 274 degrees of freedom
+## Multiple R-squared:  0.01736,	Adjusted R-squared:  0.01378 
+## F-statistic: 4.842 on 1 and 274 DF,  p-value: 0.02862
 ```
+:::
 
 We find evidence that diastolic blood pressure increases as body mass index increases (P = 0.029). For every one kg/m^-2^ increase in BMI, the mean diastolic blood pressure increases by 0.22mmHg, and we are 95% confident the true increase lies between 0.023 and 0.42mmHg. BMI accounts for 1.7% of the overall variability in diastolic blood pressure.
 
@@ -65,21 +141,36 @@ The t-value is the regression coefficient divided by it's standard error $t = 0.
 
 Stata code and output for the p-value
 
-```{stata, collectcode=TRUE, collapse=TRUE }
+::: {.cell collectcode='true'}
+
+```{.stata .cell-code}
 /*Compute sigma_x*/
   summarize bmi
   display r(sd)
 
 /*Compute pvalue*/    
   disp tprob(274,2.2)
+##     Variable |        Obs        Mean    Std. dev.       Min        Max
+## -------------+---------------------------------------------------------
+##          bmi |        276    28.40797    5.587877      18.05      46.49
+## 
+## 5.5878775
+## 
+## .0286418
 ```
+:::
 
 R code and output
 
-```{r, echo=TRUE, collapse = TRUE}
+::: {.cell}
+
+```{.r .cell-code}
 sd(hers_subset$BMI) #the sigma_x
+## [1] 5.587877
 (1-pt(2.2,274))*2 #p-value
+## [1] 0.0286418
 ```
+:::
 
 $R^2$ is the fraction of the total variance explained by the model so is equal to $R^{2} = 423.88/24412.77 = 0.017$. These two variances are default output in Stata. In R the model sum of squares and residual sum of squares can be obtained using `anova(lm.hers)`, after which the $R^2$ can be calculated.
 
@@ -89,7 +180,9 @@ $R^2$ is the fraction of the total variance explained by the model so is equal t
 
 Stata code and output
 
-```{stata, collectcode=TRUE, collapse=TRUE }
+::: {.cell collectcode='true'}
+
+```{.stata .cell-code}
 import delimited "https://raw.githubusercontent.com/atpinto/RM1/refs/heads/main/Data/hers_subset.csv"
 reg dbp bmi
 
@@ -104,11 +197,18 @@ gen lower = fitDBP -1.96*seprDBP in 277
 
 list bmi fitDBP lower upper in 277
 
+## no; data in memory would be lost
+## r(4);
+## 
+## r(4);
 ```
+:::
 
 R code and output
 
-```{r, collapse = TRUE}
+::: {.cell}
+
+```{.r .cell-code}
 hers_subset <- read.csv("https://raw.githubusercontent.com/atpinto/RM1/refs/heads/main/Data/hers_subset.csv")
 lm.hers <- lm(DBP ~ BMI, data = hers_subset)
 
@@ -117,10 +217,15 @@ new_observation <- data.frame(BMI = 28)
 predict(lm.hers, 
         newdata = new_observation, 
         interval="confidence")
+##        fit      lwr      upr
+## 1 74.04704 72.93529 75.15878
 
 predict(lm.hers, 
         newdata = new_observation, 
         interval="prediction")
+##        fit      lwr      upr
+## 1 74.04704 55.59306 92.50101
 ```
+:::
 
 We predict that the mean diastolic blood pressure for those with a BMI of 28kgm^-2^ to be 74mmHg. We are 95% confident the true mean lies between 72.9mmHg and 75.2mmHg. We expect that 95% of women with that BMI will have a diastolic blood pressure between 55.6mmHg and 92.5mmHg.
