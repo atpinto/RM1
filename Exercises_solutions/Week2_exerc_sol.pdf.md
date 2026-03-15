@@ -9,13 +9,7 @@ editor_options:
   chunk_output_type: inline
 ---
 
-```{r, setup, include=FALSE}
-library(ggplot2)
-library(Statamarkdown)
-stataexe <- "/Applications/Stata/StataBE.app/Contents/MacOS/StataBE"
-knitr::opts_chunk$set(engine.path=list(stata=stataexe))
-knitr::opts_knit$set(root.dir = '../Data') # Changes the working director to the Data folder
-```
+
 
 # Exercise solutions
 
@@ -28,7 +22,9 @@ Recall there are four assumptions of linear regression: linearity, homoscedastic
 For the continuous exposure `x1`, linearity and homoscedasticity can both be checked with a residual versus fitted plot. For the binary outcome `x2`, linearity does not need to be checked as linearity is always met for categorical variables. For homoscedasticity, the residual versus fitted plot is not particularly useful as the points all overlap each other making the graph difficult to interpret. To check homoscedasticity, you should use either boxplots or calculate and compare the standard deviation in each group. The assumption of normally distributed residuals can be checked with either a histogram, or a normal-quantile plot. Example code for Stata and R is shown below. Although it is not strictly needed, it can be helpful to also just plot the data in a scatter plot as well.
 
 Example Stata Code
-```{stata, collectcode=TRUE, collapse=TRUE }
+::: {.cell collectcode='true'}
+
+```{.stata .cell-code}
 clear
 import delimited "assumptions.csv"
 /* For the continuous explanatory variable x1 */
@@ -44,32 +40,122 @@ tabulate x2, summarize(y1) /* Calculates the standard deviation in each group */
 reg y1 x2 /* carry out regression */
 predict res_std_x2, residuals /* calculate residuals */
 qnorm res_std_x2 /* normal quantile plot of residuals */
+## (encoding automatically selected: ISO-8859-1)
+## (6 vars, 100 obs)
+## 
+## 
+## 
+##       Source |       SS           df       MS      Number of obs   =       100
+## -------------+----------------------------------   F(1, 98)        =    838.06
+##        Model |  100.316339         1  100.316339   Prob > F        =    0.0000
+##     Residual |  11.7307194        98  .119701218   R-squared       =    0.8953
+## -------------+----------------------------------   Adj R-squared   =    0.8942
+##        Total |  112.047058        99  1.13178847   Root MSE        =    .34598
+## 
+## ------------------------------------------------------------------------------
+##           y1 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+## -------------+----------------------------------------------------------------
+##           x1 |   3.555381   .1228145    28.95   0.000      3.31166    3.799102
+##        _cons |   .6783011   .0708086     9.58   0.000     .5377838    .8188184
+## ------------------------------------------------------------------------------
+## 
+## 
+## 
+## 
+## 
+## 
+##             |            Summary of y1
+##          x2 |        Mean   Std. dev.       Freq.
+## ------------+------------------------------------
+##           0 |     1.56612   .36874916          50
+##           1 |     3.36748   .70366085          50
+## ------------+------------------------------------
+##       Total |      2.4668   1.0638555         100
+## 
+## 
+##       Source |       SS           df       MS      Number of obs   =       100
+## -------------+----------------------------------   F(1, 98)        =    257.08
+##        Model |  81.1224457         1  81.1224457   Prob > F        =    0.0000
+##     Residual |  30.9246123        98  .315557269   R-squared       =    0.7240
+## -------------+----------------------------------   Adj R-squared   =    0.7212
+##        Total |  112.047058        99  1.13178847   Root MSE        =    .56174
+## 
+## ------------------------------------------------------------------------------
+##           y1 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+## -------------+----------------------------------------------------------------
+##           x2 |    1.80136    .112349    16.03   0.000     1.578407    2.024313
+##        _cons |    1.56612   .0794427    19.71   0.000     1.408469    1.723771
+## ------------------------------------------------------------------------------
 ```
+:::
 
 Example R code
-```{r, echo=-2 }
+::: {.cell}
+
+```{.r .cell-code}
 # For the continuous explanatory variable x1
-assumptions <- read.csv("assumptions.csv")
 plot(y1 ~ x1, data = assumptions) # Scatter plot
+```
+
+::: {.cell-output-display}
+![](Week2_exerc_sol_files/figure-pdf/unnamed-chunk-2-1.pdf)
+:::
+
+```{.r .cell-code}
 y1_x1_reg <- lm(y1 ~ x1, data = assumptions) # Carry out regression
 plot(y1_x1_reg, 1) # Residual versus fitted plot
-plot(y1_x1_reg, 2) # Normal quantile plot of residuals
+```
 
+::: {.cell-output-display}
+![](Week2_exerc_sol_files/figure-pdf/unnamed-chunk-2-2.pdf)
+:::
+
+```{.r .cell-code}
+plot(y1_x1_reg, 2) # Normal quantile plot of residuals
+```
+
+::: {.cell-output-display}
+![](Week2_exerc_sol_files/figure-pdf/unnamed-chunk-2-3.pdf)
+:::
+
+```{.r .cell-code}
 # For the binary explanatory variable x2
 boxplot(y1 ~ x2, data = assumptions)
+```
+
+::: {.cell-output-display}
+![](Week2_exerc_sol_files/figure-pdf/unnamed-chunk-2-4.pdf)
+:::
+
+```{.r .cell-code}
 aggregate( y1 ~ x2, data = assumptions, FUN = sd) # Calculates the standard deviation in each group
+```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+  x2        y1
+1  0 0.3687492
+2  1 0.7036609
+```
+
+
+:::
+
+```{.r .cell-code}
 y1_x2_reg <- lm(y1 ~ x2, data = assumptions) # Carry out regression
 plot(y1_x2_reg, 2)  # Normal quantile plot of residuals
 ```
 
+::: {.cell-output-display}
+![](Week2_exerc_sol_files/figure-pdf/unnamed-chunk-2-5.pdf)
+:::
+:::
+
 #### Regression between y1 and x1
-```{r, eval=FALSE, echo=FALSE}
-assumptions <- read.csv("assumptions.csv")
-plot(y1 ~ x1, data = assumptions) # Scatter plot
-y1_x1_reg <- lm(y1 ~ x1, data = assumptions) # Carry out regression
-plot(y1_x1_reg, 1) # Residual versus fitted plot
-plot(y1_x1_reg, 2) # Normal quantile plot of residuals
-```
+::: {.cell}
+
+:::
 The residua versus fitted plot shows that the linearity assumption is violated in this data. This is because residuals are generally positive for low and high values of `x`, and negative for mid range `x` values. The violation of linearity here makes homoscedasticity more difficult to assess, however as there is no obvious fanning in the residuals, this assumption has been met. The normal quantile plot shows no evidence for a concerning deviation from normality, so the normality of residuals assumption is met.
 
 #### Regression between y2 and x1
