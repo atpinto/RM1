@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>8&nbsp; Regression model building and variable selection – Regression Modelling for Biostatistics 1</title>
+<title>8&nbsp; Linear regression model building and variable selection – Regression Modelling for Biostatistics 1</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -41,7 +41,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-73e053f00451a6823eaeab9714ac17cd.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b7c2d8834e08b04a63bb76a724ffbcac.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-6d90ce357d03a3cacecb70eea96b5016.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -111,7 +111,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./008-model_building.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regression model building and variable selection</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./008-model_building.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Linear regression model building and variable selection</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -163,13 +163,13 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./003-binary_covariates_and_outliers.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Binary Covariates, Outliers, and Influential Observations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Binary Covariates in Linear Regression, Outliers, and Influential Observations</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./004-multiple_linear_regression_application.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Multiple Linear Regression - Application</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Multiple Linear Regression Application</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -193,7 +193,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./008-model_building.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regression model building and variable selection</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Linear regression model building and variable selection</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -205,19 +205,19 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./010-logistic_regression_conf_inter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interactions in Logistic Regression</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./011-logistic_regression_splines_validation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Non-linearity in Logistic Regression</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./012-logistic_regression_model_building.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">model building for binary outcomes</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Model building for Logistic Regression</span></span></a>
   </div>
 </li>
     </ul>
@@ -231,14 +231,19 @@ window.Quarto = {
    
   <ul>
   <li><a href="#learn_obj_wk08" id="toc-learn_obj_wk08" class="nav-link active" data-scroll-target="#learn_obj_wk08">Learning objectives</a></li>
-  <li><a href="#learn_act_wk04" id="toc-learn_act_wk04" class="nav-link" data-scroll-target="#learn_act_wk04">Learning activities</a>
+  <li><a href="#learn_act_wk04" id="toc-learn_act_wk04" class="nav-link" data-scroll-target="#learn_act_wk04">Learning activities</a></li>
+  <li><a href="#model-building" id="toc-model-building" class="nav-link" data-scroll-target="#model-building">Model building</a>
   <ul class="collapse">
-  <li><a href="#model-building" id="toc-model-building" class="nav-link" data-scroll-target="#model-building">Model building</a></li>
+  <li><a href="#f-tests-and-likelihood-ratio-tests-for-nested-models" id="toc-f-tests-and-likelihood-ratio-tests-for-nested-models" class="nav-link" data-scroll-target="#f-tests-and-likelihood-ratio-tests-for-nested-models">F-tests and Likelihood ratio tests for nested models</a></li>
+  <li><a href="#r2" id="toc-r2" class="nav-link" data-scroll-target="#r2"><span class="math inline">\(R^2\)</span></a></li>
+  <li><a href="#adjusted-r2" id="toc-adjusted-r2" class="nav-link" data-scroll-target="#adjusted-r2">Adjusted <span class="math inline">\(R^2\)</span></a></li>
+  <li><a href="#aic" id="toc-aic" class="nav-link" data-scroll-target="#aic">AIC</a></li>
+  <li><a href="#bic" id="toc-bic" class="nav-link" data-scroll-target="#bic">BIC</a></li>
   <li><a href="#independent-exercise" id="toc-independent-exercise" class="nav-link" data-scroll-target="#independent-exercise">Independent exercise</a></li>
+  </ul></li>
   <li><a href="#lecture-1---prediction-more-done-in-week-10" id="toc-lecture-1---prediction-more-done-in-week-10" class="nav-link" data-scroll-target="#lecture-1---prediction-more-done-in-week-10">Lecture 1 - Prediction (more done in week 10)</a></li>
   <li><a href="#lecture-2---isolating-the-effect-of-a-single-predictor" id="toc-lecture-2---isolating-the-effect-of-a-single-predictor" class="nav-link" data-scroll-target="#lecture-2---isolating-the-effect-of-a-single-predictor">Lecture 2 - Isolating the effect of a single predictor</a></li>
   <li><a href="#lecture-3---understanding-multiple-predictors" id="toc-lecture-3---understanding-multiple-predictors" class="nav-link" data-scroll-target="#lecture-3---understanding-multiple-predictors">Lecture 3 - Understanding multiple predictors</a></li>
-  </ul></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
 </nav>
@@ -248,7 +253,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="mlr_model_building" class="quarto-section-identifier"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regression model building and variable selection</span></span></h1>
+<h1 class="title"><span id="mlr_model_building" class="quarto-section-identifier"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Linear regression model building and variable selection</span></span></h1>
 </div>
 
 
@@ -303,80 +308,121 @@ window.Quarto = {
 <td>3</td>
 </tr>
 <tr class="odd">
-<td>Lecture 2</td>
+<td>Lecture 3</td>
 <td>4</td>
 </tr>
 </tbody>
 </table>
-<section id="model-building" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="model-building">Model building</h3>
-<p>The previous weeks provide the tools to carry out a multiple linear regression in Stata or R and interpret the results. However, the process of choosing exactly which regression model best answers your research question is not always clear. This process involves choosing: which covariates to include, what functional form they should take, and what (if any) transformations may be necessary. Before we illustrate these steps in three different contexts, it is helpful to first introduce several measures of regression model performance to help inform our decisions.</p>
-<section id="f-tests-and-likelihood-ratio-tests-for-nested-models" class="level4 unnumbered">
-<h4 class="unnumbered anchored" data-anchor-id="f-tests-and-likelihood-ratio-tests-for-nested-models">F-tests and Likelihood ratio tests for nested models</h4>
-<p>The first method of comparing regression models is one we have already been using all course: P-values that test the specific inclusion or exclusion of a variable or groups of variables (e.g.&nbsp;a group of dummy variables associated with a categorical covariate) from the model. This is achieved in linear regression with an F-test which produces an equivalent p-value to the t-test P-value shown in the common regression output for continuous and binary variables. For linear regression, this is also equivalent to a likelihood ratio test P-value. Although this method of comparison is the most intuitive, it is limited in that it can only compare <em>nested</em> models - models that differ by the inclusion of one or more variables. So it is not useful for comparing models that differ in other ways. e.g.&nbsp;comparing models with different methods of adjusting for non-linearity (categorisation, cubic-splines, or log-transformation of the covariate). For these comparisons, different model comparison measures need to be employed.</p>
 </section>
-<section id="r2" class="level4 unnumbered">
-<h4 class="unnumbered anchored" data-anchor-id="r2"><span class="math inline">\(R^2\)</span></h4>
-<p>We are already familiar with <em>coefficient of determination</em> R<sup>2</sup> from <a href="001-simple_linear_regression.html#reading_wk01_sec3_3_5">weeks 1’s reading</a>. Recall that this is the proportion of the total variability of the outcome that can be explained by the covariates in the model. Or alternatively 1 minus the proportion of variability remaining unexplained.</p>
+<section id="model-building" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="model-building">Model building</h2>
+<p>The previous weeks’ content have provided the tools to carry out a multiple linear regression in Stata or R and interpret the results. However, the process of choosing exactly which regression model best answers your research question is not always clear. This process involves choosing: which covariates to include, what functional form they should take, and what (if any) transformations may be necessary. Before we illustrate these steps in three different contexts, it is helpful to first introduce several measures of regression model performance to help inform our decisions.</p>
+<section id="f-tests-and-likelihood-ratio-tests-for-nested-models" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="f-tests-and-likelihood-ratio-tests-for-nested-models">F-tests and Likelihood ratio tests for nested models</h3>
+<p>The first method of comparing regression models is one that we have already been using throughout RM1: P-values that test the specific inclusion or exclusion of a variable or groups of variables (e.g.&nbsp;a group of dummy variables associated with a categorical covariate) from the model. This is achieved in linear regression with an F-test which produces an equivalent p-value to the t-test P-value shown in the common regression output for continuous and binary variables. For linear regression, this is also equivalent to a likelihood ratio test P-value.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Although this method of comparison is the most intuitive, it is limited in that it can only compare <em>nested</em> models - models that differ by the inclusion of one or more variables. So it is not useful for comparing models that differ in other ways. e.g.&nbsp;comparing models with different methods of adjusting for non-linearity (categorisation, cubic-splines, or log-transformation of the covariate). For these comparisons, different model comparison measures need to be employed.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="r2" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="r2"><span class="math inline">\(R^2\)</span></h3>
+<p>We are already familiar with <em>coefficient of determination</em> R<sup>2</sup> from <a href="001-simple_linear_regression.html#reading_wk01_sec3_3_5">week 1’s reading</a> (pages 39-42). Recall that this is the proportion of the total variability of the outcome that can be explained by the covariates in the model. Or alternatively 1 minus the proportion of variability remaining unexplained.</p>
 <p><span class="math display">\[ R^2 = \frac{\text{Model sum of squares}}{\text{Total sum of squares}}
 = 1 - \frac{\text{Residual sum of squares}}{\text{Total sum of squares}}\]</span></p>
-<p>R<sup>2</sup> therefore provides a natural and intuitive measure of regression performance with higher R<sup>2</sup> values indicating better model performance (as more variability of the outcome can be explained). However, issues arise when R<sup>2</sup> is used to compare models as it will always favour more complex models regardless of whether that increased complexity is justified. This will lead to over paramaterised, or overfitted models. Therefore R<sup>2</sup> is only a useful <em>comparitive</em> measures for models of equal complexity e.g.&nbsp;models with the same number of parameters.</p>
+<p>R<sup>2</sup> therefore provides a natural and intuitive measure of regression performance, with higher R<sup>2</sup> values indicating better model performance (as more variability of the outcome can be explained).</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Issues arise when R<sup>2</sup> is used to compare models as it will always favour more complex models regardless of whether that increased complexity is justified. This will lead to over parameterised, or overfitted models. Therefore R<sup>2</sup> is only a useful <em>comparative</em> measure for models of equal complexity e.g.&nbsp;models with the same number of parameters.</p>
+</div>
+</div>
+</div>
 </section>
-<section id="adjusted-r2" class="level4 unnumbered">
-<h4 class="unnumbered anchored" data-anchor-id="adjusted-r2">Adjusted <span class="math inline">\(R^2\)</span></h4>
+<section id="adjusted-r2" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="adjusted-r2">Adjusted <span class="math inline">\(R^2\)</span></h3>
 <p>The adjusted R<sup>2</sup> attempts to compensate for the overfitting issues associated with the <em>unadjusted</em> R<sup>2</sup> by penalising the R<sup>2</sup> calculation by the number of parameters of the model. There are several ways of doing this, and the exact method isn’t too important, so the common formula below is shown purely so you can compare the calculation to the regular R<sup>2</sup>.</p>
 <p><span class="math display">\[ \text{adjusted } R^2 = 1 - \frac{\text{Residual sum of squares}/(n-p)}{\text{Total sum of squares}/(n-1)}\]</span> where <span class="math inline">\(n\)</span> is the number of observations and <span class="math inline">\(p\)</span> is the number of parameters of the model (equal to the number of regression coefficients). So the adjusted R<sup>2</sup> will only increase if the residual error in the more complex model reduces enough to compensate for the penalty of the extra parameter (increasing <span class="math inline">\(p\)</span>).</p>
 </section>
-<section id="aic" class="level4 unnumbered">
-<h4 class="unnumbered anchored" data-anchor-id="aic">AIC</h4>
-<p>The adjusted R<sup>2</sup> is just one of many ways to penalise unnecesary complexity to avoid over fitting. One popular method of adjustment would be the Akaike Information Criterion, commonly known as the AIC. Here, instead of quantifying the model fit through least squares, the <em>maximum likelihood</em> is used to compare models - again with a penalty proportional to the number of paramaters. Using a likelihood based approach has the advantage that it can be applied in models not fit through ordinary least squares (such as logistic regression taught in the second half of this course). AIC is calculated as</p>
+<section id="aic" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="aic">AIC</h3>
+<p>The adjusted R<sup>2</sup> is just one of many ways to penalise unnecessary complexity to avoid over fitting. One popular method of adjustment would be the Akaike Information Criterion, commonly known as the AIC. Here, instead of quantifying the model fit through least squares, the <em>maximum likelihood</em> is used to compare models - again with a penalty proportional to the number of parameters. Using a likelihood based approach has the advantage that it can be applied in models not fit through ordinary least squares (such as logistic regression taught in the second half of this course). AIC is calculated as</p>
 <p><span class="math display">\[ \text{AIC} = 2p - 2\log(\mathcal{L}) \]</span></p>
-<p>where <span class="math inline">\(p\)</span> is the number of paramaters and <span class="math inline">\(\mathcal{L}\)</span> is the maximum likelihood value of the model fit. As we are subtracting the maximum likelihood, lower AIC values indicate better models (i.e.&nbsp;higher likelihoods are better). The AIC can be either negative or positive, and so it is important to remember that a “lower” AIC could mean either a smaller positive AIC value, or a “more negative” negative AIC value.</p>
+<p>where <span class="math inline">\(p\)</span> is the number of paramaters and <span class="math inline">\(\mathcal{L}\)</span> is the maximum likelihood value of the model fit. As we are subtracting the maximum likelihood, <strong>lower AIC values indicate better models</strong> (i.e.&nbsp;higher likelihoods are better). The AIC can be either negative or positive, and so it is important to remember that a “lower” AIC could mean either a smaller positive AIC value, or a “more negative” negative AIC value.</p>
 </section>
-<section id="bic" class="level4 unnumbered">
-<h4 class="unnumbered anchored" data-anchor-id="bic">BIC</h4>
+<section id="bic" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="bic">BIC</h3>
 <p>The Bayesian Information Criterion (BIC) is very similar to the AIC, however instead of penalising by <span class="math inline">\(2p\)</span>, it penalises by <span class="math inline">\(2p\log(n)\)</span>.</p>
 <p><span class="math display">\[ \text{BIC} = 2p\log(n) - 2\log(\mathcal{L})\]</span></p>
-<p>This change in penalty between BIC and AIC is important for two reasons. Firstly, the BIC penalty is a stricter penalty than AIC. Secondly, the BIC penalties become progressively stricter as the sample size increases. Both of these generally lead to BIC favouring more simple models than AIC.</p>
-</section>
+<p>This change in penalty between BIC and AIC is important for two reasons. Firstly, the BIC penalty is a stricter penalty than AIC. Secondly, the BIC penalties become progressively stricter as the sample size increases. Both of these generally lead to BIC favouring simpler models than AIC.</p>
 </section>
 <section id="independent-exercise" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="independent-exercise">Independent exercise</h3>
 <p>Use the tools above to investigate the ideal number of knots for the week 7 investigation between HDL and BMI.</p>
 </section>
-<section id="lecture-1---prediction-more-done-in-week-10" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="lecture-1---prediction-more-done-in-week-10">Lecture 1 - Prediction (more done in week 10)</h3>
+</section>
+<section id="lecture-1---prediction-more-done-in-week-10" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="lecture-1---prediction-more-done-in-week-10">Lecture 1 - Prediction (more done in week 10)</h2>
 <p>In this video, we will look at how the tools above can be used to help build regression models suitable for prediction, where the goal is to minimise the predictive error.</p>
 <iframe width="740" height="416" src="https://www.youtube.com/embed/Ffomiy0qPPg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
 </iframe>
-<p><a href="https://www.dropbox.com/s/s3mymik8m65nwjd/RM1%20Week%208%20Prediction%20models.mp4?dl=1">Download video here</a></p>
+<!-- [Download video here](https://www.dropbox.com/s/s3mymik8m65nwjd/RM1%20Week%208%20Prediction%20models.mp4?dl=1) --->
 </section>
-<section id="lecture-2---isolating-the-effect-of-a-single-predictor" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="lecture-2---isolating-the-effect-of-a-single-predictor">Lecture 2 - Isolating the effect of a single predictor</h3>
+<section id="lecture-2---isolating-the-effect-of-a-single-predictor" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="lecture-2---isolating-the-effect-of-a-single-predictor">Lecture 2 - Isolating the effect of a single predictor</h2>
 <p>In this video, we will look at how the tools above can be used to help build regression models suitable for measuring the effect of an exposure on an outcome, where the goal is to measure this effect without bias due to confounding.</p>
 <iframe width="740" height="416" src="https://www.youtube.com/embed/vSHAb_c78rg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
 </iframe>
-<p><a href="https://www.dropbox.com/s/d2xb68sfl3qxuja/RM1%20Week%208%20Epi%20models.mp4?dl=1">Download video here</a></p>
+<!-- [Download video here](https://www.dropbox.com/s/d2xb68sfl3qxuja/RM1%20Week%208%20Epi%20models.mp4?dl=1) -->
 </section>
-<section id="lecture-3---understanding-multiple-predictors" class="level3 unnumbered">
-<h3 class="unnumbered anchored" data-anchor-id="lecture-3---understanding-multiple-predictors">Lecture 3 - Understanding multiple predictors</h3>
+<section id="lecture-3---understanding-multiple-predictors" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="lecture-3---understanding-multiple-predictors">Lecture 3 - Understanding multiple predictors</h2>
 <p>In this video, we will look at how the tools above can be used in exploratory research, where the goal is to identify which covariates are associated with an outcome. It is common in this type of research for potential confounders or predictors of interest to be less well established.</p>
 <iframe width="740" height="416" src="https://www.youtube.com/embed/vKXzmSfL9GM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
 </iframe>
-<p><a href="https://www.dropbox.com/s/7x0sfgsbs1jwigt/RM1%20Week%208%20multiple%20predictors.mp4?dl=1">Download video here</a></p>
-</section>
+<!-- [Download video here](https://www.dropbox.com/s/7x0sfgsbs1jwigt/RM1%20Week%208%20multiple%20predictors.mp4?dl=1) -->
 </section>
 <section id="summary" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="summary">Summary</h2>
-<p>This weeks key concepts are:</p>
-<div id="box1" class="green-box">
+<div class="callout callout-style-default callout-tip callout-titled" title="This week’s key concepts are:">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+This week’s key concepts are:
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ol type="1">
-<li><p>There are several measures available to help statistically compare regression models - including P-values from t-tests and f-tests, R<sup>2</sup>, adjusted R<sup>2</sup>, AIC and BIC.</p></li>
-<li><p>How these tools will be applied will be different depending on the context of your research question</p></li>
-<li><p>This course focuses on prediction models, models to understand the effect of a single exposure, and understanding multiple predictors</p></li>
+<li><p>There are several measures available to statistically compare regression models - including P-values from t-tests and F-tests, R<sup>2</sup>, adjusted R<sup>2</sup>, AIC and BIC.</p></li>
+<li><p>How these tools will be applied will be different depending on the context of your research question. Certain measures can only be used in particular model comparison contexts. The measure you use depends on the types of models being compared, and how the models differ to one another.</p></li>
+<li><p>This course focuses on building regression models suitable for prediction (to make future predictions based on current data), models to understand the effect of a single exposure, and understanding multiple predictors (usually for exploratory research).</p></li>
 <li><p>All types of models should also consider contextualised field specific issues and norms.</p></li>
-<li><p>You should not use automatic covariate selection algorithms for use in this course. Rather build models where you are comfortable justifying the inclusion or exclusion of each covariate.</p></li>
+<li><p>You should not use automatic covariate selection algorithms for use in this course. Rather, build models where you are comfortable justifying the inclusion or exclusion of each covariate.</p></li>
 </ol>
+</div>
 </div>
 
 
@@ -813,6 +859,19 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Regression Modeling for Biostatistics</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
 
 
 

@@ -75,7 +75,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-73e053f00451a6823eaeab9714ac17cd.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b7c2d8834e08b04a63bb76a724ffbcac.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-6d90ce357d03a3cacecb70eea96b5016.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -197,13 +197,13 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./003-binary_covariates_and_outliers.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Binary Covariates, Outliers, and Influential Observations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Binary Covariates in Linear Regression, Outliers, and Influential Observations</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./004-multiple_linear_regression_application.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Multiple Linear Regression - Application</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Multiple Linear Regression Application</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -239,19 +239,19 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./010-logistic_regression_conf_inter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interactions in Logistic Regression</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./011-logistic_regression_splines_validation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Non-linearity in Logistic Regression</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./012-logistic_regression_model_building.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">model building for binary outcomes</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Model building for Logistic Regression</span></span></a>
   </div>
 </li>
     </ul>
@@ -265,9 +265,12 @@ window.Quarto = {
    
   <ul>
   <li><a href="#learn_obj_wk06" id="toc-learn_obj_wk06" class="nav-link active" data-scroll-target="#learn_obj_wk06">Learning objectives</a></li>
-  <li><a href="#learn_act_wk06" id="toc-learn_act_wk06" class="nav-link" data-scroll-target="#learn_act_wk06">Learning activities</a></li>
-  <li><a href="#independent-investigation---collinearity" id="toc-independent-investigation---collinearity" class="nav-link" data-scroll-target="#independent-investigation---collinearity">Independent investigation - Collinearity</a></li>
-  <li><a href="#independent-exercise" id="toc-independent-exercise" class="nav-link" data-scroll-target="#independent-exercise">Independent Exercise</a></li>
+  <li><a href="#learn_act_wk06" id="toc-learn_act_wk06" class="nav-link" data-scroll-target="#learn_act_wk06">Learning activities</a>
+  <ul class="collapse">
+  <li><a href="#handling-collinearity" id="toc-handling-collinearity" class="nav-link" data-scroll-target="#handling-collinearity">Handling collinearity</a></li>
+  <li><a href="#reading_wk6_coll" id="toc-reading_wk6_coll" class="nav-link" data-scroll-target="#reading_wk6_coll">Book Chapter 10: Section 10.4.1 (pages 421-422).</a></li>
+  </ul></li>
+  <li><a href="#independent-exercise---collinearity" id="toc-independent-exercise---collinearity" class="nav-link" data-scroll-target="#independent-exercise---collinearity">Independent Exercise - Collinearity</a></li>
   <li><a href="#interaction-effect-modification" id="toc-interaction-effect-modification" class="nav-link" data-scroll-target="#interaction-effect-modification">Interaction (effect modification)</a>
   <ul class="collapse">
   <li><a href="#a-regression-model-for-interaction" id="toc-a-regression-model-for-interaction" class="nav-link" data-scroll-target="#a-regression-model-for-interaction">A regression model for interaction</a></li>
@@ -330,51 +333,31 @@ window.Quarto = {
 <td>1, 2</td>
 </tr>
 <tr class="odd">
-<td>Independent investigation</td>
-<td>3, 4</td>
-</tr>
-<tr class="even">
-<td>Independent exercises</td>
-<td>3, 4</td>
-</tr>
-<tr class="odd">
 <td>Live tutorial/discussion</td>
 <td>3, 4</td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="independent-investigation---collinearity" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="independent-investigation---collinearity">Independent investigation - Collinearity</h2>
-<p>This week you will be practicing learning independently an unfamiliar biostatistics topic. This is aimed to provide to you the skills of independent learning a biostatistician needs to carry out an unfamiliar analysis that was not covered in the Master of Biostatistics. These are skills that will also be needed in your workplace placement project (Master students only).</p>
-<p>The topic of this weeks independent learning exercise is collinearity. Collinearity is an issue that can be faced in any regression model with more than one covariate. This week you will independently investigating collinearity and methods to deal with this statistical phenomena. To do this perform the steps below:</p>
+<p>There are a number of approaches that you can use to detect collinearity:</p>
 <ol type="1">
-<li><p>Use appropriate resources to learn about collinearity in linear regression. Specifically, by the end of this investigation you should be able to:</p>
-<ul>
-<li><p>Describe what collinearity is in linear regression</p></li>
-<li><p>Carry out an investigation to detect collinearity</p></li>
-<li><p>Be familiar with methods of dealing with collinarity</p></li>
-</ul></li>
-<li><p>Investigate the reliability of your source. Some helpful questions to ask yourself are:</p>
-<ul>
-<li><p>How does this information compare to other sources?</p></li>
-<li><p>What authority does the author have to provide this information?</p></li>
-<li><p>When was this resource developed and is the information likely to have changed?</p></li>
-<li><p>What is the purpose of this resource?</p></li>
-</ul></li>
-<li><p>Create a resource that describes to your peers your findings. This resource could be a short video, or just a discussion board post. The resource should include the following</p>
-<ul>
-<li><p>A description of what is collinearity</p></li>
-<li><p>Instructions on how to detect collinearity in linear regression analysis</p></li>
-<li><p>A description of at least one technique of dealing with collinearity</p></li>
-<li><p>Your proposed solution to the exercise below (optional)</p></li>
-</ul></li>
+<li><p>By examining scatterplots</p></li>
+<li><p>By examining the correlation between the predictor variables (e.g., via a correlation matrix)</p></li>
+<li><p>By fitting a series of regressions where the predictor variables are treated as the outcome variable (one at a time) and the other covariates are included as predictors in the model (this is a bit cumbersome)</p></li>
+<li><p>By examining the variance inflation factor (VIF), which can be used to quantify the extent of the collinearity (measures how much a coefficient’s variance is inflated due to the presence of correlation between the collinear predictor variables). You can obtain this in R or Stata after fitting your models (a value will be provided for each predictor in the model). See Section 4.2.2.2 (p74) of Vittinghoff et al for more details. Note that different cut-offs have been recommended for the VIF. In general, a VIF = 1 indicates no collinearity. VIFs of 1-5 might indicate that there is potentially some collinearity and should be investigated further. VIFs 5-10 indicate that there is potentially problematic collinearity that should be investigated and VIF&gt;10 often indicates serious collinearity that will need correction.</p></li>
 </ol>
-<p>For the third task, each learning resource should be relatively short (taking 2-4 minutes to watch or read) and be posted in the week 5 independent task assignment (even though it is not an assignment). All learning resources that are posted will receive feedback from the unit coordinator. Your resource will also be available to other students who may also wish to provide some peer feedback and or encouragement.</p>
+<section id="handling-collinearity" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="handling-collinearity">Handling collinearity</h3>
+<p>How we handle collinearity depends partly on our research question and the purpose of fitting our regression model (inferential goals from week 1), as well as the degree of collinearity and the variables affected. For example, if we are interested in fitting a prediction model where we are not interested in interpreting individual parameter values of the predictors, then we may include collinear variables if it improves the model’s performance (decreases prediction error). However, if we wish to interpret individual parameter values in the model, then we might want to try re-running the analysis with only one of the collinear variables included at a time, and slowly re-introduce the collinear variables into the model (this might involve fitting several models). You could potentially linearly combine some of the correlated variables to generate a new variable (e.g., use BMI instead of including height and weight in a model). Alternatively, you could also choose which variables to include based on what makes the most sense clinically (based on theory) and/or based on which measures are the easiest/most practical to collect. In some instances you might still need to keep collinear predictor variables in the model, for example, if there are higher order terms in the model such as quadratic terms (e.g., <span class="math inline">\(x^2\)</span>; Module 7) or interaction terms (introduced below), or if one variable is a predictor of main interest and the other is an important confounder variable. See Vittinghoff et al.&nbsp;pp421-422 for more examples.</p>
+<p>Note that other advanced techniques such as ridge regression may also be used to handle collinearity. These are beyond the scope of RM1.</p>
 </section>
-<section id="independent-exercise" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="independent-exercise">Independent Exercise</h2>
-<p>In managing children with asthmas and other respiratory diseases, it is important to monitor various measures of lung function, one of the most import of which is the volume of air that can be forced out fot he lungs in one second, known as the Forced Expiratory Volume (1 second) or FEV1 for short (measured in litres). The “<a href="https://www.dropbox.com/s/2cs0z39v2ekni81/lungfun.csv?dl=1">lungfun.csv</a>” dataset contains the following variables:</p>
+<section id="reading_wk6_coll" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="reading_wk6_coll">Book Chapter 10: Section 10.4.1 (pages 421-422).</h3>
+<p>This reading (pages 421-422 of the textbook) supplements the notes above.</p>
+</section>
+</section>
+<section id="independent-exercise---collinearity" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="independent-exercise---collinearity">Independent Exercise - Collinearity</h2>
+<p>In managing children with asthma and other respiratory diseases, it is important to monitor various measures of lung function, one of the most import of which is the volume of air that can be forced out of the lungs in one second, known as the Forced Expiratory Volume (1 second) or FEV1 for short (measured in litres). The “[lungfun.csv]” dataset contains the following variables:</p>
 <ul>
 <li><p>idnum: patient identification number</p></li>
 <li><p>age: age in years</p></li>
@@ -389,8 +372,8 @@ window.Quarto = {
 </section>
 <section id="interaction-effect-modification" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="interaction-effect-modification">Interaction (effect modification)</h2>
-<p>In previous weeks we assumed that the true underlying effect of an exposure on an outcome was constant over all individuals. This is not always the case and when the effect of the exposure is different for different groups this is called “interaction”. Another term frequently used instead of interaction is “effect modification”. You may wish to review your epidemiology notes for more information and examples of interaction.</p>
-<p>The panel of images below is a helpful visual representation of the differences in regression models with and without interaction. The first column shows simple linear regression with a single relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(Y\)</span> (a continuous <span class="math inline">\(x\)</span> is shown in the top 3 panels, and a binary <span class="math inline">\(x\)</span> is shown in the bottom three. The second column shows multiple linear regression as we have used it so far. Here a binary “group” variable is included to adjust for the mean difference in <span class="math inline">\(Y\)</span> across groups A and B. As the two lines are parallel along <span class="math inline">\(x\)</span> the mean difference between groups is constant for all values of <span class="math inline">\(x\)</span>. In the third panel, we see that the relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(Y\)</span> is different for group A and group B. That is, there is interaction between <span class="math inline">\(x\)</span> and the group variable. The lines are not parallel so the mean difference between group A and B depends on the value of x.</p>
+<p>In previous weeks we assumed that the true underlying effect of an exposure on an outcome was constant over all individuals. This is not always the case and when the effect of the exposure varies for different groups (or across different values of a covariate) this is called “interaction”. For example, a randomised controlled trial (RCT) may find that the effect of antiviral drug A vs antiviral drug B for COVID-19 patients differs between those &gt;65 years compared to those <span class="math inline">\(\le\)</span> 65 years, or the effect of the antiviral drugs may vary with BMI (e.g.&nbsp;drug A less effective than drug B for lower BMIs, but drug A is more beneficial than drug B for higher BMIs). Another term frequently used instead of interaction is “effect modification”. We often include “interaction” terms in a regression model to perform “sub-group analyses” in an RCT. You may wish to review your epidemiology notes for more information and examples of interaction.</p>
+<p>The panel of images below is a helpful visual representation of the differences in regression models with and without interaction. The first column shows simple linear regression with a single relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(Y\)</span> (a continuous <span class="math inline">\(x\)</span> is shown in the top 3 panels, and a binary <span class="math inline">\(x\)</span> is shown in the bottom three. The second column shows multiple linear regression as we have used it so far. Here a binary “group” variable is included to adjust for the mean difference in <span class="math inline">\(Y\)</span> across groups A and B. As the two lines are parallel along <span class="math inline">\(x\)</span> the mean difference between groups is constant for all values of <span class="math inline">\(x\)</span>. In the third panel, we see that the relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(Y\)</span> is different for group A and group B. That is, there is interaction between <span class="math inline">\(x\)</span> and the group variable. The lines are not parallel so the mean difference between group A and B depends on the value of <span class="math inline">\(x\)</span>.</p>
 <p><img src="images/interaction.jpg" class="img-fluid" style="width:90.0%"></p>
 <section id="a-regression-model-for-interaction" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="a-regression-model-for-interaction">A regression model for interaction</h3>
@@ -407,7 +390,7 @@ window.Quarto = {
 <li><span class="math inline">\(\beta_2\)</span>: the effect of <span class="math inline">\(x_2\)</span> when <span class="math inline">\(x_1 = 0\)</span>. i.e.&nbsp;The mean of <span class="math inline">\(Y\)</span> will increase by <span class="math inline">\(\beta_2\)</span> for every one unit increase in <span class="math inline">\(x_2\)</span> when <span class="math inline">\(x_1 = 0\)</span>.</li>
 <li><span class="math inline">\(\beta_3\)</span>: How the effect of <span class="math inline">\(x_1\)</span> changes for every one unit increase in <span class="math inline">\(x_2\)</span>. Or alternatively, how the effect of <span class="math inline">\(x_2\)</span> changes for every one unit increase in <span class="math inline">\(x_1\)</span>.</li>
 </ul>
-<p>Importantly, the statistical test for trend here is the test with the null hypothesis <span class="math inline">\(\beta_3 = 0\)</span>. Therefore the P-value for <span class="math inline">\(\beta_3\)</span> should be interpreted as the evidence for interaction between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.</p>
+<p>Importantly, the statistical test for an interaction here is the test with the null hypothesis <span class="math inline">\(\beta_3 = 0\)</span>. Therefore the P-value for <span class="math inline">\(\beta_3\)</span> should be interpreted as the evidence for an interaction between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.</p>
 </section>
 <section id="interaction-in-statistical-software" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="interaction-in-statistical-software">Interaction in statistical software</h3>
@@ -415,10 +398,13 @@ window.Quarto = {
 <section id="stata" class="level4 unnumbered">
 <h4 class="unnumbered anchored" data-anchor-id="stata">Stata</h4>
 <p>In Stata the hash symbol <code>#</code> is used to specify interaction. E.g. <code>reg Y x1 x2 x1#x2</code> would be a regression model with outcome <span class="math inline">\(Y\)</span>, covariates <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> and interaction between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. Alternatively you can use the double hash <code>##</code> as a shorthand to specify the inclusion of both covariates and interaction between them. i.e.&nbsp;<code>reg Y x1 x2 x1#x2</code> is equivalent to <code>reg Y x1##x2</code></p>
+<p>Note that you will have to use “c.” to specify an interaction between a continuous and categorical variable. For example, you might be specifying an interaction between <span class="math inline">\(treatment\)</span> which is categorical, and <span class="math inline">\(age\)</span> which is continuous. In Stata we would use the command <code>reg Y i.treatment age i.treatment#c.age</code>. If you don’t include the “c.” for the continuous variable in an interaction with a categorical variable, then Stata will incorrectly assume that the continuous variable is categorical.</p>
+<p>You should also use the “c.” to specify an interaction between two continuous variables in Stata. For example: <code>reg Y age bmi c.age#c.bmi</code> (otherwise it will assume they’re categorical variables.)</p>
+<p>For an interaction between two categorical variables, you should use the “i.” for both variables, e.g.&nbsp;<code>reg Y i.treatment i.sex i.treatment#i.sex</code>. (Note that you should always use “i.” for categorical variables in Stata, even when you’re fitting a model that doesn’t contain interactions.)</p>
 </section>
 <section id="r" class="level4 unnumbered">
 <h4 class="unnumbered anchored" data-anchor-id="r">R</h4>
-<p>In R the colon symbol <code>:</code> is used to specify interaction. E.g. <code>lm(Y ~ x1 + x2 + x1:x2, data=...)</code> would be a regression model with outcome <span class="math inline">\(Y\)</span>, covariates <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> and interaction between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. Alternatively you can use the star <code>*</code> as a shorthand to specify the inclusion of both covariates and interaction between them. i.e.&nbsp;<code>lm(Y ~ x1 + x2 + x1*x2, data=...)</code> is equivalent to <code>lm(Y ~ x1:x2, data=...)</code>.</p>
+<p>In R the colon symbol <code>:</code> is used to specify interaction. E.g. <code>lm(Y ~ x1 + x2 + x1:x2, data=...)</code> would be a regression model with outcome <span class="math inline">\(Y\)</span>, covariates <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> and interaction between <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. Alternatively you can use the star <code>*</code> as a shorthand to specify the inclusion of both covariates and interaction between them. i.e.&nbsp;<code>lm(Y ~ x1*x2, data=...)</code> is equivalent to <code>lm(Y ~ x1 + x2 + x1:x2, data=...)</code>. You could also write this as <code>lm(Y ~ x1 + x2 + x1*x2, data=...)</code>.</p>
 </section>
 <section id="reading_wk06_sec4_6_5" class="level4 unnumbered">
 <h4 class="unnumbered anchored" data-anchor-id="reading_wk06_sec4_6_5">Book Chapter 4. Section 4.6.5 (pages 107-108).</h4>
@@ -427,7 +413,7 @@ window.Quarto = {
 </section>
 <section id="example" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="example">Example</h3>
-<p>We will show two examples from the textbook that demonstrate interaction. These are examples 4.6.1 (interaction between two binary variables) and 4.6.2 (interaction between a binary variable and a continuous variable). You can also of course have interaction between two continuous variables.</p>
+<p>We will show two examples from the textbook that demonstrate interaction. These are examples 4.6.1 (interaction between two binary variables) and 4.6.2 (interaction between a binary variable and a continuous variable). You can also of course have interactions between two continuous variables.</p>
 <section id="example-4.6.1" class="level4 unnumbered">
 <h4 class="unnumbered anchored" data-anchor-id="example-4.6.1">Example 4.6.1</h4>
 <p>We return to the HERS dataset with low-density lioprotein (<code>LDL</code>) as the outcome and statin use (<code>statin</code>) and hormone therapy (<code>HT</code>) as the two binary covariates. Note that the results below will differ to those in the text book as the textbook uses <code>LDL1</code> as the outcome instead of <code>LDL</code>. The regression model with interaction is:</p>
@@ -496,7 +482,8 @@ window.Quarto = {
 <span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="do">## HTplacebo:statinsyes  -3.828743   7.665717</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>You may notice here that the R and Stata output have some differences as they choose different reference categories for the HT variable (Stata chose the placebo group as the first observation in the dataset is from the placebo group, and R chose the hormone therapy group as “hormone therapy” is before “placebo” when arranging in alphabetical order). In both instances here however the primary result is the same: “There is no evidence of interacation between HT and statin use (P = 0.513)”. As there is no evidence for interaction, you would then proceed with a non-interaction regression model.</p>
+<p>You may notice here that the R and Stata output have some differences as they choose different reference categories for the HT variable (Stata chose the placebo group as the first observation in the dataset is from the placebo group (and the HT variable is coded as 0 = placebo, 1 = hormone therapy), and R chose the hormone therapy group as the reference group “hormone therapy” is before “placebo” when arranging in alphabetical order). In both instances here however the primary result is the same: “There is no evidence of interaction between HT and statin use (P = 0.513)”. As there is no evidence for interaction, you would then proceed with a non-interaction regression model.</p>
+<p>Note that if your categorical variable(s) involved in the interaction have &gt;2 categories, then you will need to fit two models (one without the interaction and one with the interaction terms) and compare the two models with an F-test or likelihood ratio test to obtain a single p-value for the interation term (see week 4 notes).</p>
 </section>
 <section id="example-4.6.2" class="level4 unnumbered">
 <h4 class="unnumbered anchored" data-anchor-id="example-4.6.2">Example 4.6.2</h4>
@@ -591,20 +578,33 @@ window.Quarto = {
 </ul>
 <p>To calculate the mean effect of BMI on those taking statins, we would need to take linear combinations of the above regression coefficients. In this case the mean effect would be 0.58 - 0.70 = -0.12. To get a more accurate calculation of this, along with the corresponding confidence interval use the <code>lincom BMIc + 1.statins#c.BMIc</code> statement in stata and the <code>summary(glht(lm.hers, "BMIc + statinsyes:BMIc = 0"))</code> command in R (you can swap “summary” with “confint” in this statement to obtain the confidence intervals).</p>
 </section>
+<section id="additional-independent-exercise-optional" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="additional-independent-exercise-optional">Additional Independent Exercise (optional)</h4>
+<p>Try using the HERS dataset to explore other interactions, e.g., between statins and smoking, between age and statins. Are the interactions significant? Write out the regression equation and interpret each regression parameter. Feel free to post your findings on the Week 6 discussion board.</p>
+</section>
 </section>
 </section>
 <section id="summary" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="summary">Summary</h2>
-<p>This weeks key concepts are:</p>
-<div id="box1" class="green-box">
+<div class="callout callout-style-default callout-tip callout-titled" title="This week’s key concepts are:">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+This week’s key concepts are:
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ol type="1">
-<li><p>Collinearity occurs when two or more covariates in a regression model are associated with each other, and do not have sufficient independent associations with the outcome</p></li>
-<li><p>Collinearity increases standard errors of regression coefficients</p></li>
-<li><p>You should check for collinearity when carrying out linear regression. If detected, the effects of collinearity can be determined by removing some of the collinear covariates.</p></li>
+<li><p>Collinearity occurs when two or more covariates/predictor variables in a regression model are associated with each other, and do not have sufficient independent associations with the outcome</p></li>
+<li><p>Collinearity increases standard errors of regression coefficients, can lead to unstable estimates of the regression coefficients, can cause difficulty in interpretation of model results, and may contribute to overfitting in some settings. In some situations though, it may be ok to have collinearity present in the model.</p></li>
+<li><p>You should check for collinearity when carrying out linear regression. If detected, the effects of collinearity can be determined by removing some of the collinear covariates and/or by examining the VIF.</p></li>
 <li><p>Interaction between two covariates occurs when the effect size for variable 1, depends on the level of covariate 2. This is also called effect modification.</p></li>
 <li><p>Interaction between two variables in regression can be tested by including an additional covariate in your regression model that is the multiplication of your two covariates. If one or more of these covariates is categorical (with more than 2 categories), this will be the addition of several interaction terms between all dummy variables.</p></li>
-<li><p>The interpretation of regression models with interaction terms is more complex as effect sizes are not constant for interacting covariates.</p></li>
+<li><p>The interpretation of regression models with interaction terms is more complex as the effect sizes are not constant for interacting covariates (depend on the level of the other covariate involved in the interaction).</p></li>
 </ol>
+</div>
 </div>
 
 
@@ -1041,6 +1041,19 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Regression Modeling for Biostatistics</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
 
 
 
