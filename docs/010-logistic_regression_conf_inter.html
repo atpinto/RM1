@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10&nbsp; Interactions in Logistic Regression – Regression Modelling for Biostatistics 1</title>
+<title>Learning objectives – Regression Modelling for Biostatistics 1</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -145,7 +145,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./010-logistic_regression_conf_inter.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interactions in Logistic Regression</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./010-logistic_regression_conf_inter.html">Learning objectives</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -197,13 +197,13 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./003-binary_covariates_and_outliers.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Binary Covariates, Outliers, and Influential Observations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Binary Covariates in Linear Regression, Outliers, and Influential Observations</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./004-multiple_linear_regression_application.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Multiple Linear Regression - Application</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Multiple Linear Regression Application</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -227,7 +227,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./008-model_building.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regression model building and variable selection</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Linear regression model building and variable selection</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -239,19 +239,19 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./010-logistic_regression_conf_inter.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interactions in Logistic Regression</span></span></a>
+ <span class="menu-text">Learning objectives</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./011-logistic_regression_splines_validation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Non-linearity in Logistic Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Non-linearity in Logistic Regression</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./012-logistic_regression_model_building.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Model building for Logistic Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Model building for Logistic Regression</span></span></a>
   </div>
 </li>
     </ul>
@@ -264,19 +264,18 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#learn_obj_wk10" id="toc-learn_obj_wk10" class="nav-link active" data-scroll-target="#learn_obj_wk10">Learning objectives</a></li>
-  <li><a href="#learn_act_wk10" id="toc-learn_act_wk10" class="nav-link" data-scroll-target="#learn_act_wk10">Learning activities</a></li>
-  <li><a href="#interactions-.unnumbered" id="toc-interactions-.unnumbered" class="nav-link" data-scroll-target="#interactions-.unnumbered"><span class="header-section-number">10.1</span> Interactions {.unnumbered}}</a>
+  <li><a href="#learn_act_wk10" id="toc-learn_act_wk10" class="nav-link active" data-scroll-target="#learn_act_wk10">Learning activities</a></li>
+  <li><a href="#interactions-.unnumbered" id="toc-interactions-.unnumbered" class="nav-link" data-scroll-target="#interactions-.unnumbered">Interactions {.unnumbered}}</a>
   <ul class="collapse">
-  <li><a href="#interaction-between-two-binary-predictors-.unnumbered" id="toc-interaction-between-two-binary-predictors-.unnumbered" class="nav-link" data-scroll-target="#interaction-between-two-binary-predictors-.unnumbered"><span class="header-section-number">10.1.1</span> Interaction between two binary predictors {.unnumbered}}</a></li>
-  <li><a href="#interaction-between-a-binary-indicator-and-a-continuous-predictor-.unnumbered" id="toc-interaction-between-a-binary-indicator-and-a-continuous-predictor-.unnumbered" class="nav-link" data-scroll-target="#interaction-between-a-binary-indicator-and-a-continuous-predictor-.unnumbered"><span class="header-section-number">10.1.2</span> Interaction between a binary indicator and a continuous predictor {.unnumbered}}</a></li>
+  <li><a href="#interaction-between-two-binary-predictors-.unnumbered" id="toc-interaction-between-two-binary-predictors-.unnumbered" class="nav-link" data-scroll-target="#interaction-between-two-binary-predictors-.unnumbered">Interaction between two binary predictors {.unnumbered}}</a></li>
+  <li><a href="#interaction-between-a-binary-indicator-and-a-continuous-variable" id="toc-interaction-between-a-binary-indicator-and-a-continuous-variable" class="nav-link" data-scroll-target="#interaction-between-a-binary-indicator-and-a-continuous-variable">Interaction between a binary indicator and a continuous variable</a></li>
   </ul></li>
-  <li><a href="#prediction-.unnumbered" id="toc-prediction-.unnumbered" class="nav-link" data-scroll-target="#prediction-.unnumbered"><span class="header-section-number">10.2</span> Prediction {.unnumbered}}</a>
+  <li><a href="#prediction" id="toc-prediction" class="nav-link" data-scroll-target="#prediction">Prediction</a>
   <ul class="collapse">
-  <li><a href="#investigation" id="toc-investigation" class="nav-link" data-scroll-target="#investigation"><span class="header-section-number">10.2.1</span> Investigation:</a></li>
+  <li><a href="#investigation" id="toc-investigation" class="nav-link" data-scroll-target="#investigation">Investigation:</a></li>
   </ul></li>
-  <li><a href="#residuals-and-other-diagnostic-tools-.unnumbered" id="toc-residuals-and-other-diagnostic-tools-.unnumbered" class="nav-link" data-scroll-target="#residuals-and-other-diagnostic-tools-.unnumbered"><span class="header-section-number">10.3</span> Residuals and other diagnostic tools {.unnumbered}}</a></li>
-  <li><a href="#model-checking---diagnostics-.unnumbered" id="toc-model-checking---diagnostics-.unnumbered" class="nav-link" data-scroll-target="#model-checking---diagnostics-.unnumbered"><span class="header-section-number">10.4</span> Model checking - diagnostics {.unnumbered}}</a></li>
+  <li><a href="#residuals-and-other-diagnostic-tools" id="toc-residuals-and-other-diagnostic-tools" class="nav-link" data-scroll-target="#residuals-and-other-diagnostic-tools">Residuals and other diagnostic tools</a></li>
+  <li><a href="#model-checking---diagnostics" id="toc-model-checking---diagnostics" class="nav-link" data-scroll-target="#model-checking---diagnostics">Model checking - diagnostics</a></li>
   </ul>
 </nav>
     </div>
@@ -285,7 +284,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span id="logreg_more" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Interactions in Logistic Regression</span></span></h1>
+<h1 class="title"><span id="learn_obj_wk10" class="quarto-section-identifier">Learning objectives</span></h1>
 </div>
 
 
@@ -302,8 +301,7 @@ window.Quarto = {
 </header>
 
 
-<section id="learn_obj_wk10" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="learn_obj_wk10">Learning objectives</h2>
+<p>Confounding and Interaction in Logistic Regression {#logreg_more}</p>
 <p>By the end of this week you should be able to:</p>
 <ol type="1">
 <li><p>Interpret statistical output for a multiple logistic regression model with interactions</p></li>
@@ -312,7 +310,6 @@ window.Quarto = {
 <li><p>Discover how to identify outliers and influential observations</p></li>
 <li><p>Understand how to use these tools to assess the model fit</p></li>
 </ol>
-</section>
 <section id="learn_act_wk10" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="learn_act_wk10">Learning activities</h2>
 <p>This week’s learning activities include:</p>
@@ -349,23 +346,21 @@ window.Quarto = {
 <p><strong>Lecture 1 in R</strong></p>
 <iframe width="740" height="416" src="https://www.youtube.com/embed/mlIuhqOu-VM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
 </iframe>
-<p><a href="https://www.dropbox.com/s/bkm59nl3rzy0ojh/RM1_week10_lecture1_R.mp4?dl=1">Download video here</a></p>
 <p><strong>Lecture 1 in Stata</strong></p>
 <iframe width="740" height="416" src="https://www.youtube.com/embed/O7oPfDeabB8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
 </iframe>
-<p><a href="https://www.dropbox.com/s/efeiyw463fmo17e/RM1_week10_lecture1_Stata.mp4?dl=1">Download video here</a></p>
 </section>
-<section id="interactions-.unnumbered" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="interactions-.unnumbered"><span class="header-section-number">10.1</span> Interactions {.unnumbered}}</h2>
-<p>The interaction between two predictors or effect modification is quite similar to what we saw in linear regression. We will revisit this concept since its interpretation is typically done in terms of OR (whereas the intearction term is typically added on the log-odds scale). This deserves explanation. The general form of an interaction model with two covariates <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> is: <span class="math inline">\(logit(p)= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_1\times x_2\)</span> where <span class="math inline">\(logit(p)\)</span> is shortened version of <span class="math inline">\(\log(p/(1-p))\)</span> and, for simplicity, we have simplified the notation since <span class="math inline">\(p=p(y=1 | x_1, x_2,  x_1\times x_2)\)</span>. Also <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> can be binary or continuous with the convention that a binary indicator is always coded 0/1.</p>
-<section id="interaction-between-two-binary-predictors-.unnumbered" class="level3" data-number="10.1.1">
-<h3 data-number="10.1.1" class="anchored" data-anchor-id="interaction-between-two-binary-predictors-.unnumbered"><span class="header-section-number">10.1.1</span> Interaction between two binary predictors {.unnumbered}}</h3>
-<p>We again consider the WcGS study and consider the potential interaction between <em>arcus</em> and a binary indicator for patients aged over 50 called <em>bage_50</em>. The specification of the logistic model in Stata or R follows the general syntax used with the linear model. You can either define “by hand” the interaction term and add it to the model with the the two covariates <em>arcus</em> and <em>bage_50</em> or let the software do the job for you. We will use the second approach here but it critical to be sure about the coding (0/1) or tell Stata or R to create the right indicators for you. The Stata syntax will then be: <em>logistic chd69 i.arcus##i.bage_50, coef</em> and R’s: <em>glm(chd69 <span class="math inline">\(\sim\)</span> factor(arcus)<sup><span class="math inline">\(\star\)</span></sup>factor(bage_50), family=binomial, data=wcgs)</em>. The command <em>factor()</em> is not necessary when both covariates are coded 0/1. Note that in the Stata command we used the option <em>coef</em> to avoid reporting the ORs. The following results are obtained:</p>
+<section id="interactions-.unnumbered" class="level2">
+<h2 class="anchored" data-anchor-id="interactions-.unnumbered">Interactions {.unnumbered}}</h2>
+<p>The interaction between two X variables, also known as effect modification, in logistic regression is similar to what we saw in linear regression. With logistic regression, the interpretation is typically done in terms of OR (whereas the interaction term is typically added on the log-odds scale). This deserves explanation. The general form of an interaction model with two covariates <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> is: <span class="math inline">\(logit(p)= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_1\times x_2\)</span> where <span class="math inline">\(logit(p)\)</span> is shortened version of <span class="math inline">\(\log(p/(1-p))\)</span> and, for simplicity, we have simplified the notation since <span class="math inline">\(p=p(y=1 | x_1, x_2, x_1\times x_2)\)</span>. Also <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> can be binary or continuous with the convention that a binary indicator is always coded 0/1.</p>
+<section id="interaction-between-two-binary-predictors-.unnumbered" class="level3">
+<h3 class="anchored" data-anchor-id="interaction-between-two-binary-predictors-.unnumbered">Interaction between two binary predictors {.unnumbered}}</h3>
+<p>We again consider the WCGS study and consider the potential interaction between <em>arcus</em> and a binary indicator for patients aged over 50 called <em>bage_50</em>. The specification of the logistic model in Stata or R follows the general syntax used with the linear model. You can either define “by hand” the interaction term and add it to the model with the the two covariates <em>arcus</em> and <em>bage_50</em> or let the software do the job for you. We will use the second approach here and note that it is critical to use the coding (0/1) or to tell Stata or R to create the right indicators for you. The Stata syntax will then be: <em>logistic chd69 i.arcus##i.bage_50, coef</em> and R’s: <em>glm(chd69</em> <span class="math inline">\(\sim\)</span> factor(arcus)<span class="math inline">\(*\)</span>factor(bage_50), family=binomial, data=wcgs). The command <em>factor()</em> is not necessary when both covariates are coded 0/1. Note that in the Stata command we used the option <em>coef</em> to avoid reporting the ORs. The following results are obtained:</p>
 <p><strong>R code and output</strong></p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>wcgs <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"wcgs.csv"</span>)</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>wcgs <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://raw.githubusercontent.com/atpinto/RM1/refs/heads/main/Data/wcgs.csv"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>wcgs<span class="ot">&lt;-</span><span class="fu">data.frame</span>(wcgs)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>wcgs<span class="sc">$</span>bage_50<span class="ot">&lt;-</span><span class="fu">as.numeric</span>(wcgs<span class="sc">$</span>age<span class="sc">&gt;=</span><span class="dv">50</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>out1<span class="ot">&lt;-</span><span class="fu">glm</span>(chd69 <span class="sc">~</span> arcus<span class="sc">*</span>bage_50, <span class="at">family=</span>binomial, <span class="at">data=</span>wcgs)</span>
@@ -397,7 +392,7 @@ window.Quarto = {
 <div class="cell" data-collectcode="true">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> wcgs.dta</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> https:<span class="co">//github.com/atpinto/RM1/raw/refs/heads/main/Data/wcgs.dta</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> bage50=(age&gt;=50)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">logistic</span> chd69 arcus##bage50, coef</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>## Logistic regression                                     Number <span class="kw">of</span> <span class="kw">obs</span> =  3,152</span>
@@ -418,7 +413,7 @@ window.Quarto = {
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>The interaction term is significant (<span class="math inline">\(p=0.03\)</span>) which means that we cannot igore the age effect when considering the association of arcus with CHD. Let’s use the notation introduced above, <span class="math inline">\(x_1\)</span> = <em>arcus</em> and <span class="math inline">\(x_2\)</span> = <em>bage_50</em> and consider a young patient (less than 50) without arcus. The log-odds of CHD occurence is: <span class="math inline">\(\hat\beta_0=-2.88\)</span> up to rounding. Compare with someone in the same age category with arcus, the log-odds of CHD occurence is: <span class="math inline">\(\hat\beta_0+\hat\beta_1=-2.23\)</span>, therefore the OR for arcus in this age group is: <span class="math inline">\(\exp(\hat\beta_0+\hat\beta_1)/\exp(\hat\beta_0)=\exp(\hat\beta_1)=1.91\)</span>, 95<span class="math inline">\(\%\)</span>CI=(1.34 ; 2.70). By the same token, the log-odds of CHD occurence for a patient aged 50+ without arcus is: <span class="math inline">\(\hat\beta_0+\hat\beta_2=-2.88+.89=-1.99\)</span> and changes to <span class="math inline">\(\hat\beta_0+\hat\beta_1+\hat\beta_2+\hat\beta_3=-1.93\)</span> for patients with arcus, therefore the OR for arcus in patients aged 50+ is <span class="math inline">\(\exp(\hat\beta_1+\hat\beta_3)=1.06\)</span> by taking the ratio of the corresponding exponentiated terms. To get a 95<span class="math inline">\(\%\)</span> CI for this OR we need to use <em>lincom</em> or the corresponding R command yielding OR=1.06, 95<span class="math inline">\(\%\)</span>CI=(0.71 ; 1.58).</p>
+<p>The interaction term is significant (<span class="math inline">\(p=0.03\)</span>) which means that we cannot ignore the age effect when considering the association of arcus with CHD. Let’s use the notation introduced above, <span class="math inline">\(x_1\)</span> = <em>arcus</em> and <span class="math inline">\(x_2\)</span> = <em>bage_50</em> and consider a young patient (less than 50) without arcus. The log-odds of CHD occurrence is: <span class="math inline">\(\hat\beta_0=-2.88\)</span> up to rounding. Compare with someone in the same age category with arcus, the log-odds of CHD occurrence is: <span class="math inline">\(\hat\beta_0+\hat\beta_1=-2.23\)</span>, therefore the OR for arcus in this age group is: <span class="math inline">\(\exp(\hat\beta_0+\hat\beta_1)/\exp(\hat\beta_0)=\exp(\hat\beta_1)=1.91\)</span>, 95<span class="math inline">\(\%\)</span>CI=(1.34 ; 2.70). By the same token, the log-odds of CHD occurence for a patient aged 50+ without arcus is: <span class="math inline">\(\hat\beta_0+\hat\beta_2=-2.88+.89=-1.99\)</span> and changes to <span class="math inline">\(\hat\beta_0+\hat\beta_1+\hat\beta_2+\hat\beta_3=-1.93\)</span> for patients with arcus, therefore the OR for arcus in patients aged 50+ is <span class="math inline">\(\exp(\hat\beta_1+\hat\beta_3)=1.06\)</span> by taking the ratio of the corresponding exponentiated terms. To get a 95<span class="math inline">\(\%\)</span> CI for this OR we need to use <em>lincom</em> or the corresponding R command yielding OR=1.06, 95<span class="math inline">\(\%\)</span>CI=(0.71 ; 1.58).</p>
 <p><strong>R code and output</strong></p>
 <div class="cell">
 <details class="code-fold">
@@ -489,32 +484,34 @@ window.Quarto = {
 <span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>## ------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>In other words, the OR for arcus is <span class="math inline">\(\exp(\hat\beta_1)=1.91\)</span>, 95% CI=(1.34 ; 2.70) in patients aged less than 50 and <span class="math inline">\(\exp(\hat\beta_1+\hat\beta_3)=1.06\)</span>, 95% CI= (0.71 ; 1.58) in patients aged 50+. We clearly see here the effect modification at play, the OR in patients aged less than 50 is <em>multiplied</em> by <span class="math inline">\(\exp(\hat\beta3)\)</span> to provide the OR in patients aged 50+. The additive interaction term on the log-odds scale translates into a multiplicative factor for the OR (due to the well known property of the exponential function).</p>
+<p>In other words, the OR for arcus is <span class="math inline">\(\exp(\hat\beta_1)=1.91\)</span>, 95% CI=(1.34 ; 2.70) in patients aged less than 50 and the OR for arcus is <span class="math inline">\(\exp(\hat\beta_1+\hat\beta_3)=1.06\)</span>, 95% CI= (0.71 ; 1.58) in patients aged 50+. We clearly see here the effect modification at play, the OR in patients aged less than 50 is <em>multiplied</em> by <span class="math inline">\(\exp(\hat\beta_3)\)</span> to provide the OR in patients aged 50+. The additive interaction term on the log-odds scale translates into a multiplicative factor for the OR (due to the well known property of the exponential function).</p>
 </section>
-<section id="interaction-between-a-binary-indicator-and-a-continuous-predictor-.unnumbered" class="level3" data-number="10.1.2">
-<h3 data-number="10.1.2" class="anchored" data-anchor-id="interaction-between-a-binary-indicator-and-a-continuous-predictor-.unnumbered"><span class="header-section-number">10.1.2</span> Interaction between a binary indicator and a continuous predictor {.unnumbered}}</h3>
-<p>Interactions between a continuous variable and a binary predictor can be handled in a similar way. The is the purpose of next activity.</p>
-<p>Investigation:</p>
+<section id="interaction-between-a-binary-indicator-and-a-continuous-variable" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="interaction-between-a-binary-indicator-and-a-continuous-variable">Interaction between a binary indicator and a continuous variable</h3>
+<p>Interactions between a binary indicator and a continuous variable can be handled in a similar way to the two binary indicators situation outlined above. Demonstrating this is the purpose of the next activity.</p>
+<section id="inv1" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="inv1">Investigation:</h4>
 <ol type="1">
-<li>start by reading the compulsory reading:</li>
+<li>Start by reading the compulsory reading:</li>
 </ol>
 <section id="reading_wk10_interaction" class="level5 unnumbered">
-<h5 class="unnumbered anchored" data-anchor-id="reading_wk10_interaction"><span class="citation" data-cites="vittinghoff2012">[@vittinghoff2012]</span> Chapter 5. Logistic regression (Section 5.2.4. p 163-165)</h5>
-<p>This reading explains how to introduce a possible interaction the between <em>age</em> seen this time as a continuous variable and <em>arcus</em> (coded 0/1).</p>
+<h5 class="unnumbered anchored" data-anchor-id="reading_wk10_interaction">Vittinghoff et al.&nbsp;(2012) Chapter 5. Logistic regression (Section 5.2.4. p 163-165)</h5>
+<p>This reading explains how to introduce a possible interaction between <em>age</em> (seen this time as a continuous variable) and <em>arcus</em> (coded 0/1).</p>
 <ol start="2" type="1">
-<li><p>try to reproduce the output</p></li>
-<li><p>can you give the association between <em>chd69</em> and <em>age</em> in patients without arcus? Provide the OR, its 95% CI and give an interpretation of the association.</p></li>
-<li><p>give the association between <em>chd69</em> and <em>age</em> in patients with arcus. Provide the OR, its 95% C and give an interpretation of the association. Does it make sense to add an interaction in this model?</p></li>
-<li><p>Can we interpret the coefficient of <em>arcus</em> alone? How can we get a more meaningful coefficient for <em>arcus</em> (either on the log-odds scale or as an OR)?</p></li>
+<li><p>Try to reproduce the output</p></li>
+<li><p>Can you give the association between <em>chd69</em> and <em>age</em> in patients without arcus? Provide the OR, its 95% CI and give an interpretation of the association.</p></li>
+<li><p>Give the association between <em>chd69</em> and <em>age</em> in patients with arcus. Provide the OR, its 95% C and give an interpretation of the association. Does it make sense to add an interaction in this model?</p></li>
+<li><p>How do we interpret the coefficient of <em>arcus</em> (either on the log-odds scale or as an OR)?</p></li>
 </ol>
 </section>
 </section>
 </section>
-<section id="prediction-.unnumbered" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="prediction-.unnumbered"><span class="header-section-number">10.2</span> Prediction {.unnumbered}}</h2>
-<p>Just as we did for the linear model we can create predictions for all patients in the dataset and beyond. What does it mean in this context? Let rewrite the formula defining the logistic model for a given sample of <span class="math inline">\(i=1,\dots,n\)</span> observations. Again we simplify the notation and note <span class="math inline">\(p_i\)</span> the probability of observing an event (e.g.&nbsp;cHD in our example) for patient <span class="math inline">\(i\)</span> given all their characteristics <span class="math inline">\(x_{1i},\dots, x_{pi}\)</span>. It is convenient to create the vector of covariates for this individual <span class="math inline">\(x_i=(1,\)</span>x_{1i},, x_{pi})^T$, the leading one being added for the intercept. The logistic model then stipulates that:</p>
-<p><span class="math display">\[log(p_i/(1-p_i))=\beta_0 + \beta_1 x_{1i}+\dots+\beta_p x_{pi} =x_i^T\beta,\]</span> where <span class="math inline">\(\beta=(\beta_0,\beta_1,\dots\,beta_p)^T\)</span> is the vector or parameter. It’s very similar to the formula in linear for the mean response in the linear model (up to the logistic transformation called link). It’s possible to extract <span class="math inline">\(p_i\)</span> from this equation by using the inverse transformation yielding <span class="math inline">\(p_i=\exp(x_i^T\beta)/(1+\exp(x_i^T\beta))\)</span>. This expression represents the probability of the patient experiencing the event and is between 0 and 1 [why?]. Now, it’s easy to get the predicted probability or prediction noted <span class="math inline">\(\hat\$p_i\)</span> for patient <span class="math inline">\(i\)</span> by plugging in the MLE <span class="math inline">\(\hat\beta\)</span> for <span class="math inline">\(\beta\)</span> in the formula, i.e.:</p>
-<p><span class="math display">\[\hat p_i=\frac{\exp(x_i^T\hat\beta)}{1+\exp(x_i^T\hat\beta)}\]</span> By the same token we can compute the probability of a new patient experiencing an event by using a different set of covariates <span class="math inline">\(x_{new}\)</span>. All statistical packages provide predicted values for all patients using a command predict or equivalent. AS an example we can compute the predicted probabilities of CHD occurence for all patients in the dataset. Also, the same command(s) can be used for a new patient with <em>age=40</em>, <em>bmi=25</em>, <em>chol=400</em>, <em>sbp=130</em>, <em>smoke=0</em>, <em>dibpat=0</em>. To avoid issue with the rescaling/centring we will refit the model with the original variables. The Stata and R code can be found here and give the same results, i.e.&nbsp;<span class="math inline">\(\hat p=0.13\)</span>, 95<span class="math inline">\(\%\)</span>CI=(0.079 ; 0.216).</p>
+</section>
+<section id="prediction" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="prediction">Prediction</h2>
+<p>Just as we did for the linear model we can create predictions from logistic regression for all patients in the dataset and beyond. What does it mean in this context? Let’s rewrite the formula defining the logistic regression model for a given sample of <span class="math inline">\(i=1,\dots,n\)</span> observations. Again we simplify the notation and note <span class="math inline">\(p_i\)</span> the probability of observing an event (e.g.&nbsp;CHD in our example) for patient <span class="math inline">\(i\)</span> given their set of characteristics <span class="math inline">\(x_{1i},\dots, x_{pi}\)</span>. It is convenient to create the vector of covariates for this individual <span class="math inline">\(x_i=(1,x_{1i},\dots, x_{pi})^T\)</span>, the leading one being added for the intercept. The logistic model then stipulates that:</p>
+<p><span class="math display">\[log(p_i/(1-p_i))=\beta_0 + \beta_1 x_{1i}+\dots+\beta_p x_{pi} =x_i^T\beta,\]</span> where <span class="math inline">\(\beta=(\beta_0,\beta_1,\dots,\beta_p)^T\)</span> is the vector of parameters to be estimated. It’s possible to extract <span class="math inline">\(p_i\)</span> from this equation by using the inverse transformation yielding <span class="math inline">\(p_i=\exp(x_i^T\beta)/(1+\exp(x_i^T\beta))\)</span>. This expression represents the probability of a patient experiencing the event and is between 0 and 1 [why?]. Now, it’s easy to get the predicted probability or prediction noted <span class="math inline">\(\hat{p}_i\)</span> for patient <span class="math inline">\(i\)</span> by plugging in the MLE <span class="math inline">\(\hat\beta\)</span> for <span class="math inline">\(\beta\)</span> in the formula, i.e.:</p>
+<p><span class="math display">\[\hat p_i=\frac{\exp(x_i^T\hat\beta)}{1+\exp(x_i^T\hat\beta)}\]</span> By the same token we can compute the probability of a new patient experiencing an event by using their specific set of covariates <span class="math inline">\(x_{new}\)</span> in place of <span class="math inline">\(x_{i}\)</span>. As an example, in the following code for R and Stata we compute the predicted probabilities of CHD occurence for all patients in the dataset and for a new patient with <em>age=40</em>, <em>bmi=25</em>, <em>chol=400</em>, <em>sbp=130</em>, <em>smoke=0</em>, <em>dibpat=0</em>. To avoid issue with the rescaling/centering we refit the model with the original variables. The Stata and R code can be found here and give the key results, i.e.&nbsp;<span class="math inline">\(\hat p=0.13\)</span>, 95<span class="math inline">\(\%\)</span>CI=(0.079 ; 0.216).</p>
 <p><strong>R code and output</strong></p>
 <div class="cell">
 <details class="code-fold">
@@ -571,7 +568,7 @@ window.Quarto = {
 <div class="cell" data-collectcode="true">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> wcgs.dta</span>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> https:<span class="co">//github.com/atpinto/RM1/raw/refs/heads/main/Data/wcgs.dta</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">drop</span> <span class="kw">if</span> <span class="fu">missing</span>(chd69) | <span class="fu">missing</span>(bmi) | <span class="fu">missing</span>(age) | <span class="fu">missing</span>(sbp) | <span class="fu">missing</span>(smoke) | <span class="fu">missing</span>(chol) | <span class="fu">missing</span>(dibpat)  </span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">drop</span> <span class="kw">if</span> chol ==645</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -614,10 +611,10 @@ window.Quarto = {
 <span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>## </span>
 <span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>## </span>
 <span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>## -------------------------------------------------------------------------------------------------------------------------------</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>## ----------------------------------------------------------------------------------------------------</span>
 <span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>##      Dependent <span class="kw">variable</span>: chd69     Equation: chd69     Command: <span class="kw">logistic</span></span>
 <span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>## Covariates <span class="kw">set</span> to <span class="ot">value</span>: age = 40, bmi = 25, chol = 400, sbp = 130, smoke = 0, dibpat = 0</span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>## -------------------------------------------------------------------------------------------------------------------------------</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>## ----------------------------------------------------------------------------------------------------</span>
 <span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>## </span>
 <span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>## ----------------------------------------------</span>
 <span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>##       All |         pr          lb          ub</span>
@@ -628,10 +625,10 @@ window.Quarto = {
 <span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>##            [lb , ub]  =  [95% Confidence Interval]</span>
 <span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>## </span>
 <span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>## </span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>## -------------------------------------------------------------------------------------------------------------------------------</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>## ----------------------------------------------------------------------------------------------------</span>
 <span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>##      Dependent <span class="kw">variable</span>: chd69     Equation: chd69     Command: <span class="kw">logistic</span></span>
 <span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>## Covariates <span class="kw">set</span> to <span class="ot">value</span>: age = 40, bmi = 25, chol = 400, sbp = 130, smoke = 0, dibpat = 0</span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>## -------------------------------------------------------------------------------------------------------------------------------</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>## ----------------------------------------------------------------------------------------------------</span>
 <span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>## </span>
 <span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>## ----------------------------------------------</span>
 <span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>##       All |         <span class="kw">xb</span>          lb          ub</span>
@@ -648,33 +645,33 @@ window.Quarto = {
 <span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>## .2160001</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Some nice plots of predicted probabilities versus a (continuous) covariate can be obtained using the command margins available both in Stata and R - see lecture 1. Note that the predicted probabilities you may get from a logistic regression model used to analyse case control studies are not reliable. Only ORs can be estimated with such a retrospective design. We defer for now the notion of prediction accuracy, i.e.&nbsp;how well a logistic regression model predicts. This will be discussed in week 11.</p>
-<section id="investigation" class="level3" data-number="10.2.1">
-<h3 data-number="10.2.1" class="anchored" data-anchor-id="investigation"><span class="header-section-number">10.2.1</span> Investigation:</h3>
+<p>Some nice plots of predicted probabilities versus a (continuous) covariate can be obtained using the command margins available both in Stata and R - see lecture 1.</p>
+<p>Note that while a logistic regression model can be used to analyse data from a case control study, the predicted probabilities you get are not sensible for general purposes. This is because in a case-control study the probability of the outcome is fixed by the study design (e.g.&nbsp;at 50<span class="math inline">\(\%\)</span> if we have equal numbers of cases and controls). Only ORs can be validly estimated with such a retrospective design. We defer for now the notion of prediction accuracy, i.e.&nbsp;how well a logistic regression model predicts. This will be discussed in week 11.</p>
+<section id="investigation" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="investigation">Investigation:</h3>
 <ol type="1">
-<li><p>calculate the predicted probability of CHD occurence for a patient with the following characteristics: <em>age=50</em>, <em>BMI=27</em>, <em>chol=200</em>, <em>sbp=150</em>, <em>smoke=1</em>, <em>dibpat=0</em>. Give the 95% CI.</p></li>
+<li><p>Continuing the WCGS example, use R or Stata to calculate the predicted probability of CHD occurence for a patient with the following characteristics: <em>age=50</em>, <em>BMI=27</em>, <em>chol=200</em>, <em>sbp=150</em>, <em>smoke=1</em>, <em>dibpat=0</em>. Give the 95% CI.</p></li>
 <li><p>Represent the probability of an event as a function of age for a particular patient profile, e.g.&nbsp;use <em>BMI=27</em>, <em>chol=200</em>, <em>sbp=150</em>, <em>smoke=1</em>, <em>dibpat=0</em> and let <em>age</em> free to vary. Hint: look at the Stata/R code provided in the lecture to produce this plot using the command/library <em>margins</em> and related plots.</p></li>
-<li><p>Contrast with a plot of the CHD probability vs age for <em>smoke=0</em>, the other characteristics remaining the same. Draw the 2 plots side-by-side.</p></li>
+<li><p>Create a plot of the CHD probability vs age for <em>smoke=0</em> with the other characteristics remaining the same. Contrast this plot with the plot for <em>smoke=1</em> in part 2 above by drawing the two plots side-by-side.</p></li>
 </ol>
 </section>
 </section>
-<section id="residuals-and-other-diagnostic-tools-.unnumbered" class="level2" data-number="10.3">
-<h2 data-number="10.3" class="anchored" data-anchor-id="residuals-and-other-diagnostic-tools-.unnumbered"><span class="header-section-number">10.3</span> Residuals and other diagnostic tools {.unnumbered}}</h2>
-<p>Raw residuals were calculated as the difference between observed and fitted values with several standardised versions available. A natural way to extend this idea in logistic regression is to compute the Pearson residuals defined as a standardised difference beween the binary endpoint and the prediction, i.e.&nbsp;<span class="math display">\[r_{P,i}=\frac{y_i-\hat p_i}{\sqrt{\hat p_i(1-\hat p_i)}}\]</span> In other words, the Pearson residual has the following structure “(observed - expected)/SD(observed)” for the corresponding observation. The standardisation performed here corresponds to dividing by the standard deviation of the response <span class="math inline">\(y_i\)</span> both other variants have also been suggested. They cannot be easily represented due to the discrete nature of the outcome. Another form of residuals exists for this model, they are called the deviance residuals (<span class="math inline">\(r_{D,i}\)</span>). The formula is omitted for simplicity but the deviance residuals measure the disagreement between the maxima of the observed and the fitted log-likelihood functions. Since logistic regression uses the maximal likelihood principle, the goal in logistic regression is to minimize the sum of the deviance residuals, so we do something similar to what we do in linear regression. Both types of residuals are readily available in standard packages. One can wonder whether the Pearson or the deviance residuals are normally distributed and the answer is “no”. A normal probability plot of either type is usually of little interest since the plot will typically show a kick (a broken line) due to the discreteness of the outcome, even when we simulate data from a logistic regression model. Still other plots can be very helpful such as the plot of the residuals versus prediction or an index plot. Before we examine this in detail on an example, the notion of leverage also exist in logistic regression and is correspond to the diagonal element <span class="math inline">\(h_{ii}\)</span> of the “hat matrix” that has a slightly more complicated definition than in linear model but a similar interpretation. It is not always easy to see on scatter points whether an observation is a leverage point since the fitted curve is no longer a hyperplane geometrically. An approximation to the Cook’s distance is and the various dfbetas are also available in this model. They allow us to examine whether some observations are unduly influential on the fit.</p>
+<section id="residuals-and-other-diagnostic-tools" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="residuals-and-other-diagnostic-tools">Residuals and other diagnostic tools</h2>
+<p>Raw residuals were calculated as the difference between observed and fitted values with several standardised versions available. A natural way to extend this idea in logistic regression is to compute the Pearson residuals defined as a standardised difference beween the binary endpoint and the prediction, i.e.&nbsp;<span class="math display">\[r_{P,i}=\frac{y_i-\hat p_i}{\sqrt{\hat p_i(1-\hat p_i)}}\]</span> In other words, the Pearson residual has the following structure “(observed - expected)/SD(observed)” for the corresponding observation. The standardisation performed here corresponds to dividing by the standard deviation of the response <span class="math inline">\(y_i\)</span> and we note that other variants have been suggested. These Pearson residuals cannot be easily interrogated due to the discrete nature of the outcome. Another form of residuals exists for this model, called the deviance residuals (<span class="math inline">\(r_{D,i}\)</span>). The formula is omitted for simplicity but the deviance residuals measure the disagreement between the maxima of the observed and the fitted log-likelihood functions. Since logistic regression uses the maximum likelihood principle, the goal in logistic regression is to minimize the sum of the deviance residuals, so we can interrogate these deviance residuals in ways that are more akin to what we do with residuals in linear regression. Both types of residuals are readily available in standard packages.</p>
+<p>One might wonder whether the Pearson or deviance residuals are normally distributed and the answer is “no”. A normal probability plot of either type will typically show a kick (a broken line) due to the discreteness of the outcome, so these plots are not very useful. However, other plots can be very helpful such as the plot of the residuals versus prediction, also called an index plot. Before we examine this in detail on an example, note that the notion of leverage also exists in logistic regression and corresponds to the diagonal element <span class="math inline">\(h_{ii}\)</span> of the “hat matrix” that has a slightly more complicated definition than in linear regression but a similar interpretation. It is not always easy to see from a scatter plot of data points whether an observation has high leverage because the fitted curve is no longer a hyperplane geometrically. An approximation to the Cook’s distance is available and the various dfbetas are also available for logistic regression (to describe change in the log-odds ratio parameters when removing individual data points). Taken together these plots allow us to examine whether some observations are unduly influential on the model fit.</p>
 <p><strong>Lecture 2 in R</strong></p>
 <iframe width="740" height="416" src="https://www.youtube.com/embed/DwCJ2VOy-PI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
 </iframe>
-<p>[Download video here]https://www.dropbox.com/s/i8vaa1cfi326kjv/RM1_week10_lecture2_R.mp4?dl=1)</p>
 <p><strong>Lecture 2 in Stata</strong></p>
 <iframe width="740" height="416" src="https://www.youtube.com/embed/Guv1oBHQlUk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
 </iframe>
-<p><a href="https://www.dropbox.com/s/glmmed07d3jb7lc/RM1_week10_lecture2_Stata.mp4?dl=1">Download video here</a></p>
 </section>
-<section id="model-checking---diagnostics-.unnumbered" class="level2" data-number="10.4">
-<h2 data-number="10.4" class="anchored" data-anchor-id="model-checking---diagnostics-.unnumbered"><span class="header-section-number">10.4</span> Model checking - diagnostics {.unnumbered}}</h2>
-<p>Cheking the model assumptions is just as important in logistic regression as it is in linear regression. First, we work under the assumption that the observations are independent. If some form of clustering is anticipated, a more complex modelling is required. This is essentially a design issue and in most cases we know from the start whether this assumption is met or not. Since we do not have an error term <em>per se’</em>, no checks of distributional assumptions analogous to normally distributed residuals and constant variance are required. This comes from the fact that the probability distribution for binary outcomes has a simple form that does not include a separate variance parameter. However, we still need to check linearity and whether outliers or influential observations are present in the data making inference invalid. We will defer the examination of linearity until next week and focus on outliers and influential observations in this section.</p>
-<p>As an example, we use the <em>final</em> model proposed by Vittinghof et al.&nbsp;2012) for <em>chd69</em> of the WGCS study. The authors don’t delve into their model building strategy so we will not speculate for now and simply reproduce their analysis with some additional checks. The selected covariates are <em>age_10</em>, <em>chol_50</em>, <em>sbp_50</em>, <em>bmi_10</em>, <em>smoke</em>, <em>dibpat</em>, and two interactions terms involving 2 continuous previous predictors named <em>bmichol</em> and <em>bmisbp</em>. Their results can be reproduced using the code below. Note that they have scaled and CENTRED variables otherwise we get different results. The sample means for age, cholesterol, SBP and BMI were used to centre the variables.</p>
-<p>There are different types of useful residual plots we can produce: one is an index plot displaying the Pearson (or deviance) residual vs the ordered observation number in the dataset. This plot allows us to identify large residuals. Another possibly the plot of the Cook’s distance vs the predicted probability. These two plots can be found side-by-side in the figure below, see also p.&nbsp;175-176 in Vittinghof et al.&nbsp;(2012). You can also examine other diagnostic tools like leverage and draw other plots e.g.&nbsp;Pearson (or deviance) residuals vs probabilities</p>
+<section id="model-checking---diagnostics" class="level1 unnumbered">
+<h1 class="unnumbered">Model checking - diagnostics</h1>
+<p>Cheking the model assumptions is just as important in logistic regression as it is in linear regression. First, we work under the assumption that the observations are independent. If some form of clustering is anticipated, a more complex modelling procedure is required as covered in LCD. This is essentially a design issue and in most cases we know from the start whether this assumption is met or not. In logistic regression, since there is no error/residual term as part of the model specification, there are no checks of distributional assumptions analogous to normally distributed residuals and constant variance required. This comes from the fact that the probability distribution for binary outcomes has a simple form that does not include a separate variance parameter. However, we still need to check linearity and whether outliers or influential observations are present in the data making inference invalid. We will defer the examination of linearity until next week and focus on outliers and influential observations in this section.</p>
+<p>As an example, we use the <em>final</em> model proposed by Vittinghoff et al.&nbsp;(2012) for <em>chd69</em> of the WGCS study. The authors don’t delve into their model building strategy so we will not speculate for now and simply reproduce their analysis with some additional checks. The selected covariates are <em>age_10</em>, <em>chol_50</em>, <em>sbp_50</em>, <em>bmi_10</em>, <em>smoke</em>, <em>dibpat</em>, and two interaction terms involving 2 continuous variables that are pre-calculated and named <em>bmichol</em> and <em>bmisbp</em>. The results can be reproduced using the code below noting the need to scale and centre the variables to get identical results. The sample means for age, cholesterol, SBP and BMI were used to centre the respective variables.</p>
+<p>There are different types of useful residual plots we can produce. Firstly we have an index plot displaying the Pearson (or deviance) residual vs the ordered observation number in the dataset. This plot allows us to identify large residuals. Secondly there is the Cook’s distance plotted against the predicted probability. These two plots can be found side-by-side in the figure below, see also p.&nbsp;175-176 in Vittinghoff et al.&nbsp;(2012). You can also examine other diagnostic tools like leverage and draw other plots e.g.&nbsp;Pearson (or deviance) residuals vs predicted probabilities.</p>
 <p><strong>R code and output</strong></p>
 <div class="cell">
 <details class="code-fold">
@@ -805,7 +802,7 @@ window.Quarto = {
 <div class="cell" data-collectcode="true">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> wcgs.dta</span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> https:<span class="co">//github.com/atpinto/RM1/raw/refs/heads/main/Data/wcgs.dta</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>** <span class="kw">sample</span> <span class="kw">mean</span> will <span class="ot">all</span> <span class="kw">obs</span> is used to centre the variables</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> age10=(age-46.27869)/10    </span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> bmi10=(bmi-24.51837)/10    </span>
@@ -909,7 +906,7 @@ window.Quarto = {
 <span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a>##      +-----------------------------------------------------------------------+</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We clearly see the grouping of residuals by CHD status on the left panel but there is no indication that an observation has a residual that is much larger than the others. Note that some of these residuals are well above 2 and that’s perfectly fine. The standardisation carried out in the standard Pearson residuals does not mean that their variance is 1. A similar plot can be produced for the deviance residuals (omitted) and will lead to a similar interpretation. The plot of the Cook’s distance vs the predicted probabilities identifies two observations with a slightly bigger Cook’s distance (CD). We can identify who they are by sorting the data by decreasing CD and printing the top 2-5 observations. The one with the largest CD is patient 10078 with CHD who does not smoke, is very obese (BMI=38.9) and a cholesterol below average (188 mg/dL = 4.86 mmol/L). The next one is case 12453 who did not have CHD, smokes and has a very high SBP (196). Although these two observations stand out, they are not overly influential on the fit. A case-deletion and refit would lead us to a similar conclusion. Note that you may get different values in Stata but similar looking plots (up tp scaling). This has to do with the way the Cook’s distance is calculated. A lot of other plots can be produced like in linear regression: you can for instance compute the dfbetas (one per parameter) and plot them to identify influential observations or use leverage values again for other plots. There is no real equivalent of residuals-squared versus leverage. Plot of Pearson or deviance residuals versus a particular covariate are not particularly useful to identify remaining structures than the model may not have captured (like a quadratic trend in age). This will be examined using splines - see week 11 material.</p>
+<p>We clearly see the grouping of residuals by CHD status on the left panel but there is no indication that an observation has a residual that is much larger than the others. Note that some of these residuals are well above 2 and that’s perfectly fine. The standardisation carried out in the standard Pearson residuals does not mean that their variance is 1. A similar plot can be produced for the deviance residuals (omitted) and will lead to a similar interpretation. The plot of the Cook’s distance vs the predicted probabilities identifies two observations with a slightly bigger Cook’s distance (CD). We can identify who they are by sorting the data by decreasing CD and printing the top 2-5 observations. The one with the largest CD is patient 10078 with CHD who does not smoke, is very obese (BMI=38.9) and a cholesterol below average (188 mg/dL = 4.86 mmol/L). The next one is patient 12453 who did not have CHD, smokes and has a very high SBP (196). Although these two observations stand out, they are not overly influential on the fit. A case-deletion and refit would lead us to a similar conclusion. Note that you may get different values in Stata but similar looking plots (up to different scaling in the way the Cook’s distance is calculated in the respective pacakages). A lot of other plots can be produced like in linear regression: you can for instance compute the dfbetas (one per parameter) and plot them to identify influential observations or use leverage values again for other plots. There is no real equivalent of residuals-squared versus leverage. Plot of Pearson or deviance residuals versus a particular covariate are not particularly useful to identify remaining structures than the model may not have captured (like a quadratic trend in age). This will be examined using splines - see week 11 material.</p>
 <p>We said earlier that we should not expect the Pearson or deviance residuals to be normally distributed. What happens if we draw a normal probability plot anyway? The figure below displays such a plot and we can clearly see the separation between two groups based on the outcome status and plot is a broken line.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -920,7 +917,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>R-users may be able to produce a more meaningful plot using the library <em>gamlss</em> . This library allows you to fit a large variety of models that will be explored in RM2. You can force <em>gamlss</em> to fit a logistic regression model and get the exact same fit as the standard <em>glm</em> command. The code can be found here. The advantage is that a standard plot of the output gives you a much nicer plot of residuals. These resdiduals are called randomised quantile residuals due to Dunn and Smyth (2012). They essentially use randomisation to achieve continuous residuals when the response variable is discrete. Irrespective of the technicality (details to be given in RM2), R produces very nice plots for these residuals.</p>
+<p>R-users may be able to produce a more meaningful plot using the library <em>gamlss</em> . This library allows you to fit a large variety of models that will be explored in RM2. You can force <em>gamlss</em> to fit a logistic regression model and get the exact same fit as the standard <em>glm</em> command. The code can be found below. The advantage is that a standard plot of the output gives you a much nicer plot of residuals. These resdiduals are called randomised quantile residuals due to Dunn and Smyth (2012). They essentially use randomisation to achieve continuous residuals when the response variable is discrete. Irrespective of the technicality (details to be given in RM2), R produces very nice plots for these residuals.</p>
 <p><strong>R code and output</strong></p>
 <div class="cell">
 <details class="code-fold">
@@ -938,7 +935,7 @@ window.Quarto = {
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="do">## Loading required package: gamlss.dist</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="do">## Loading required package: nlme</span></span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="do">## Loading required package: parallel</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  **********   GAMLSS Version 5.4-22  **********</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  **********   GAMLSS Version 5.5-0  **********</span></span>
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="do">## For more on GAMLSS look at https://www.gamlss.com/</span></span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="do">## Type gamlssNews() to see new features/changes/bug fixes.</span></span>
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>out4<span class="ot">&lt;-</span><span class="fu">gamlss</span>(chd69 <span class="sc">~</span> age_10 <span class="sc">+</span> chol_50 <span class="sc">+</span> sbp_50 <span class="sc">+</span>  bmi_10 <span class="sc">+</span> smoke <span class="sc">+</span> dibpat <span class="sc">+</span> bmichol <span class="sc">+</span> bmisbp, <span class="at">family=</span>BI, <span class="at">data=</span>wcgs2cc)</span>
@@ -955,22 +952,31 @@ window.Quarto = {
 </div>
 <pre><code>## ******************************************************************
 ##   Summary of the Randomised Quantile Residuals
-##                            mean   =  0.007621309 
-##                        variance   =  0.9807098 
-##                coef. of skewness  =  -0.02278271 
-##                coef. of kurtosis  =  2.977382 
-## Filliben correlation coefficient  =  0.9997885 
+##                            mean   =  -0.02716557 
+##                        variance   =  1.0271 
+##                coef. of skewness  =  -0.03497135 
+##                coef. of kurtosis  =  2.880928 
+## Filliben correlation coefficient  =  0.9997009 
 ## ******************************************************************</code></pre>
 </div>
-<p>A nice straight QQ plot of this randomised quantile residuals is produced meaning that there are no particular issue in the residuals to be concerned about. R-users can try to run the code given above and first verify that <em>gamlss</em> and <em>glm</em> gave the same fit. The plot command issued right after the fit returns though a completely different figure due to a different implementation in <em>gamlss</em>. There is no equivalent to this function <em>gamlss</em> in Stata that we know of.</p>
-<p>The following are the key takeaway messages from this week:</p>
-<div id="box1" class="green-box">
+<p>A nice straight QQ plot of this randomised quantile residuals is produced meaning that there are no particular issues in the residuals to be concerned about. R-users can try to run the code given above and first verify that <em>gamlss</em> and <em>glm</em> gave the same fit. The plot command issued right after the fit may however return a completely different figure due to a different implementation in <em>gamlss</em>. To our knowledge, there is no equivalent to this function <em>gamlss</em> in Stata.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="The following are the key takeaway messages from this week:">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The following are the key takeaway messages from this week:
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ol type="1">
-<li><p>The concept of interaction is similar to the one used in linear regression when expressed on the logit scale. Effect modification is mutiplicative on the odds-ratio scale</p></li>
-<li><p>Predicted probabilities of an event adn 95% CI can be calculated for any patient’s profile. Transforming the linear predictor and its 95% CI to the probability scale is the way to go.</p></li>
+<li><p>The concept of interaction is similar to the one used in linear regression when expressed on the logit scale. Effect modification is mutiplicative on the odds-ratio scale.</p></li>
+<li><p>Predicted probabilities of an event and 95% CI can be calculated for any patient’s profile.</p></li>
 <li><p>Residuals can also be extended (e.g.&nbsp;the Pearson and deviance residuals) but they are not normally distributed.</p></li>
-<li><p>Other diagnostic tools (e.g.&nbsp;leverage, Cook’s distance) exist and have similar interpretarion. They cam help identify outliers and influential observations.</p></li>
+<li><p>Other diagnostic tools (e.g.&nbsp;leverage, Cook’s distance) exist and have similar interpretation. They can help identify outliers and influential observations.</p></li>
 </ol>
+</div>
 </div>
 
 
@@ -1402,7 +1408,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
   <div class="nav-page nav-page-next">
       <a href="./011-logistic_regression_splines_validation.html" class="pagination-link" aria-label="Non-linearity in Logistic Regression">
-        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Non-linearity in Logistic Regression</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Non-linearity in Logistic Regression</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -1410,7 +1416,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Regression Modeling for Biostatistics.</p>
+<p>Regression Modeling for Biostatistics</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
